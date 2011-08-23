@@ -1,0 +1,22 @@
+Index: corosync-1.0/conf/corosync.conf.example
+===================================================================
+--- corosync-1.0.orig/conf/corosync.conf.example	2009-06-10 06:33:21.000000000 -0400
++++ corosync-1.0/conf/corosync.conf.example	2009-06-10 06:54:17.000000000 -0400
+@@ -1,7 +1,7 @@
+ # Please read the corosync.conf.5 manual page
+ totem {
+ 	version: 2
+-	secauth: off
++	secauth: on
+ 	threads: 0
+ 	interface {
+ 		ringnumber: 0
+@@ -14,7 +14,7 @@
+ logging {
+ 	fileline: off
+ 	to_stderr: yes
+-	to_logfile: yes
++	to_logfile: no
+ 	to_syslog: yes
+ 	logfile: /tmp/corosync.log
+ 	debug: off

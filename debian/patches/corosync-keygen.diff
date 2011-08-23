@@ -1,0 +1,41 @@
+Index: corosync-1.1.2/tools/corosync-keygen.c
+===================================================================
+--- corosync-1.1.2.orig/tools/corosync-keygen.c	2009-10-27 13:25:02.000000000 +0100
++++ corosync-1.1.2/tools/corosync-keygen.c	2009-10-27 13:25:14.000000000 +0100
+@@ -67,9 +67,9 @@
+ 
+ 	printf ("Gathering %lu bits for key from /dev/random.\n", (unsigned long)(sizeof (key) * 8));
+ 	printf ("Press keys on your keyboard to generate entropy.\n");
+-	random_fd = open ("/dev/random", O_RDONLY);
++	random_fd = open ("/dev/urandom", O_RDONLY);
+ 	if (random_fd == -1) {
+-		perror ("Is /dev/random present? Opening /dev/random");
++		perror ("Is /dev/urandom present? Opening /dev/urandom");
+ 		exit (errno);
+ 	}
+ 
+@@ -78,16 +78,14 @@
+ 	 */
+ 	bytes_read = 0;
+ 
+-retry_read:
+-	res = read (random_fd, &key[bytes_read], sizeof (key) - bytes_read);
+-	if (res == -1) {
+-		perror ("Could not read /dev/random");
+-		exit (errno);
+-	}
+-	bytes_read += res;
+-	if (bytes_read != sizeof (key)) {
+-		printf ("Press keys on your keyboard to generate entropy (bits = %d).\n", bytes_read * 8);
+-		goto retry_read;
++	while (bytes_read < sizeof (key)) {
++		res = read (random_fd, key + bytes_read, sizeof (key) - bytes_read);
++		if (res <= 0) {
++			perror ("Could not read /dev/urandom");
++			exit (1);
++		}
++		bytes_read += res;
++		printf ("Got %d bits\n", bytes_read*8);
+ 	}
+ 	close (random_fd);
+ 

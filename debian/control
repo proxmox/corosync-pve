@@ -1,0 +1,68 @@
+Source: corosync-pve
+Priority: extra
+Maintainer: Proxmox Support Team <support@proxmox.com>
+Build-Depends: debhelper (>= 7), autotools-dev, libnss3-dev, groff, quilt
+Standards-Version: 3.7.3
+Section: admin
+Homepage: http://openais.org/
+
+Package: corosync-pve
+Section: admin
+Architecture: any
+Depends: ${shlibs:Depends}, psmisc, lsb-base (>= 3.0-6), libcorosync4-pve, adduser
+Conflicts: openais (<< 0.96), corosync
+Provides: corosync
+Description: Standards-based cluster framework (daemon and modules)
+ The corosync project is a project to implement a production quality
+ "Revised BSD" licensed implementation of all core functionalities
+ required by openais. The project implements cutting edge research
+ on virtual synchrony to provide 100% correct operation in the face of
+ failures or partitionable networks with excellent performance
+ characteristics.
+ .
+ The Application Interface Specification is a software API and policies
+ which are used to develop applications that maintain service during
+ faults.
+ .
+ This package contains the corosync daemon and modules.
+
+Package: libcorosync4-pve
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}
+Conflicts: libopenais2 (<< 0.96-1), libcorosync4
+Provides: libcorosync4
+Description: Standards-based cluster framework (libraries)
+ The corosync project is a project to implement a production quality
+ "Revised BSD" licensed implementation of all core functionalities
+ required by openais. The project implements cutting edge research
+ on virtual synchrony to provide 100% correct operation in the face of
+ failures or partitionable networks with excellent performance
+ characteristics.
+ .
+ The Application Interface Specification is a software API and policies
+ which are used to develop applications that maintain service during
+ faults.
+ .
+ This package contains libraries that should be used by corosync clients.
+
+Package: libcorosync-pve-dev
+Section: libdevel
+Architecture: any
+Depends: libcorosync4-pve (= ${binary:Version})
+Conflicts: libopenais-dev (<< 0.96-1),  libcorosync-dev
+Provides: libcorosync-dev
+Description: Standards-based cluster framework (developer files)
+ The corosync project is a project to implement a production quality
+ "Revised BSD" licensed implementation of all core functionalities
+ required by openais. The project implements cutting edge research
+ on virtual synchrony to provide 100% correct operation in the face of
+ failures or partitionable networks with excellent performance
+ characteristics.
+ .
+ The Application Interface Specification is a software API and policies
+ which are used to develop applications that maintain service during
+ faults.
+ .
+ This package contains header files required to build clients for the
+ corosync infrastructure.
