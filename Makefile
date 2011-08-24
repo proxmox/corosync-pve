@@ -22,12 +22,14 @@ ${DEBS}: ${CSSRC}
 	cp -a debian ${CSDIR}/debian
 	cd ${CSDIR}; dpkg-buildpackage -rfakeroot -b -us -uc
 
+.PHONY: download
 download:
 	rm -rf corosync-${CSVERSION} corosync-${CSVERSION}.orig.tar.gz
-	git clone git://corosync.org/corosync.git -b flatiron-1.4 corosync-${CSVERSION}
+	git clone git://corosync.org/corosync.git corosync-${CSVERSION}/
+	cd corosync-${CSVERSION}; git checkout -b local v${CSVERSION}
 	cd corosync-${CSVERSION}; ./autogen.sh
+	# do not delete .git, because configure use that to detect version
 	tar czf corosync-${CSVERSION}.orig.tar.gz corosync-${CSVERSION}/
-
 
 .PHONY: upload
 upload: ${DEBS}
@@ -39,6 +41,8 @@ upload: ${DEBS}
 	cp ${DEBS} /pve/${RELEASE}/extra
 	cd /pve/${RELEASE}/extra; dpkg-scanpackages . /dev/null > Packages; gzip -9c Packages > Packages.gz
 	umount /pve/${RELEASE}; mount /pve/${RELEASE} -o ro
+
+distclean: clean
 
 .PHONY: clean
 clean:
