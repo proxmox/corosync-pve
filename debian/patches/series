@@ -1,4 +1,4 @@
 #config-path.diff
 #default-config.diff
 #corosync-keygen.diff
-#cpg-join-fix.diff
+cpg-join-fix.diff
