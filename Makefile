@@ -1,6 +1,8 @@
 RELEASE=2.0
 
-CSVERSION=1.4.1
+# source from http://www.corosync.org/doku.php?id=releases
+
+CSVERSION=1.4.3
 CSRELEASE=1
 CSDIR=corosync-${CSVERSION}
 CSSRC=corosync-${CSVERSION}.orig.tar.gz
@@ -21,15 +23,6 @@ ${DEBS}: ${CSSRC}
 	tar xf ${CSSRC} 
 	cp -a debian ${CSDIR}/debian
 	cd ${CSDIR}; dpkg-buildpackage -rfakeroot -b -us -uc
-
-.PHONY: download
-download:
-	rm -rf corosync-${CSVERSION} corosync-${CSVERSION}.orig.tar.gz
-	git clone git://corosync.org/corosync.git corosync-${CSVERSION}/
-	cd corosync-${CSVERSION}; git checkout -b local v${CSVERSION}
-	cd corosync-${CSVERSION}; ./autogen.sh
-	# do not delete .git, because configure use that to detect version
-	tar czf corosync-${CSVERSION}.orig.tar.gz corosync-${CSVERSION}/
 
 .PHONY: upload
 upload: ${DEBS}
