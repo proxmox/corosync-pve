@@ -1,6 +1,6 @@
 RELEASE=2.2
 
-# source from http://www.corosync.org/doku.php?id=releases
+# source from http://www.corosync.org
 
 CSVERSION=1.4.4
 CSRELEASE=1
