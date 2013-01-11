@@ -1,3 +1,11 @@
+corosync-pve (1.4.4-2) unstable; urgency=low
+
+  * disable SCHED_RR (RT_GROUP_SCHED was disabled in our kernel
+    anyways). In newer kernels this is enabled, but causes corosync to
+    crash.
+
+ -- Proxmox Support Team <support@proxmox.com>  Fri, 11 Jan 2013 15:39:40 +0100
+
 corosync-pve (1.4.4-1) unstable; urgency=low
 
   *  update to 1.4.4

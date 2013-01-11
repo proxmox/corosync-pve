@@ -1,0 +1,36 @@
+Index: new/exec/main.c
+===================================================================
+--- new.orig/exec/main.c	2013-01-11 15:35:35.000000000 +0100
++++ new/exec/main.c	2013-01-11 15:36:39.000000000 +0100
+@@ -1265,7 +1265,7 @@
+ 
+ static void corosync_setscheduler (void)
+ {
+-#if defined(HAVE_PTHREAD_SETSCHEDPARAM) && defined(HAVE_SCHED_GET_PRIORITY_MAX) && defined(HAVE_SCHED_SETSCHEDULER)
++#if 0 && defined(HAVE_PTHREAD_SETSCHEDPARAM) && defined(HAVE_SCHED_GET_PRIORITY_MAX) && defined(HAVE_SCHED_SETSCHEDULER)
+ 	int res;
+ 
+ 	sched_priority = sched_get_priority_max (SCHED_RR);
+@@ -1301,9 +1301,6 @@
+ 			"Could not get maximum scheduler priority");
+ 		sched_priority = 0;
+ 	}
+-#else
+-	log_printf(LOGSYS_LEVEL_WARNING,
+-		"The Platform is missing process priority setting features.  Leaving at default.");
+ #endif
+ }
+ 
+Index: new/exec/timer.c
+===================================================================
+--- new.orig/exec/timer.c	2013-01-11 15:35:40.000000000 +0100
++++ new/exec/timer.c	2013-01-11 15:35:46.000000000 +0100
+@@ -109,7 +109,7 @@
+ 	int fds;
+ 	unsigned long long timeout;
+ 
+-#if defined(HAVE_PTHREAD_SETSCHEDPARAM) && defined(HAVE_SCHED_GET_PRIORITY_MAX)
++#if 0 && defined(HAVE_PTHREAD_SETSCHEDPARAM) && defined(HAVE_SCHED_GET_PRIORITY_MAX)
+ 	if (sched_priority != 0) {
+ 		struct sched_param sched_param;
+ 
