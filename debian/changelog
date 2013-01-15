@@ -1,3 +1,9 @@
+corosync-pve (1.4.4-3) unstable; urgency=low
+
+  * run at high priority using setpriority(-20)
+
+ -- Proxmox Support Team <support@proxmox.com>  Tue, 15 Jan 2013 12:54:02 +0100
+
 corosync-pve (1.4.4-2) unstable; urgency=low
 
   * disable SCHED_RR (RT_GROUP_SCHED was disabled in our kernel

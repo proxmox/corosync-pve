@@ -3,7 +3,7 @@ RELEASE=2.3
 # source from http://www.corosync.org
 
 CSVERSION=1.4.4
-CSRELEASE=2
+CSRELEASE=3
 CSDIR=corosync-${CSVERSION}
 CSSRC=corosync-${CSVERSION}.orig.tar.gz
 
