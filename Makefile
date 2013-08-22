@@ -8,6 +8,7 @@ CSDIR=corosync-${CSVERSION}
 CSSRC=corosync-${CSVERSION}.orig.tar.gz
 
 ARCH:=$(shell dpkg-architecture -qDEB_BUILD_ARCH)
+GITVERSION:=$(shell cat .git/refs/heads/master)
 
 DEBS=									\
 	corosync-pve_${CSVERSION}-${CSRELEASE}_${ARCH}.deb 		\
@@ -22,6 +23,8 @@ ${DEBS}: ${CSSRC}
 	rm -rf ${CSDIR}
 	tar xf ${CSSRC} 
 	cp -a debian ${CSDIR}/debian
+	echo "git clone git://git.proxmox.com/git/corosync-pve.git\\ngit checkout ${GITVERSION}" >  ${CSDIR}/debian/SOURCE
+
 	cd ${CSDIR}; dpkg-buildpackage -rfakeroot -b -us -uc
 
 .PHONY: upload
