@@ -1,4 +1,4 @@
-RELEASE=3.0
+RELEASE=3.2
 
 # source from http://www.corosync.org
 
