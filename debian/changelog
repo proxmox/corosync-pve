@@ -1,3 +1,9 @@
+corosync-pve (1.4.7-1) unstable; urgency=low
+
+  * update to 1.4.7
+
+ -- Proxmox Support Team <support@proxmox.com>  Tue, 22 Jul 2014 06:17:13 +0200
+
 corosync-pve (1.4.6-1) unstable; urgency=low
 
   * update to 1.4.6
