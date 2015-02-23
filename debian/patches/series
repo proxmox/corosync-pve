@@ -1,5 +1,5 @@
 #config-path.diff
 #default-config.diff
 #corosync-keygen.diff
-cpg-join-fix.diff
-disable-sched-rr.patch
+#cpg-join-fix.diff
+#disable-sched-rr.patch

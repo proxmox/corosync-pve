@@ -1,7 +1,7 @@
 Source: corosync-pve
 Priority: extra
 Maintainer: Proxmox Support Team <support@proxmox.com>
-Build-Depends: debhelper (>= 7), autotools-dev, libnss3-dev, groff, quilt
+Build-Depends: debhelper (>= 7), libnss3-dev, groff, quilt, dh-systemd (>= 1.4)
 Standards-Version: 3.7.3
 Section: admin
 Homepage: http://openais.org/
@@ -9,7 +9,7 @@ Homepage: http://openais.org/
 Package: corosync-pve
 Section: admin
 Architecture: any
-Depends: ${shlibs:Depends}, psmisc, lsb-base (>= 3.0-6), libcorosync4-pve, adduser
+Depends: ${shlibs:Depends}, ${misc:Depends}, psmisc, lsb-base (>= 3.0-6), libcorosync4-pve, adduser, dh-systemd, systemd
 Conflicts: openais (<< 0.96), corosync
 Provides: corosync
 Description: Standards-based cluster framework (daemon and modules)

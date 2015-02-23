@@ -1,0 +1,14 @@
+[Unit]
+Description=Corosync Cluster Engine
+ConditionKernelCommandLine=!nocluster
+ConditionPathExists=/etc/corosync/corosync.conf
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/usr/share/corosync/corosync start
+ExecStop=/usr/share/corosync/corosync stop
+Type=forking
+
+[Install]
+WantedBy=multi-user.target

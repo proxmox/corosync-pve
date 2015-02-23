@@ -12,6 +12,7 @@ set -e
 case "$1" in
     purge)
 	rm -rf /var/lib/corosync
+	rm -rf /var/log/corosync
     ;;
 
     remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)

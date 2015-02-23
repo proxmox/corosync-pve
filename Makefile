@@ -1,11 +1,11 @@
-RELEASE=3.2
+RELEASE=4.0
 
 # source from http://www.corosync.org
 
-CSVERSION=1.4.7
+CSVERSION=2.3.4
 CSRELEASE=1
 CSDIR=corosync-${CSVERSION}
-CSSRC=corosync-${CSVERSION}.orig.tar.gz
+CSSRC=corosync-${CSVERSION}.tar.gz
 
 ARCH:=$(shell dpkg-architecture -qDEB_BUILD_ARCH)
 GITVERSION:=$(shell cat .git/refs/heads/master)
@@ -26,6 +26,11 @@ ${DEBS}: ${CSSRC}
 	echo "git clone git://git.proxmox.com/git/corosync-pve.git\\ngit checkout ${GITVERSION}" >  ${CSDIR}/debian/SOURCE
 
 	cd ${CSDIR}; dpkg-buildpackage -rfakeroot -b -us -uc
+
+.PHONY: download
+download:
+	rm -f ${CSSRC}
+	wget http://build.clusterlabs.org/corosync/releases/${CSSRC}
 
 .PHONY: upload
 upload: ${DEBS}

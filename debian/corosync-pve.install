@@ -1,4 +1,6 @@
 usr/sbin
+usr/bin/corosync-blackbox
 usr/share/man/man5
 usr/share/man/man8
-usr/lib/lcrso
+debian/corosync.service lib/systemd/system
+usr/share/corosync/corosync
