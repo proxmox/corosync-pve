@@ -4,3 +4,4 @@ usr/share/man/man5
 usr/share/man/man8
 debian/corosync.service lib/systemd/system
 usr/share/corosync/corosync
+usr/share/augeas/lenses/corosync.aug
