@@ -9,7 +9,7 @@ Homepage: http://openais.org/
 Package: corosync-pve
 Section: admin
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, psmisc, lsb-base (>= 3.0-6), libcorosync4-pve, adduser, dh-systemd, systemd
+Depends: ${shlibs:Depends}, ${misc:Depends}, psmisc, lsb-base (>= 3.0-6), libcorosync4-pve, adduser, systemd
 Conflicts: openais (<< 0.96), corosync
 Provides: corosync
 Description: Standards-based cluster framework (daemon and modules)
