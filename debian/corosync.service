@@ -4,6 +4,9 @@ ConditionKernelCommandLine=!nocluster
 ConditionPathExists=/etc/corosync/corosync.conf
 Requires=network-online.target
 After=network-online.target
+DefaultDependencies=no
+Before=shutdown.target
+Conflicts=shutdown.target
 
 [Service]
 ExecStart=/usr/share/corosync/corosync start
