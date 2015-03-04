@@ -48,6 +48,7 @@ distclean: clean
 .PHONY: clean
 clean:
 	rm -rf *_${ARCH}.deb *.changes *.dsc ${CSDIR} corosync_${CSVERSION}-${CSRELEASE}.tar.gz
+	find . -name '*~' -exec rm {} ';'
 
 .PHONY: dinstall
 dinstall: ${DEBS}
