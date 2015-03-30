@@ -1,3 +1,9 @@
+corosync-pve (2.3.4-2) unstable; urgency=medium
+
+  * update to latest upstream (commit 82526d2fe9137e8b604f1bbae6d6e39ba41377f9)
+
+ -- Proxmox Support Team <support@proxmox.com>  Mon, 30 Mar 2015 19:10:35 +0200
+
 corosync-pve (2.3.4-1) unstable; urgency=medium
 
   * update to 2.3.4
