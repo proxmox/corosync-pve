@@ -3,3 +3,4 @@
 #corosync-keygen.diff
 #cpg-join-fix.diff
 #disable-sched-rr.patch
+0001-totem-swap-unicast-and-multicast-bind-order.patch
