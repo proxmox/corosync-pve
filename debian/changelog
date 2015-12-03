@@ -1,3 +1,12 @@
+corosync-pve (2.3.5-2) unstable; urgency=medium
+
+  * update to latest versions from branch needle
+    (commit e2b6b25126a3e8f2caefcb8ccde67788c63fbeb5)
+
+  * remove patch 0001-totem-swap-unicast-and-multicast-bind-order.patch (upstream)
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 03 Dec 2015 14:49:43 +0100
+
 corosync-pve (2.3.5-1) unstable; urgency=medium
 
   * update to v2.3.5

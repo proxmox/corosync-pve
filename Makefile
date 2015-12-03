@@ -3,7 +3,7 @@ RELEASE=4.0
 # source from http://www.corosync.org
 
 CSVERSION=2.3.5
-CSRELEASE=1
+CSRELEASE=2
 CSDIR=corosync-${CSVERSION}
 CSSRC=corosync-${CSVERSION}.tar.gz
 
@@ -29,10 +29,10 @@ ${DEBS}: ${CSSRC}
 
 .PHONY: download
 download:
-	rm -f ${CSSRC} ${CSSRC}.tmp ${CSDIR}
+	rm -rf ${CSSRC} ${CSSRC}.tmp ${CSDIR}
 	# wget http://build.clusterlabs.org/corosync/releases/${CSSRC}
-	git clone https://github.com/corosync/corosync.git ${CSDIR}
-	cd ${CSDIR}; git checkout v${CSVERSION}
+	git clone https://github.com/corosync/corosync.git  -b needle ${CSDIR}
+	#cd ${CSDIR}; git checkout v${CSVERSION}
 	cd ${CSDIR}; ./autogen.sh
 	tar czf ${CSSRC}.tmp ${CSDIR}
 	mv ${CSSRC}.tmp ${CSSRC}
