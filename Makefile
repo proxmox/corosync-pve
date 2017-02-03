@@ -10,16 +10,19 @@ CSSRC=corosync-${CSVERSION}.tar.gz
 ARCH:=$(shell dpkg-architecture -qDEB_BUILD_ARCH)
 GITVERSION:=$(shell cat .git/refs/heads/master)
 
-DEBS=									\
-	corosync-pve_${CSVERSION}-${CSRELEASE}_${ARCH}.deb 		\
-	libcorosync4-pve_${CSVERSION}-${CSRELEASE}_${ARCH}.deb 		\
+DEB1 := corosync-pve_${CSVERSION}-${CSRELEASE}_${ARCH}.deb
+
+DEB2 := libcorosync4-pve_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
 	libcorosync-pve-dev_${CSVERSION}-${CSRELEASE}_${ARCH}.deb
+
+DEBS := $(DEB1) $(DEB2)
 
 all: ${DEBS}
 	echo ${DEBS}
 
-${DEBS}: ${CSSRC}
-	echo ${DEBS}
+$(DEB2): $(DEB1)
+
+${DEB1}: ${CSSRC}
 	rm -rf ${CSDIR}
 	tar xf ${CSSRC} 
 	cp -a debian ${CSDIR}/debian
