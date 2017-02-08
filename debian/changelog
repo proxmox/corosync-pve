@@ -1,3 +1,9 @@
+corosync-pve (2.4.2-1) unstable; urgency=medium
+
+  * update to corosync 2.4.2
+
+ -- Proxmox Support Team <support@proxmox.com>  Wed, 08 Feb 2017 14:08:49 +0100
+
 corosync-pve (2.4.0-1) unstable; urgency=medium
 
   * update to v2.4.0
