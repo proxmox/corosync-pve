@@ -20,8 +20,9 @@ DEBS := $(DEB1) $(DEB2)
 all: ${DEBS}
 	echo ${DEBS}
 
+.PHONY: deb
+deb: $(DEB1)
 $(DEB2): $(DEB1)
-
 ${DEB1}: ${CSSRC}
 	rm -rf ${CSDIR}
 	tar xf ${CSSRC} 
