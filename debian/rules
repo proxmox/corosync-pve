@@ -27,5 +27,5 @@ override_dh_auto_configure:
 override_dh_systemd_enable:
 	dh_systemd_enable -pcorosync-pve --name corosync
 
-#override_dh_systemd_start:
-#	dh_systemd_start -pcorosync-pve --name corosync --no-start
+override_dh_systemd_start:
+	dh_systemd_start -pcorosync-pve --name corosync --restart-after-upgrade -r
