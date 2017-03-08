@@ -43,7 +43,7 @@ download:
 
 .PHONY: upload
 upload: ${DEBS}
-	tar cf - ${DEBS} | ssh repoman@repo.proxmox.com upload -dist jessie -arch ${ARCH} -product pve
+	tar cf - ${DEBS} | ssh repoman@repo.proxmox.com -- upload --product pve --dist jessie --arch ${ARCH}
 
 distclean: clean
 
