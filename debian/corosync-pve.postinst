@@ -14,6 +14,13 @@ case "$1" in
 	# create the ais user
         adduser --quiet --group --system --no-create-home ais
 
+	if [ -n "$2" ]; then
+	    # switch from stop-wait-start to restart requires a final manual start after upgrade
+	    if dpkg --compare-versions "$2" le "2.4.2-1" ; then
+		deb-systemd-invoke start corosync.service > /dev/null || true
+	    fi
+	fi
+
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
