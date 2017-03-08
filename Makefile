@@ -29,7 +29,7 @@ ${DEB1}: ${CSSRC}
 	cp -a debian ${CSDIR}/debian
 	echo "git clone git://git.proxmox.com/git/corosync-pve.git\\ngit checkout ${GITVERSION}" >  ${CSDIR}/debian/SOURCE
 
-	cd ${CSDIR}; dpkg-buildpackage -rfakeroot -b -us -uc
+	cd ${CSDIR}; dpkg-buildpackage -b -us -uc
 
 .PHONY: download
 download:
