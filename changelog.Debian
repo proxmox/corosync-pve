@@ -1,3 +1,9 @@
+corosync (2.4.2-pve1) unstable; urgency=medium
+
+  * switch to Debian's corosync package as base
+
+ -- Proxmox Support Team <support@proxmox.com>  Wed, 8 Mar 2017 14:16:58 +0100
+
 corosync-pve (2.4.2-2) unstable; urgency=medium
 
   * rebuild for PVE 5.0 / Debian Stretch
