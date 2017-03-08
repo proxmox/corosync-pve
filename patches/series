@@ -1,0 +1,5 @@
+0001-add-Provides-Replaces-corosync-pve.patch
+0002-don-t-install-default-corosync.conf.patch
+0003-restart-after-package-upgrade-is-complete.patch
+0004-remove-init-script.patch
+0005-add-corosync-pve-postinst-for-restart-on-dist-upgrad.patch

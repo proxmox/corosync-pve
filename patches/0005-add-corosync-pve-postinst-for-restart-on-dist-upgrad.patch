@@ -1,0 +1,35 @@
+From 519451819e81818c578ce177ad9cce859d9e55c2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
+Date: Wed, 8 Mar 2017 14:08:04 +0100
+Subject: [PATCH 5/5] add corosync-pve postinst for restart on dist-upgrade
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
+---
+ debian/corosync-pve.postinst | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+ create mode 100755 debian/corosync-pve.postinst
+
+diff --git a/debian/corosync-pve.postinst b/debian/corosync-pve.postinst
+new file mode 100755
+index 0000000..f282563
+--- /dev/null
++++ b/debian/corosync-pve.postinst
+@@ -0,0 +1,12 @@
++#!/bin/sh
++
++set -e
++
++if [ "$1" = "configure" ]; then
++	if [ -n "$2" ]; then
++		# switching package name from corosync-pve to corosync requires a manual restart on upgrade, once
++		if dpkg --compare-versions "$2" lt "2.4.2-pve1" ; then
++			deb-systemd-invoke try-restart corosync.service > /dev/null || true
++		fi
++	fi
++fi
+-- 
+2.1.4
+
