@@ -1,3 +1,9 @@
+corosync-pve (2.4.2-2~pve4+1) unstable; urgency=medium
+
+  * also restart when switching from old to new upgrade behaviour
+
+ -- Proxmox Support Team <support@proxmox.com>  Wed, 8 Mar 2017 11:25:48 +0100
+
 corosync-pve (2.4.2-2~pve4) unstable; urgency=medium
 
   * restart corosync.service on upgrades instead of stop-wait-start
