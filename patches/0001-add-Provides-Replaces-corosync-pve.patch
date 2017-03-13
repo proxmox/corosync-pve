@@ -1,7 +1,7 @@
 From 60055d6619687705a248bf3ff0f7e09bf2da488c Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
 Date: Tue, 7 Mar 2017 13:29:31 +0100
-Subject: [PATCH 1/5] add Provides/Replaces: corosync-pve
+Subject: [PATCH 1/7] add Provides/Replaces: corosync-pve
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

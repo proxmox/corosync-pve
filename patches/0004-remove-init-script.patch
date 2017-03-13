@@ -1,7 +1,7 @@
 From 047ef59e56d1456283e2d4df68234e8b88f36a2d Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
 Date: Wed, 8 Mar 2017 12:59:37 +0100
-Subject: [PATCH 4/5] remove init script
+Subject: [PATCH 4/7] remove init script
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

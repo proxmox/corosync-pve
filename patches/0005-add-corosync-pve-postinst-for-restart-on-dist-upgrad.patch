@@ -1,7 +1,7 @@
 From 519451819e81818c578ce177ad9cce859d9e55c2 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
 Date: Wed, 8 Mar 2017 14:08:04 +0100
-Subject: [PATCH 5/5] add corosync-pve postinst for restart on dist-upgrade
+Subject: [PATCH 5/7] add corosync-pve postinst for restart on dist-upgrade
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
