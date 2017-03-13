@@ -12,6 +12,7 @@ ARCH:=$(shell dpkg-architecture -qDEB_BUILD_ARCH)
 GITVERSION:=$(shell cat .git/refs/heads/master)
 
 DEBS=corosync-pve_${CSVERSION}-${CSRELEASE}_all.deb \
+libcorosync4-pve_${CSVERSION}-${CSRELEASE}_all.deb \
 corosync_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
 corosync-notifyd_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
 corosync-qdevice_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
