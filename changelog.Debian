@@ -1,3 +1,11 @@
+corosync (2.4.2-pve2) unstable; urgency=medium
+
+  * add libcorosync4-pve transitional package
+
+  * only start corosync service if config exists
+
+ -- Proxmox Support Team <support@proxmox.com>  Mon, 13 Mar 2017 13:31:34 +0100
+
 corosync (2.4.2-pve1) unstable; urgency=medium
 
   * switch to Debian's corosync package as base
