@@ -1,0 +1,32 @@
+From 99fe4ea69637a29e7b089ba857cff61208fa0679 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
+Date: Mon, 13 Mar 2017 13:26:29 +0100
+Subject: [PATCH 6/7] add libcorosync4-pve transitional package
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
+---
+ debian/control | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/debian/control b/debian/control
+index d11dc18..bae42c6 100644
+--- a/debian/control
++++ b/debian/control
+@@ -36,6 +36,11 @@ Architecture: all
+ Depends: corosync (= ${binary:Version})
+ Description: Transitional package.
+ 
++Package: libcorosync4-pve
++Architecture: all
++Depends: corosync (= ${binary:Version})
++Description: Transitional package.
++
+ Package: corosync
+ Architecture: any
+ Pre-Depends: ${misc:Pre-Depends}
+-- 
+2.1.4
+

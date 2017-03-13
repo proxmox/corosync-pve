@@ -3,3 +3,4 @@
 0003-restart-after-package-upgrade-is-complete.patch
 0004-remove-init-script.patch
 0005-add-corosync-pve-postinst-for-restart-on-dist-upgrad.patch
+0006-add-libcorosync4-pve-transitional-package.patch
