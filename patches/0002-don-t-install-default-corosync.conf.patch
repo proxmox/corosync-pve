@@ -1,7 +1,7 @@
 From 34924c90ccb5cb883ac135b35e3ffdd48c459db7 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
 Date: Tue, 7 Mar 2017 13:32:02 +0100
-Subject: [PATCH 2/7] don't install default corosync.conf
+Subject: [PATCH 2/8] don't install default corosync.conf
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

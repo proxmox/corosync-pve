@@ -1,7 +1,7 @@
 From d962302d3a91eb614c6ecccf836b30032f1ae600 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
 Date: Wed, 8 Mar 2017 12:12:05 +0100
-Subject: [PATCH 3/7] restart after package upgrade is complete
+Subject: [PATCH 3/8] restart after package upgrade is complete
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

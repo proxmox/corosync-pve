@@ -1,0 +1,78 @@
+From f1b91ad6c1659477b72853666cde930932279d6c Mon Sep 17 00:00:00 2001
+From: Thomas Lamprecht <t.lamprecht@proxmox.com>
+Date: Wed, 29 Mar 2017 09:35:19 +0200
+Subject: [PATCH 8/8] remove unecessary and problematic corosync-qdevice.init
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Thomas Lamprecht <t.lamprecht@proxmox.com>
+---
+ debian/corosync-qdevice.init | 55 --------------------------------------------
+ 1 file changed, 55 deletions(-)
+ delete mode 100755 debian/corosync-qdevice.init
+
+diff --git a/debian/corosync-qdevice.init b/debian/corosync-qdevice.init
+deleted file mode 100755
+index 344666a..0000000
+--- a/debian/corosync-qdevice.init
++++ /dev/null
+@@ -1,55 +0,0 @@
+-#!/bin/sh
+-# kFreeBSD do not accept scripts as interpreters, using #!/bin/sh and sourcing.
+-if [ true != "$INIT_D_SCRIPT_SOURCED" ] ; then
+-    set "$0" "$@"; INIT_D_SCRIPT_SOURCED=true . /lib/init/init-d-script
+-fi
+-### BEGIN INIT INFO
+-# Provides:		corosync-qdevice
+-# Required-Start:	$remote_fs $syslog corosync
+-# Required-Stop:	$remote_fs $syslog corosync
+-# Default-Start:	
+-# Default-Stop:		0 1 6
+-# Short-Description:	Corosync Qdevice daemon
+-# Description:		Starts and stops Corosync Qdevice daemon.
+-### END INIT INFO
+-
+-NAME="corosync-qdevice"
+-DESC="Corosync Qdevice daemon"
+-DAEMON="/usr/sbin/$NAME"
+-PIDFILE="/run/$NAME/$NAME.pid"
+-
+-CONFIG="/etc/default/$NAME"
+-[ -f "$CONFIG" ] && . "$CONFIG"
+-
+-DAEMON_ARGS="$COROSYNC_QDEVICE_OPTIONS"
+-
+-do_start_prepare() {
+-    if grep -q nocluster /proc/cmdline; then
+-        log_failure_msg "not configured to run at boot"
+-        exit 1
+-    fi
+-}
+-
+-# do_{start,stop}_cmd from init-d-script, but without the --name option.
+-# corosync-qdevice is too long for a process name, it gets truncated,
+-# which makes it incompatible with the --name option.  See #843419.
+-do_start_cmd() {
+-	start-stop-daemon --start --quiet ${PIDFILE:+--pidfile ${PIDFILE}} \
+-	    $START_ARGS \
+-	    --startas $DAEMON --exec $DAEMON --test > /dev/null \
+-	    || return 1
+-	start-stop-daemon --start --quiet ${PIDFILE:+--pidfile ${PIDFILE}} \
+-	    $START_ARGS \
+-	    --startas $DAEMON --exec $DAEMON -- $DAEMON_ARGS \
+-	    || return 2
+-}
+-do_stop_cmd() {
+-	start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 \
+-	    $STOP_ARGS \
+-	    ${PIDFILE:+--pidfile ${PIDFILE}} --exec $DAEMON
+-	RETVAL="$?"
+-	[ "$RETVAL" = 2 ] && return 2
+-	# Many daemons don't delete their pidfiles when they exit.
+-	rm -f $PIDFILE
+-	return $RETVAL
+-}
+-- 
+2.1.4
+

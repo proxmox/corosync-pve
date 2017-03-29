@@ -1,7 +1,7 @@
 From 95e8f3ed850ddb1f42446c1d1a9582a7397c71d5 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
 Date: Mon, 13 Mar 2017 13:27:49 +0100
-Subject: [PATCH 7/7] only start corosync.service if conf exists
+Subject: [PATCH 7/8] only start corosync.service if conf exists
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit

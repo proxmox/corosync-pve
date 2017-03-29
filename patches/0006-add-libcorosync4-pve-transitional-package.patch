@@ -1,7 +1,7 @@
 From 99fe4ea69637a29e7b089ba857cff61208fa0679 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
 Date: Mon, 13 Mar 2017 13:26:29 +0100
-Subject: [PATCH 6/7] add libcorosync4-pve transitional package
+Subject: [PATCH 6/8] add libcorosync4-pve transitional package
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
