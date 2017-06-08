@@ -1,3 +1,9 @@
+corosync (2.4.2-pve3) unstable; urgency=medium
+
+  * don't install corosync-qdevice init script
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 8 Jun 2017 14:13:22 +0200
+
 corosync (2.4.2-pve2) unstable; urgency=medium
 
   * add libcorosync4-pve transitional package
