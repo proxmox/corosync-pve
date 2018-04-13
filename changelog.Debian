@@ -1,3 +1,9 @@
+corosync (2.4.2-pve4) unstable; urgency=medium
+
+  * fix CVE-2018-1084
+
+ -- Proxmox Support Team <support@proxmox.com>  Fri, 13 Apr 2018 10:29:34 +0200
+
 corosync (2.4.2-pve3) unstable; urgency=medium
 
   * don't install corosync-qdevice init script
