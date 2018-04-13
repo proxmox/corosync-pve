@@ -1,3 +1,9 @@
+corosync-pve (2.4.2-2~pve4+2) unstable; urgency=medium
+
+  * fix CVE-2018-1084
+
+ -- Proxmox Support Team <support@proxmox.com>  Fri, 13 Apr 2018 11:15:45 +0200
+
 corosync-pve (2.4.2-2~pve4+1) unstable; urgency=medium
 
   * also restart when switching from old to new upgrade behaviour
