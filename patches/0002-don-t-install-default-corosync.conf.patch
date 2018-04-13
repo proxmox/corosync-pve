@@ -1,7 +1,7 @@
-From 34924c90ccb5cb883ac135b35e3ffdd48c459db7 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
 Date: Tue, 7 Mar 2017 13:32:02 +0100
-Subject: [PATCH 2/8] don't install default corosync.conf
+Subject: [PATCH] don't install default corosync.conf
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -15,7 +15,7 @@ Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
 
 diff --git a/debian/corosync.conf b/debian/corosync.conf
 deleted file mode 100644
-index 0444432..0000000
+index 04444322..00000000
 --- a/debian/corosync.conf
 +++ /dev/null
 @@ -1,111 +0,0 @@
@@ -131,7 +131,7 @@ index 0444432..0000000
 -	expected_votes: 2
 -}
 diff --git a/debian/corosync.install b/debian/corosync.install
-index da4efa1..3c03c3f 100755
+index da4efa17..3c03c3f6 100755
 --- a/debian/corosync.install
 +++ b/debian/corosync.install
 @@ -31,6 +31,5 @@ usr/share/augeas/lenses/corosync.aug
@@ -142,5 +142,5 @@ index da4efa1..3c03c3f 100755
  usr/share/corosync/xml2conf.xsl
  var/lib/corosync
 -- 
-2.1.4
+2.14.2
 

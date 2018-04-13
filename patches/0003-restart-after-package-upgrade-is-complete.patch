@@ -1,7 +1,7 @@
-From d962302d3a91eb614c6ecccf836b30032f1ae600 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
 Date: Wed, 8 Mar 2017 12:12:05 +0100
-Subject: [PATCH 3/8] restart after package upgrade is complete
+Subject: [PATCH] restart after package upgrade is complete
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -12,7 +12,7 @@ Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
  1 file changed, 3 insertions(+)
 
 diff --git a/debian/rules b/debian/rules
-index d43bf29..f45847c 100755
+index d43bf29b..f45847cc 100755
 --- a/debian/rules
 +++ b/debian/rules
 @@ -86,6 +86,9 @@ override_dh_systemd_enable:
@@ -26,5 +26,5 @@ index d43bf29..f45847c 100755
  	dh_strip --dbgsym-migration=corosync-dbg
  
 -- 
-2.1.4
+2.14.2
 

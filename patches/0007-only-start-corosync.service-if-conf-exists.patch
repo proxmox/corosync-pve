@@ -1,7 +1,7 @@
-From 95e8f3ed850ddb1f42446c1d1a9582a7397c71d5 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
 Date: Mon, 13 Mar 2017 13:27:49 +0100
-Subject: [PATCH 7/8] only start corosync.service if conf exists
+Subject: [PATCH] only start corosync.service if conf exists
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -13,7 +13,7 @@ Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
  2 files changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/init/corosync.service.in b/init/corosync.service.in
-index d71a857..3b8316a 100644
+index d71a8572..3b8316a7 100644
 --- a/init/corosync.service.in
 +++ b/init/corosync.service.in
 @@ -1,6 +1,7 @@
@@ -25,7 +25,7 @@ index d71a857..3b8316a 100644
  After=network-online.target
  
 diff --git a/debian/patches/Add-Documentation-URIs-to-the-systemd-service-files.patch b/debian/patches/Add-Documentation-URIs-to-the-systemd-service-files.patch
-index d77faae..e9f25e4 100644
+index d77faae9..e9f25e45 100644
 --- a/debian/patches/Add-Documentation-URIs-to-the-systemd-service-files.patch
 +++ b/debian/patches/Add-Documentation-URIs-to-the-systemd-service-files.patch
 @@ -52,5 +52,5 @@ index d71a857..12193b1 100644
@@ -36,5 +36,5 @@ index d77faae..e9f25e4 100644
   Requires=network-online.target
 - After=network-online.target
 -- 
-2.1.4
+2.14.2
 
