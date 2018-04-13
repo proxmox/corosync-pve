@@ -3,3 +3,4 @@
 #corosync-keygen.diff
 #cpg-join-fix.diff
 #disable-sched-rr.patch
+cve-2018-1084.patch
