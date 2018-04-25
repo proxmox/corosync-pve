@@ -3,7 +3,7 @@ RELEASE=5.0
 # source from http://www.corosync.org
 
 CSVERSION=2.4.2
-CSRELEASE=pve4
+CSRELEASE=pve5
 DEBRELEASE=3
 CSDIR=corosync-${CSVERSION}
 CSSRC=corosync-${CSVERSION}.tar.gz

@@ -1,3 +1,9 @@
+corosync (2.4.2-pve5) unstable; urgency=medium
+
+  * cpg: Inform clients about left nodes during pause
+
+ -- Proxmox Support Team <support@proxmox.com>  Wed, 25 Apr 2018 10:26:48 +0200
+
 corosync (2.4.2-pve4) unstable; urgency=medium
 
   * fix CVE-2018-1084
