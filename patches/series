@@ -7,3 +7,4 @@
 0007-only-start-corosync.service-if-conf-exists.patch
 0008-remove-unecessary-and-problematic-corosync-qdevice.i.patch
 0009-totemcrypto-Check-length-of-the-packet.patch
+0010-cpg-Inform-clients-about-left-nodes-during-pause.patch
