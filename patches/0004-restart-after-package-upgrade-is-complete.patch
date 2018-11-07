@@ -12,12 +12,12 @@ Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
  1 file changed, 3 insertions(+)
 
 diff --git a/debian/rules b/debian/rules
-index 7108d92c..871ba8d0 100755
+index d863e8e8..366f6ac9 100755
 --- a/debian/rules
 +++ b/debian/rules
-@@ -81,6 +81,9 @@ override_dh_installsystemd:
- 	dh_installsystemd -p corosync-qdevice --no-enable --no-start
- 	dh_installsystemd --remaining-packages
+@@ -81,6 +81,9 @@ override_dh_systemd_enable:
+ 	dh_systemd_enable -p corosync-qdevice --no-enable
+ 	dh_systemd_enable --remaining-packages
  
 +override_dh_systemd_start:
 +	dh_systemd_start -r --restart-after-upgrade
