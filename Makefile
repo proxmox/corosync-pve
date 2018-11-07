@@ -3,13 +3,13 @@ RELEASE=5.0
 # source from http://www.corosync.org
 
 CSVERSION=2.4.4
-CSRELEASE=pve5
+CSRELEASE=pve1
 DEBRELEASE=3
 CSDIR=corosync-${CSVERSION}
 CSSRC=corosync_${CSVERSION}.orig.tar.gz
 
 ARCH:=$(shell dpkg-architecture -qDEB_BUILD_ARCH)
-GITVERSION:=$(shell cat .git/refs/heads/master)
+GITVERSION:=$(shell git rev-parse HEAD)
 
 MAIN_DEB=corosync-pve_${CSVERSION}-${CSRELEASE}_all.deb
 
