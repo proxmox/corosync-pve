@@ -11,7 +11,9 @@ CSSRC=corosync_${CSVERSION}.orig.tar.gz
 ARCH:=$(shell dpkg-architecture -qDEB_BUILD_ARCH)
 GITVERSION:=$(shell cat .git/refs/heads/master)
 
-DEBS=corosync-pve_${CSVERSION}-${CSRELEASE}_all.deb \
+MAIN_DEB=corosync-pve_${CSVERSION}-${CSRELEASE}_all.deb
+
+OTHER_DEBS=\
 libcorosync4-pve_${CSVERSION}-${CSRELEASE}_all.deb \
 corosync_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
 corosync-notifyd_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
@@ -34,7 +36,23 @@ libcpg-dev_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
 libquorum-dev_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
 libsam-dev_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
 libtotem-pg-dev_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libvotequorum-dev_${CSVERSION}-${CSRELEASE}_${ARCH}.deb
+libvotequorum-dev_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
+
+DBG_DEBS=\
+corosync-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
+corosync-notifyd-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
+corosync-qdevice-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
+corosync-qnetd-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
+libcfg6-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
+libcmap4-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
+libcorosync-common4-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
+libcpg4-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
+libquorum5-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
+libsam4-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
+libtotem-pg5-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
+libvotequorum8-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
+
+DEBS=${MAIN_DEB} ${OTHER_DEBS} ${DBG_DEBS}
 
 DSC=corosync-pve_${CSVERSION}-${CSRELEASE}.dsc
 
@@ -54,7 +72,8 @@ ${CSDIR}: ${CSSRC} patches changelog.Debian
 
 .PHONY: deb
 deb: ${DEBS}
-${DEBS}: ${CSDIR}
+${OTHER_DEBS} ${DBG_DEBS}: ${MAIN_DEB}
+${MAIN_DEB}: ${CSDIR}
 	cd ${CSDIR}; dpkg-buildpackage -b -us -uc
 
 .PHONY: dsc
