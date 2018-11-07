@@ -12,10 +12,10 @@ Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
  1 file changed, 5 insertions(+)
 
 diff --git a/debian/control b/debian/control
-index d11dc18c..bae42c6a 100644
+index 8a2ed29e..15e1cf7e 100644
 --- a/debian/control
 +++ b/debian/control
-@@ -36,6 +36,11 @@ Architecture: all
+@@ -49,6 +49,11 @@ Architecture: all
  Depends: corosync (= ${binary:Version})
  Description: Transitional package.
  
@@ -27,6 +27,3 @@ index d11dc18c..bae42c6a 100644
  Package: corosync
  Architecture: any
  Pre-Depends: ${misc:Pre-Depends}
--- 
-2.14.2
-

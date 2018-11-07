@@ -8,33 +8,18 @@ Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
 ---
- init/corosync.service.in                                                | 1 +
- .../patches/Add-Documentation-URIs-to-the-systemd-service-files.patch   | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ init/corosync.service.in | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/init/corosync.service.in b/init/corosync.service.in
-index d71a8572..3b8316a7 100644
+index 7733a98c..1b65c94b 100644
 --- a/init/corosync.service.in
 +++ b/init/corosync.service.in
-@@ -1,6 +1,7 @@
- [Unit]
+@@ -2,6 +2,7 @@
  Description=Corosync Cluster Engine
+ Documentation=man:corosync man:corosync.conf man:corosync_overview
  ConditionKernelCommandLine=!nocluster
 +ConditionPathExists=/etc/corosync/corosync.conf
  Requires=network-online.target
  After=network-online.target
  
-diff --git a/debian/patches/Add-Documentation-URIs-to-the-systemd-service-files.patch b/debian/patches/Add-Documentation-URIs-to-the-systemd-service-files.patch
-index d77faae9..e9f25e45 100644
---- a/debian/patches/Add-Documentation-URIs-to-the-systemd-service-files.patch
-+++ b/debian/patches/Add-Documentation-URIs-to-the-systemd-service-files.patch
-@@ -52,5 +52,5 @@ index d71a857..12193b1 100644
-  Description=Corosync Cluster Engine
- +Documentation=man:corosync man:corosync.conf man:corosync_overview
-  ConditionKernelCommandLine=!nocluster
-+ ConditionPathExists=/etc/corosync/corosync.conf
-  Requires=network-online.target
-- After=network-online.target
--- 
-2.14.2
-

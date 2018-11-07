@@ -1,20 +1,17 @@
-From f1b91ad6c1659477b72853666cde930932279d6c Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Thomas Lamprecht <t.lamprecht@proxmox.com>
 Date: Wed, 29 Mar 2017 09:35:19 +0200
-Subject: [PATCH 8/8] remove unecessary and problematic corosync-qdevice.init
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH] remove unecessary and problematic corosync-qdevice.init
 
 Signed-off-by: Thomas Lamprecht <t.lamprecht@proxmox.com>
 ---
- debian/corosync-qdevice.init | 55 --------------------------------------------
+ debian/corosync-qdevice.init | 55 ------------------------------------
  1 file changed, 55 deletions(-)
  delete mode 100755 debian/corosync-qdevice.init
 
 diff --git a/debian/corosync-qdevice.init b/debian/corosync-qdevice.init
 deleted file mode 100755
-index 344666a..0000000
+index 344666ad..00000000
 --- a/debian/corosync-qdevice.init
 +++ /dev/null
 @@ -1,55 +0,0 @@
@@ -73,6 +70,3 @@ index 344666a..0000000
 -	rm -f $PIDFILE
 -	return $RETVAL
 -}
--- 
-2.1.4
-

@@ -16,28 +16,16 @@ Reviewed-by: Christine Caulfield <ccaulfie@redhat.com>
 (cherry picked from commit fc1d5418533c1faf21616b282c2559bed7d361c4)
 Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
 ---
- exec/totemcrypto.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ exec/totemcrypto.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/exec/totemcrypto.c b/exec/totemcrypto.c
-index a97ba62f..bf30ffc2 100644
+index 9f8f083c..d8d0fcae 100644
 --- a/exec/totemcrypto.c
 +++ b/exec/totemcrypto.c
-@@ -627,6 +627,11 @@ static int authenticate_nss_2_3 (
- 		unsigned char	tmp_hash[hash_len[instance->crypto_hash_type]];
- 		int             datalen = *buf_len - hash_len[instance->crypto_hash_type];
- 
-+		if (*buf_len <= hash_len[instance->crypto_hash_type]) {
-+			log_printf(instance->log_level_security, "Received message is too short...  ignoring");
-+			return -1;
-+		}
-+
- 		if (calculate_nss_hash(instance, buf, datalen, tmp_hash) < 0) {
- 			return -1;
- 		}
-@@ -736,6 +741,12 @@ int crypto_authenticate_and_decrypt (struct crypto_instance *instance,
- {
- 	struct crypto_config_header *cch = (struct crypto_config_header *)buf;
+@@ -864,6 +864,12 @@ int crypto_authenticate_and_decrypt (struct crypto_instance *instance,
+ 		return (-1);
+ 	}
  
 +	if (*buf_len <= sizeof(struct crypto_config_header)) {
 +		log_printf(instance->log_level_security, "Received message is too short...  ignoring");
@@ -46,8 +34,5 @@ index a97ba62f..bf30ffc2 100644
 +	}
 +
  	if (cch->crypto_cipher_type != CRYPTO_CIPHER_TYPE_2_3) {
- 		log_printf(instance->log_level_security,
- 			   "Incoming packet has different crypto type. Rejecting");
--- 
-2.14.2
-
+ 		guessed_str = NULL;
+ 

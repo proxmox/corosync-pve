@@ -8,7 +8,7 @@ Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
 ---
- debian/corosync.conf    | 111 ------------------------------------------------
+ debian/corosync.conf    | 111 ----------------------------------------
  debian/corosync.install |   1 -
  2 files changed, 112 deletions(-)
  delete mode 100644 debian/corosync.conf
@@ -131,16 +131,13 @@ index 04444322..00000000
 -	expected_votes: 2
 -}
 diff --git a/debian/corosync.install b/debian/corosync.install
-index da4efa17..3c03c3f6 100755
+index 027a58db..f38d1f78 100755
 --- a/debian/corosync.install
 +++ b/debian/corosync.install
-@@ -31,6 +31,5 @@ usr/share/augeas/lenses/corosync.aug
+@@ -30,6 +30,5 @@ usr/share/augeas/lenses/corosync.aug
  usr/share/augeas/lenses/tests/test_corosync.aug
  etc/corosync/corosync.*example* usr/share/doc/corosync/examples
  etc/corosync/uidgid.d
 -debian/corosync.conf etc/corosync
  usr/share/corosync/xml2conf.xsl
  var/lib/corosync
--- 
-2.14.2
-

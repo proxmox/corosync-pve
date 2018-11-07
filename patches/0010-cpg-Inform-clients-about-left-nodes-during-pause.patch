@@ -49,7 +49,7 @@ idea of using heuristics to choose same downlist on all nodes.
 Signed-off-by: Jan Friesse <jfriesse@redhat.com>
 Signed-off-by: Thomas Lamprecht <t.lamprecht@proxmox.com>
 ---
- exec/cpg.c | 164 +++++--------------------------------------------------------
+ exec/cpg.c | 164 ++++-------------------------------------------------
  1 file changed, 11 insertions(+), 153 deletions(-)
 
 diff --git a/exec/cpg.c b/exec/cpg.c
@@ -279,7 +279,7 @@ index 78ac1e9e..b851cba3 100644
 -	struct list_head *iter;
 -	struct downlist_msg *stored_msg;
 -	int found;
- 
+-
 -	if (downlist_state != CPG_DOWNLIST_WAITING_FOR_MESSAGES) {
 -		log_printf (LOGSYS_LEVEL_WARNING, "downlist left_list: %d received in state %d",
 -			req_exec_cpg_downlist->left_nodes, downlist_state);
@@ -310,13 +310,10 @@ index 78ac1e9e..b851cba3 100644
 -			return;
 -		}
 -	}
--
+ 
 -	downlist_master_choose_and_send ();
 +	log_printf (LOGSYS_LEVEL_WARNING, "downlist left_list: %d received",
 +			req_exec_cpg_downlist->left_nodes);
  }
  
  
--- 
-2.14.2
-
