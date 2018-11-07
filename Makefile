@@ -36,20 +36,31 @@ libsam-dev_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
 libtotem-pg-dev_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
 libvotequorum-dev_${CSVERSION}-${CSRELEASE}_${ARCH}.deb
 
+DSC=corosync-pve_${CSVERSION}-${CSRELEASE}.dsc
+
 all: ${DEBS}
 	echo ${DEBS}
 
+${CSDIR}: ${CSSRC} patches changelog.Debian
+	rm -rf $@ $@.tmp
+	mkdir $@.tmp
+	tar -C $@.tmp --strip-components=1 -xf ${CSSRC}
+	mv $@.tmp/debian/changelog $@.tmp/debian/changelog.org
+	cat changelog.Debian $@.tmp/debian/changelog.org > $@.tmp/debian/changelog
+	cd $@.tmp; ln -s ../patches patches
+	cd $@.tmp; quilt push -a
+	cd $@.tmp; rm -rf .pc ./patches
+	mv $@.tmp $@
+
 .PHONY: deb
 deb: ${DEBS}
-${DEBS}: ${CSSRC}
-	rm -rf ${CSDIR}
-	tar xf ${CSSRC}
-	mv ${CSDIR}/debian/changelog ${CSDIR}/debian/changelog.org
-	cat changelog.Debian ${CSDIR}/debian/changelog.org > ${CSDIR}/debian/changelog
-	cd ${CSDIR}; ln -s ../patches patches
-	cd ${CSDIR}; quilt push -a
-	cd ${CSDIR}; rm -rf .pc ./patches
+${DEBS}: ${CSDIR}
 	cd ${CSDIR}; dpkg-buildpackage -b -us -uc
+
+.PHONY: dsc
+dsc: ${DSC}
+${DSC}: ${CSDIR}
+	cd ${CSDIR}; dpkg-buildpackage -S -us -uc -d -nc
 
 .PHONY: download
 download:
