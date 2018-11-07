@@ -96,7 +96,7 @@ distclean: clean
 
 .PHONY: clean
 clean:
-	rm -rf *.deb *.changes *.dsc *.buildinfo ${CSDIR}
+	rm -rf *.deb *.changes *.dsc *.buildinfo ${CSDIR} *.debian.tar.xz
 	find . -name '*~' -exec rm {} ';'
 
 .PHONY: dinstall
