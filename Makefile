@@ -2,11 +2,11 @@ RELEASE=5.0
 
 # source from http://www.corosync.org
 
-CSVERSION=2.4.2
+CSVERSION=2.4.4
 CSRELEASE=pve5
 DEBRELEASE=3
 CSDIR=corosync-${CSVERSION}
-CSSRC=corosync-${CSVERSION}.tar.gz
+CSSRC=corosync_${CSVERSION}.orig.tar.gz
 
 ARCH:=$(shell dpkg-architecture -qDEB_BUILD_ARCH)
 GITVERSION:=$(shell cat .git/refs/heads/master)
@@ -54,8 +54,7 @@ ${DEBS}: ${CSSRC}
 .PHONY: download
 download:
 	rm -rf ${CSSRC} ${CSSRC}.tmp ${CSDIR}
-	git clone https://anonscm.debian.org/git/debian-ha/corosync.git -b debian/${CSVERSION}-${DEBRELEASE} ${CSDIR}
-	# wget http://build.clusterlabs.org/corosync/releases/${CSSRC}
+	git clone https://salsa.debian.org/ha-team/corosync.git -b debian/${CSVERSION}-${DEBRELEASE} ${CSDIR}
 	tar czf ${CSSRC}.tmp ${CSDIR}
 	mv ${CSSRC}.tmp ${CSSRC}
 
@@ -67,7 +66,7 @@ distclean: clean
 
 .PHONY: clean
 clean:
-	rm -rf *.deb *.changes *.dsc *.buildinfo ${CSDIR} corosync_${CSVERSION}-${CSRELEASE}.tar.gz
+	rm -rf *.deb *.changes *.dsc *.buildinfo ${CSDIR}
 	find . -name '*~' -exec rm {} ';'
 
 .PHONY: dinstall
