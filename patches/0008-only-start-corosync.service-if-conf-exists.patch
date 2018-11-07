@@ -1,25 +1,54 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
-Date: Mon, 13 Mar 2017 13:27:49 +0100
+Date: Wed, 24 Oct 2018 15:15:33 +0200
 Subject: [PATCH] only start corosync.service if conf exists
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
 ---
- init/corosync.service.in | 1 +
- 1 file changed, 1 insertion(+)
+ ...tart-corosync.service-if-conf-exists.patch | 28 +++++++++++++++++++
+ debian/patches/series                         |  1 +
+ 2 files changed, 29 insertions(+)
+ create mode 100644 debian/patches/pve__only-start-corosync.service-if-conf-exists.patch
 
-diff --git a/init/corosync.service.in b/init/corosync.service.in
-index 7733a98c..1b65c94b 100644
---- a/init/corosync.service.in
-+++ b/init/corosync.service.in
-@@ -2,6 +2,7 @@
- Description=Corosync Cluster Engine
- Documentation=man:corosync man:corosync.conf man:corosync_overview
- ConditionKernelCommandLine=!nocluster
-+ConditionPathExists=/etc/corosync/corosync.conf
- Requires=network-online.target
- After=network-online.target
- 
+diff --git a/debian/patches/pve__only-start-corosync.service-if-conf-exists.patch b/debian/patches/pve__only-start-corosync.service-if-conf-exists.patch
+new file mode 100644
+index 00000000..18afb84e
+--- /dev/null
++++ b/debian/patches/pve__only-start-corosync.service-if-conf-exists.patch
+@@ -0,0 +1,28 @@
++From 306692e2627b0fe072bfae21ddb5d501189c57c5 Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
++Date: Mon, 13 Mar 2017 13:27:49 +0100
++Subject: [PATCH] only start corosync.service if conf exists
++MIME-Version: 1.0
++Content-Type: text/plain; charset=UTF-8
++Content-Transfer-Encoding: 8bit
++
++Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
++---
++ init/corosync.service.in | 1 +
++ 1 file changed, 1 insertion(+)
++
++diff --git a/init/corosync.service.in b/init/corosync.service.in
++index 7733a98c..1b65c94b 100644
++--- a/init/corosync.service.in
+++++ b/init/corosync.service.in
++@@ -2,6 +2,7 @@
++ Description=Corosync Cluster Engine
++ Documentation=man:corosync man:corosync.conf man:corosync_overview
++ ConditionKernelCommandLine=!nocluster
+++ConditionPathExists=/etc/corosync/corosync.conf
++ Requires=network-online.target
++ After=network-online.target
++ 
++-- 
++2.19.1
++
+diff --git a/debian/patches/series b/debian/patches/series
+index de0e277d..78b44c78 100644
+--- a/debian/patches/series
++++ b/debian/patches/series
+@@ -16,3 +16,4 @@ Fix-typo-sucesfully-successfully.patch
+ qnetd-stay-with-the-DBM-NSS-DB-format.patch
+ Fix-typo-defualt-default.patch
+ Please-make-the-manpages-reproducible.patch
++pve__only-start-corosync.service-if-conf-exists.patch
