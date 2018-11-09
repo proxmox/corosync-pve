@@ -9,3 +9,4 @@
 0009-remove-unecessary-and-problematic-corosync-qdevice.i.patch
 0010-cpg-Inform-clients-about-left-nodes-during-pause.patch
 0011-d-control-bump-versioned-b-d-on-libqb.patch
+0012-bsys-disable-augeas-tools.patch

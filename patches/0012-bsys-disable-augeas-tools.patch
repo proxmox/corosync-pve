@@ -1,0 +1,50 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Thomas Lamprecht <t.lamprecht@proxmox.com>
+Date: Fri, 9 Nov 2018 13:24:18 +0100
+Subject: [PATCH] bsys: disable augeas-tools
+
+Signed-off-by: Thomas Lamprecht <t.lamprecht@proxmox.com>
+---
+ debian/control           | 1 -
+ debian/rules             | 2 +-
+ debian/corosync.install  | 2 --
+ 3 files changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/debian/control b/debian/control
+index e105b0b2..b58b8b66 100644
+--- a/debian/control
++++ b/debian/control
+@@ -7,7 +7,6 @@ Uploaders:
+  Ferenc Wágner <wferi@debian.org>,
+ Standards-Version: 4.1.4
+ Build-Depends:
+- augeas-tools,
+  debhelper (>= 9~),
+  dctrl-tools,
+  dh-exec,
+diff --git a/debian/rules b/debian/rules
+index 7108d92c..26a6a864 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -42,7 +42,7 @@ override_dh_auto_configure:
+ 	    $(enable-rdma) \
+ 	    $(enable-monitoring) \
+ 	    $(enable-watchdog) \
+-	    --enable-augeas \
++	    --disable-augeas \
+ 	    --enable-snmp \
+ 	    --enable-xmlconf \
+ 	    $(enable-systemd) \
+diff --git a/debian/corosync.install b/debian/corosync.install
+index 027a58db..e928228a 100755
+--- a/debian/corosync.install
++++ b/debian/corosync.install
+@@ -26,10 +26,8 @@ usr/share/doc/corosync/README.recovery
+ usr/share/doc/corosync/SECURITY
+ usr/share/doc/corosync/AUTHORS
+ usr/share/doc/corosync/INSTALL
+-usr/share/augeas/lenses/corosync.aug
+-usr/share/augeas/lenses/tests/test_corosync.aug
+ etc/corosync/corosync.*example* usr/share/doc/corosync/examples
+ etc/corosync/uidgid.d
+ usr/share/corosync/xml2conf.xsl
