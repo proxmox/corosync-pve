@@ -1,0 +1,166 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
+Date: Wed, 22 May 2019 12:24:45 +0200
+Subject: [PATCH] cfgtool: Improve link status display
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+cherry-picked from upstream master
+
+Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
+---
+ .../cfgtool-Improve-link-status-display.patch | 134 ++++++++++++++++++
+ debian/patches/series                         |   1 +
+ 2 files changed, 135 insertions(+)
+ create mode 100644 debian/patches/cfgtool-Improve-link-status-display.patch
+
+diff --git a/debian/patches/cfgtool-Improve-link-status-display.patch b/debian/patches/cfgtool-Improve-link-status-display.patch
+new file mode 100644
+index 00000000..93ee9937
+--- /dev/null
++++ b/debian/patches/cfgtool-Improve-link-status-display.patch
+@@ -0,0 +1,134 @@
++From: Christine Caulfield <ccaulfie@redhat.com>
++Date: Tue, 22 Jan 2019 10:06:29 +0000
++Subject: cfgtool: Improve link status display
++
++Now show the nodeids properly, rather than node indexes which were
++annoying and unhelpful.
++
++Signed-off-by: Christine Caulfield <ccaulfie@redhat.com>
++Reviewed-by: Jan Friesse <jfriesse@redhat.com>
++(cherry picked from commit c0d14485c3ebdeb2332f7c48acd155163e5b7fc1)
++---
++ tools/Makefile.am        |  2 +-
++ tools/corosync-cfgtool.c | 56 ++++++++++++++++++++++++++++++++++++++++++++++--
++ 2 files changed, 55 insertions(+), 3 deletions(-)
++
++diff --git a/tools/Makefile.am b/tools/Makefile.am
++index 7a9ab04..0793884 100644
++--- a/tools/Makefile.am
+++++ b/tools/Makefile.am
++@@ -58,7 +58,7 @@ corosync-blackbox: corosync-blackbox.sh
++ 
++ corosync_cmapctl_LDADD	= $(LIBQB_LIBS) $(top_builddir)/lib/libcmap.la
++ 
++-corosync_cfgtool_LDADD	= $(LIBQB_LIBS) $(top_builddir)/lib/libcfg.la
+++corosync_cfgtool_LDADD	= $(LIBQB_LIBS) $(top_builddir)/lib/libcfg.la $(top_builddir)/lib/libcmap.la
++ 
++ corosync_cpgtool_LDADD	= $(LIBQB_LIBS) $(top_builddir)/lib/libcfg.la \
++ 			  $(top_builddir)/lib/libcpg.la
++diff --git a/tools/corosync-cfgtool.c b/tools/corosync-cfgtool.c
++index c138085..ed29694 100644
++--- a/tools/corosync-cfgtool.c
+++++ b/tools/corosync-cfgtool.c
++@@ -50,6 +50,7 @@
++ #include <corosync/corotypes.h>
++ #include <corosync/totem/totem.h>
++ #include <corosync/cfg.h>
+++#include <corosync/cmap.h>
++ 
++ #define cs_repeat(result, max, code)				\
++ 	do {							\
++@@ -75,16 +76,33 @@ enum user_action {
++ 	ACTION_KILL_NODE,
++ };
++ 
+++static int node_compare(const void *aptr, const void *bptr)
+++{
+++	uint32_t a,b;
+++
+++	a = *(uint32_t *)aptr;
+++	b = *(uint32_t *)bptr;
+++
+++	return a > b;
+++}
+++
++ static int
++ linkstatusget_do (char *interface_name, int brief)
++ {
++ 	cs_error_t result;
++ 	corosync_cfg_handle_t handle;
+++	cmap_handle_t cmap_handle;
++ 	unsigned int interface_count;
++ 	char **interface_names;
++ 	char **interface_status;
+++	uint32_t nodeid_list[KNET_MAX_HOST];
+++	char iter_key[CMAP_KEYNAME_MAXLEN];
++ 	unsigned int i;
+++	cmap_iter_handle_t iter;
++ 	unsigned int nodeid;
+++	unsigned int node_pos;
+++	cmap_value_types_t type;
+++	size_t value_len;
++ 	int rc = 0;
++ 	int len, s = 0, t;
++ 
++@@ -95,6 +113,37 @@ linkstatusget_do (char *interface_name, int brief)
++ 		exit (1);
++ 	}
++ 
+++	result = cmap_initialize (&cmap_handle);
+++	if (result != CS_OK) {
+++		printf ("Could not initialize corosync cmap API error %d\n", result);
+++		exit (1);
+++	}
+++	/* Get a list of nodes. We do it this way rather than using votequorum as cfgtool
+++	 * needs to be independent of quorum type
+++	 */
+++	result = cmap_iter_init(cmap_handle, "nodelist.node.", &iter);
+++	if (result != CS_OK) {
+++		printf ("Could not get nodelist from cmap. error %d\n", result);
+++		exit (1);
+++	}
+++
+++	while ((cmap_iter_next(cmap_handle, iter, iter_key, &value_len, &type)) == CS_OK) {
+++		result = sscanf(iter_key, "nodelist.node.%u.nodeid", &node_pos);
+++		if (result != 1) {
+++			continue;
+++		}
+++		if (cmap_get_uint32(cmap_handle, iter_key, &nodeid) == CS_OK) {
+++			nodeid_list[s++] = nodeid;
+++		}
+++	}
+++
+++	/* totemknet returns nodes in nodeid order - even though it doesn't tell us
+++	   what the nodeid is. So sort our node list and we can then look up
+++	   knet node pos to get an actual nodeid.
+++	   Yep, I really should have totally rewritten the cfg interface for this.
+++	*/
+++	qsort(nodeid_list, s, sizeof(uint32_t), node_compare);
+++
++ 	result = corosync_cfg_local_get(handle, &nodeid);
++ 	if (result != CS_OK) {
++ 		printf ("Could not get the local node id, the error is: %d\n", result);
++@@ -134,9 +183,11 @@ linkstatusget_do (char *interface_name, int brief)
++ 					(!strstr(interface_status[i], "FAULTY"))) {
++ 					len = strlen(interface_status[i]);
++ 					printf ("\tstatus:\n");
++-					while(s < len) {
+++					while (s < len) {
+++						nodeid = nodeid_list[s];
++ 						t = interface_status[i][s] - '0';
++-						printf("\t\tnode %d:\t", s++);
+++						s++;
+++						printf("\t\tnodeid %2d:\t", nodeid);
++ 						printf("link enabled:%d\t", t&1? 1 : 0);
++ 						printf("link connected:%d\n", t&2? 1: 0);
++ 					}
++@@ -157,6 +208,7 @@ linkstatusget_do (char *interface_name, int brief)
++ 		free(interface_names);
++ 	}
++ 
+++	(void)cmap_finalize (cmap_handle);
++ 	(void)corosync_cfg_finalize (handle);
++ 	return rc;
++ }
+diff --git a/debian/patches/series b/debian/patches/series
+index fcba2944..32007175 100644
+--- a/debian/patches/series
++++ b/debian/patches/series
+@@ -6,3 +6,4 @@ AC_PROG_SED-is-already-present.patch
+ Use-the-SED-variable-provided-by-configure.patch
+ Use-the-AWK-variable-provided-by-configure.patch
+ pve__only-start-corosync.service-if-conf-exists.patch
++cfgtool-Improve-link-status-display.patch

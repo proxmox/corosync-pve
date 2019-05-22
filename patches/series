@@ -2,3 +2,7 @@
 0002-remove-init-script.patch
 0003-only-start-corosync.service-if-conf-exists.patch
 0004-bsys-disable-augeas-tools.patch
+0005-cfgtool-Improve-link-status-display.patch
+0006-Revert-init-Enable-StopWhenUnneeded.patch
+0007-add-crypto-patches.patch
+0008-CPG-callback-merging.patch

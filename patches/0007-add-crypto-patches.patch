@@ -1,0 +1,404 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
+Date: Wed, 22 May 2019 12:26:43 +0200
+Subject: [PATCH] add crypto patches
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+cherry-picked from upstream master, to ease in-place upgrade for
+clusters running our default configuration
+
+Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
+---
+ ...rypto-re-introduce-secauth-parameter.patch |  62 ++++++++
+ .../keygen-Reflect-change-in-knet.patch       | 100 +++++++++++++
+ ...et-totem.keyfile-and-totem.key-to-RO.patch |  44 ++++++
+ .../totemconfig-Remove-support-for-3des.patch | 138 ++++++++++++++++++
+ debian/patches/series                         |   4 +
+ 5 files changed, 348 insertions(+)
+ create mode 100644 debian/patches/crypto-re-introduce-secauth-parameter.patch
+ create mode 100644 debian/patches/keygen-Reflect-change-in-knet.patch
+ create mode 100644 debian/patches/set-totem.keyfile-and-totem.key-to-RO.patch
+ create mode 100644 debian/patches/totemconfig-Remove-support-for-3des.patch
+
+diff --git a/debian/patches/crypto-re-introduce-secauth-parameter.patch b/debian/patches/crypto-re-introduce-secauth-parameter.patch
+new file mode 100644
+index 00000000..1c5739c1
+--- /dev/null
++++ b/debian/patches/crypto-re-introduce-secauth-parameter.patch
+@@ -0,0 +1,62 @@
++From: =?utf-8?q?Fabian_Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
++Date: Wed, 10 Apr 2019 09:43:33 +0200
++Subject: crypto: re-introduce secauth parameter
++MIME-Version: 1.0
++Content-Type: text/plain; charset="utf-8"
++Content-Transfer-Encoding: 8bit
++
++with the following semantics:
++- default off
++- implies crypto_hash SHA256 and crypto_cipher AES256
++- crypto_* have higher precedence
++- only applicable for knet, like crypto_*
++
++this should make upgrading from Corosync 2.x less painful for users that
++have an explicit secauth=on in their configuration.
++
++Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
++Reviewed-by: Jan Friesse <jfriesse@redhat.com>
++(cherry picked from commit b97ca8e9f026aaaf2fe9cf697d89803004587f60)
++---
++ exec/totemconfig.c  | 8 ++++++++
++ man/corosync.conf.5 | 8 ++++++++
++ 2 files changed, 16 insertions(+)
++
++diff --git a/exec/totemconfig.c b/exec/totemconfig.c
++index 4f69fd5..1954f76 100644
++--- a/exec/totemconfig.c
+++++ b/exec/totemconfig.c
++@@ -450,6 +450,14 @@ static int totem_get_crypto(struct totem_config *totem_config, const char **erro
++ 		tmp_model = "nss";
++ 	}
++ 
+++	if (icmap_get_string("totem.secauth", &str) == CS_OK) {
+++		if (strcmp(str, "on") == 0) {
+++			tmp_cipher = "aes256";
+++			tmp_hash = "sha256";
+++		}
+++		free(str);
+++	}
+++
++ 	if (icmap_get_string("totem.crypto_cipher", &str) == CS_OK) {
++ 		if (strcmp(str, "none") == 0) {
++ 			tmp_cipher = "none";
++diff --git a/man/corosync.conf.5 b/man/corosync.conf.5
++index 216dfc5..b294e11 100644
++--- a/man/corosync.conf.5
+++++ b/man/corosync.conf.5
++@@ -224,6 +224,14 @@ transmission is only supported for the knet transport.
++ 
++ The default is none.
++ 
+++.TP
+++secauth
+++This implies crypto_cipher=aes256 and crypto_hash=sha256, unless those options
+++are explicitly set. Encrypted transmission is only supported for the knet
+++transport.
+++
+++The default is off.
+++
++ .TP
++ keyfile
++ This specifies the fully qualified path to the shared key used to
+diff --git a/debian/patches/keygen-Reflect-change-in-knet.patch b/debian/patches/keygen-Reflect-change-in-knet.patch
+new file mode 100644
+index 00000000..068f481f
+--- /dev/null
++++ b/debian/patches/keygen-Reflect-change-in-knet.patch
+@@ -0,0 +1,100 @@
++From: Jan Friesse <jfriesse@redhat.com>
++Date: Tue, 9 Apr 2019 17:09:34 +0200
++Subject: keygen: Reflect change in knet
++
++Knet commit 1cb36f0cffd4559971826ca4774a88c5b05882fb reduced minimal
++key length to 1024-bit. Keygen should keep compatibility with already
++released 3.0.[0-1] so default key length should be 2048 bits. It's
++possible to use -s argument to generate shorter key - keygen respects
++minimum/maximum as defined by knet.
++
++Also fix man page to reflect this change.
++
++Signed-off-by: Jan Friesse <jfriesse@redhat.com>
++Reviewed-by: Christine Caulfield <ccaulfie@redhat.com>
++(cherry picked from commit c260bce45b1f5b4a82c74513c4b3302d32daf179)
++---
++ tools/corosync-keygen.c |  4 ++--
++ man/corosync-keygen.8   | 21 +++++++++------------
++ 2 files changed, 11 insertions(+), 14 deletions(-)
++
++diff --git a/tools/corosync-keygen.c b/tools/corosync-keygen.c
++index 40e4d6e..243661a 100644
++--- a/tools/corosync-keygen.c
+++++ b/tools/corosync-keygen.c
++@@ -1,6 +1,6 @@
++ /*
++  * Copyright (c) 2004 MontaVista Software, Inc.
++- * Copyright (c) 2005-2017 Red Hat, Inc.
+++ * Copyright (c) 2005-2019 Red Hat, Inc.
++  *
++  * All rights reserved.
++  *
++@@ -52,7 +52,7 @@
++ 
++ #define DEFAULT_KEYFILE COROSYSCONFDIR "/authkey"
++ 
++-#define DEFAULT_KEYFILE_LEN		TOTEM_PRIVATE_KEY_LEN_MIN
+++#define DEFAULT_KEYFILE_LEN		256
++ 
++ #define DEFAULT_RANDOM_DEV		"/dev/urandom"
++ 
++diff --git a/man/corosync-keygen.8 b/man/corosync-keygen.8
++index 0839621..8767ddc 100644
++--- a/man/corosync-keygen.8
+++++ b/man/corosync-keygen.8
++@@ -1,5 +1,5 @@
++ .\"/*
++-.\" * Copyright (C) 2010-2017 Red Hat, Inc.
+++.\" * Copyright (C) 2010-2019 Red Hat, Inc.
++ .\" *
++ .\" * All rights reserved.
++ .\" *
++@@ -31,7 +31,7 @@
++ .\" * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
++ .\" * THE POSSIBILITY OF SUCH DAMAGE.
++ .\" */
++-.TH COROSYNC-KEYGEN 8 2017-07-03
+++.TH COROSYNC-KEYGEN 8 2019-04-09
++ .SH NAME
++ corosync-keygen \- Generate an authentication key for Corosync.
++ .SH SYNOPSIS
++@@ -69,7 +69,7 @@ Random number source file. Default is /dev/urandom. As an example /dev/random ma
++ used when really superb randomness is needed.
++ .TP
++ .B -s size
++-Size of the generated key in bytes. Default is 1024 bytes. Allowed range is <1024, 4096>.
+++Size of the generated key in bytes. Default is 256 bytes. Allowed range is <128, 4096>.
++ .TP
++ .TP
++ .B -l
++@@ -84,7 +84,7 @@ Generate the key.
++ .nf
++ # corosync-keygen
++ Corosync Cluster Engine Authentication key generator.
++-Gathering 8192 bits for key from /dev/urandom.
+++Gathering 2048 bits for key from /dev/urandom.
++ Writing corosync key to /etc/corosync/authkey
++ .fi
++ 
++@@ -101,15 +101,12 @@ Writing corosync key to /tmp/authkey.
++ Generate superb key using /dev/random
++ .nf
++ # corosync-keygen -r /dev/random
++-Corosync Cluster Engine Authentication key generator.
++-Gathering 8192 bits for key from /dev/random.
+++Gathering 2048 bits for key from /dev/random.
++ Press keys on your keyboard to generate entropy.
++-Press keys on your keyboard to generate entropy (7928 bits still needed).
++-Press keys on your keyboard to generate entropy (7880 bits still needed).
++- ...
++-Press keys on your keyboard to generate entropy (104 bits still needed).
++-Press keys on your keyboard to generate entropy (56 bits still needed).
++-Press keys on your keyboard to generate entropy (8 bits still needed).
+++Press keys on your keyboard to generate entropy (1128 bits still needed).
+++Press keys on your keyboard to generate entropy (504 bits still needed).
+++Press keys on your keyboard to generate entropy (128 bits still needed).
+++Press keys on your keyboard to generate entropy (32 bits still needed).
++ Writing corosync key to /etc/corosync/authkey.
++ .fi
++ 
+diff --git a/debian/patches/set-totem.keyfile-and-totem.key-to-RO.patch b/debian/patches/set-totem.keyfile-and-totem.key-to-RO.patch
+new file mode 100644
+index 00000000..9daad20b
+--- /dev/null
++++ b/debian/patches/set-totem.keyfile-and-totem.key-to-RO.patch
+@@ -0,0 +1,44 @@
++From: =?utf-8?q?Fabian_Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
++Date: Wed, 3 Apr 2019 21:57:30 +0200
++Subject: set totem.keyfile and totem.key to RO
++MIME-Version: 1.0
++Content-Type: text/plain; charset="utf-8"
++Content-Transfer-Encoding: 8bit
++
++so that we get the nice log message when attempting to modify them at
++runtime, just like for totem.crypto_* and co.
++
++Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
++Reviewed-by: Jan Friesse <jfriesse@redhat.com>
++(cherry picked from commit 03fba21503f1b8395519190cc537f63100e995f5)
++---
++ exec/cfg.c  | 2 ++
++ exec/main.c | 2 ++
++ 2 files changed, 4 insertions(+)
++
++diff --git a/exec/cfg.c b/exec/cfg.c
++index dec7dbf..9aeba0c 100644
++--- a/exec/cfg.c
+++++ b/exec/cfg.c
++@@ -578,6 +578,8 @@ static void remove_ro_entries(icmap_map_t temp_map)
++ 	delete_and_notify_if_changed(temp_map, "totem.secauth");
++ 	delete_and_notify_if_changed(temp_map, "totem.crypto_hash");
++ 	delete_and_notify_if_changed(temp_map, "totem.crypto_cipher");
+++	delete_and_notify_if_changed(temp_map, "totem.keyfile");
+++	delete_and_notify_if_changed(temp_map, "totem.key");
++ 	delete_and_notify_if_changed(temp_map, "totem.version");
++ 	delete_and_notify_if_changed(temp_map, "totem.threads");
++ 	delete_and_notify_if_changed(temp_map, "totem.ip_version");
++diff --git a/exec/main.c b/exec/main.c
++index 8554036..06a519c 100644
++--- a/exec/main.c
+++++ b/exec/main.c
++@@ -1036,6 +1036,8 @@ static void set_icmap_ro_keys_flag (void)
++ 	 */
++ 	icmap_set_ro_access("totem.crypto_cipher", CS_FALSE, CS_TRUE);
++ 	icmap_set_ro_access("totem.crypto_hash", CS_FALSE, CS_TRUE);
+++	icmap_set_ro_access("totem.keyfile", CS_FALSE, CS_TRUE);
+++	icmap_set_ro_access("totem.key", CS_FALSE, CS_TRUE);
++ 	icmap_set_ro_access("totem.secauth", CS_FALSE, CS_TRUE);
++ 	icmap_set_ro_access("totem.ip_version", CS_FALSE, CS_TRUE);
++ 	icmap_set_ro_access("totem.rrp_mode", CS_FALSE, CS_TRUE);
+diff --git a/debian/patches/totemconfig-Remove-support-for-3des.patch b/debian/patches/totemconfig-Remove-support-for-3des.patch
+new file mode 100644
+index 00000000..c46f137f
+--- /dev/null
++++ b/debian/patches/totemconfig-Remove-support-for-3des.patch
+@@ -0,0 +1,138 @@
++From: Jan Friesse <jfriesse@redhat.com>
++Date: Thu, 11 Apr 2019 08:23:29 +0200
++Subject: totemconfig: Remove support for 3des
++
++Triple DES is considered as a "weak cipher" since 2016 so there is
++really no need to support it in the corosync. Thanks to bug in
++Corosync/Knet/NSS which caused 3des to not work at all,
++no matter what library was used, we can just remove support for 3des
++without braking the compatibility.
++
++Also fix coroparse so:
++- totem.crypto_type is removed (this is 1.x construct which was not used
++even in 2.x)
++- Add checking of totem.crypto_model.
++- Enumarate possible values for crypto_model, crypto_cipher and
++crypto_hash error messages
++
++Signed-off-by: Jan Friesse <jfriesse@redhat.com>
++Reviewed-by: Christine Caulfield <ccaulfie@redhat.com>
++(cherry picked from commit d05636b738e3cb1cd7a491e4ef492cd44a8bf6a9)
++---
++ exec/coroparse.c         | 21 ++++++++++-----------
++ exec/totemconfig.c       |  3 ---
++ conf/lenses/corosync.aug |  4 ++--
++ man/corosync.conf.5      |  6 +++---
++ 4 files changed, 15 insertions(+), 19 deletions(-)
++
++diff --git a/exec/coroparse.c b/exec/coroparse.c
++index bee0a8c..16e0257 100644
++--- a/exec/coroparse.c
+++++ b/exec/coroparse.c
++@@ -1,5 +1,5 @@
++ /*
++- * Copyright (c) 2006-2018 Red Hat, Inc.
+++ * Copyright (c) 2006-2019 Red Hat, Inc.
++  *
++  * All rights reserved.
++  *
++@@ -747,13 +747,11 @@ static int main_config_parser_cb(const char *path,
++ 					return (0);
++ 				}
++ 			}
++-			if (strcmp(path, "totem.crypto_type") == 0) {
+++			if (strcmp(path, "totem.crypto_model") == 0) {
++ 				if ((strcmp(value, "nss") != 0) &&
++-				    (strcmp(value, "aes256") != 0) &&
++-				    (strcmp(value, "aes192") != 0) &&
++-				    (strcmp(value, "aes128") != 0) &&
++-				    (strcmp(value, "3des") != 0)) {
++-					*error_string = "Invalid crypto type";
+++				    (strcmp(value, "openssl") != 0)) {
+++					*error_string = "Invalid crypto model. "
+++					    "Should be nss or openssl";
++ 
++ 					return (0);
++ 				}
++@@ -762,9 +760,9 @@ static int main_config_parser_cb(const char *path,
++ 				if ((strcmp(value, "none") != 0) &&
++ 				    (strcmp(value, "aes256") != 0) &&
++ 				    (strcmp(value, "aes192") != 0) &&
++-				    (strcmp(value, "aes128") != 0) &&
++-				    (strcmp(value, "3des") != 0)) {
++-					*error_string = "Invalid cipher type";
+++				    (strcmp(value, "aes128") != 0)) {
+++					*error_string = "Invalid cipher type. "
+++					    "Should be none, aes256, aes192 or aes128";
++ 
++ 					return (0);
++ 				}
++@@ -776,7 +774,8 @@ static int main_config_parser_cb(const char *path,
++ 				    (strcmp(value, "sha256") != 0) &&
++ 				    (strcmp(value, "sha384") != 0) &&
++ 				    (strcmp(value, "sha512") != 0)) {
++-					*error_string = "Invalid hash type";
+++					*error_string = "Invalid hash type. "
+++					    "Should be none, md5, sha1, sha256, sha384 or sha512";
++ 
++ 					return (0);
++ 				}
++diff --git a/exec/totemconfig.c b/exec/totemconfig.c
++index d57562a..4f69fd5 100644
++--- a/exec/totemconfig.c
+++++ b/exec/totemconfig.c
++@@ -463,9 +463,6 @@ static int totem_get_crypto(struct totem_config *totem_config, const char **erro
++ 		if (strcmp(str, "aes128") == 0) {
++ 			tmp_cipher = "aes128";
++ 		}
++-		if (strcmp(str, "3des") == 0) {
++-			tmp_cipher = "3des";
++-		}
++ 		free(str);
++ 	}
++ 
++diff --git a/conf/lenses/corosync.aug b/conf/lenses/corosync.aug
++index 39334f1..edeb4fb 100644
++--- a/conf/lenses/corosync.aug
+++++ b/conf/lenses/corosync.aug
++@@ -51,8 +51,8 @@ let totem =
++     |kv "rrp_mode" /none|active|passive/
++     |kv "vsftype" /none|ykd/
++     |kv "secauth" /on|off/
++-    |kv "crypto_type" /nss|aes256|aes192|aes128|3des/
++-    |kv "crypto_cipher" /none|nss|aes256|aes192|aes128|3des/
+++    |kv "crypto_model" /nss|openssl/
+++    |kv "crypto_cipher" /none|nss|aes256|aes192|aes128/
++     |kv "crypto_hash" /none|md5|sha1|sha256|sha384|sha512/
++     |kv "transport" /udp|iba|udpu/
++     |kv "version" Rx.integer
++diff --git a/man/corosync.conf.5 b/man/corosync.conf.5
++index dd6f3ba..216dfc5 100644
++--- a/man/corosync.conf.5
+++++ b/man/corosync.conf.5
++@@ -1,6 +1,6 @@
++ .\"/*
++ .\" * Copyright (c) 2005 MontaVista Software, Inc.
++-.\" * Copyright (c) 2006-2018 Red Hat, Inc.
+++.\" * Copyright (c) 2006-2019 Red Hat, Inc.
++ .\" *
++ .\" * All rights reserved.
++ .\" *
++@@ -32,7 +32,7 @@
++ .\" * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
++ .\" * THE POSSIBILITY OF SUCH DAMAGE.
++ .\" */
++-.TH COROSYNC_CONF 5 2019-01-10 "corosync Man Page" "Corosync Cluster Engine Programmer's Manual"
+++.TH COROSYNC_CONF 5 2019-04-11 "corosync Man Page" "Corosync Cluster Engine Programmer's Manual"
++ .SH NAME
++ corosync.conf - corosync executive configuration file
++ 
++@@ -218,7 +218,7 @@ The default is none.
++ .TP
++ crypto_cipher
++ This specifies which cipher should be used to encrypt all messages.
++-Valid values are none (no encryption), aes256, aes192, aes128 and 3des.
+++Valid values are none (no encryption), aes256, aes192 and aes128.
++ Enabling crypto_cipher, requires also enabling of crypto_hash. Encrypted
++ transmission is only supported for the knet transport.
++ 
+diff --git a/debian/patches/series b/debian/patches/series
+index 2caabe1c..6f18c886 100644
+--- a/debian/patches/series
++++ b/debian/patches/series
+@@ -8,3 +8,7 @@ Use-the-AWK-variable-provided-by-configure.patch
+ pve__only-start-corosync.service-if-conf-exists.patch
+ cfgtool-Improve-link-status-display.patch
+ Revert-init-Enable-StopWhenUnneeded.patch
++set-totem.keyfile-and-totem.key-to-RO.patch
++keygen-Reflect-change-in-knet.patch
++totemconfig-Remove-support-for-3des.patch
++crypto-re-introduce-secauth-parameter.patch

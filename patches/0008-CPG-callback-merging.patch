@@ -1,0 +1,858 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
+Date: Wed, 22 May 2019 12:27:19 +0200
+Subject: [PATCH] CPG callback merging
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+cherry-picked from upstream PR 468.
+
+this series aims to minimize callback calls in case of cluster cold
+starts or re-joining after network partitions, which cause a huge spike
+in network load on bigger clusters running pmxcfs.
+
+Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
+---
+ .../cpg-Add-CPG_REASON_UNDEFINED.patch        | 152 +++++++++++++
+ ...more-comments-to-notify_lib_joinlist.patch | 193 +++++++++++++++++
+ ...illing-of-member_list-to-subfunction.patch | 130 ++++++++++++
+ ...ify_lib_joinlist-drop-conn-parameter.patch | 112 ++++++++++
+ ...-confchg-event-per-group-on-joinlist.patch | 199 ++++++++++++++++++
+ debian/patches/series                         |   5 +
+ 6 files changed, 791 insertions(+)
+ create mode 100644 debian/patches/cpg-Add-CPG_REASON_UNDEFINED.patch
+ create mode 100644 debian/patches/cpg-Add-more-comments-to-notify_lib_joinlist.patch
+ create mode 100644 debian/patches/cpg-Move-filling-of-member_list-to-subfunction.patch
+ create mode 100644 debian/patches/cpg-notify_lib_joinlist-drop-conn-parameter.patch
+ create mode 100644 debian/patches/cpg-send-single-confchg-event-per-group-on-joinlist.patch
+
+diff --git a/debian/patches/cpg-Add-CPG_REASON_UNDEFINED.patch b/debian/patches/cpg-Add-CPG_REASON_UNDEFINED.patch
+new file mode 100644
+index 00000000..a69b53ac
+--- /dev/null
++++ b/debian/patches/cpg-Add-CPG_REASON_UNDEFINED.patch
+@@ -0,0 +1,152 @@
++From: Jan Friesse <jfriesse@redhat.com>
++Date: Tue, 16 Apr 2019 12:52:31 +0200
++Subject: cpg: Add CPG_REASON_UNDEFINED
++
++Previously the reason field for the member_list items
++in cpg_totem_confchg_fn was unset what may be little confusing.
++
++Solution is to add a special value CPG_REASON_UNDEFINED and use it for
++the member_list items.
++
++Signed-off-by: Jan Friesse <jfriesse@redhat.com>
++Reviewed-by: Christine Caulfield <ccaulfie@redhat.com>
++(cherry picked from commit 41f9e966bb1cfa70d0f6ec1ce46d9c845845b599)
++---
++ include/corosync/cpg.h        |  3 ++-
++ man/cpg_initialize.3.in       | 18 ++++++++++--------
++ man/cpg_model_initialize.3.in | 18 ++++++++++--------
++ exec/cpg.c                    |  3 ++-
++ 4 files changed, 24 insertions(+), 18 deletions(-)
++
++diff --git a/include/corosync/cpg.h b/include/corosync/cpg.h
++index 5ebd478..600bbf7 100644
++--- a/include/corosync/cpg.h
+++++ b/include/corosync/cpg.h
++@@ -1,5 +1,5 @@
++ /*
++- * Copyright (c) 2006-2011 Red Hat, Inc.
+++ * Copyright (c) 2006-2019 Red Hat, Inc.
++  *
++  * All rights reserved.
++  *
++@@ -80,6 +80,7 @@ typedef enum {
++  * @brief The cpg_reason_t enum
++  */
++ typedef enum {
+++	CPG_REASON_UNDEFINED = 0,
++ 	CPG_REASON_JOIN = 1,
++ 	CPG_REASON_LEAVE = 2,
++ 	CPG_REASON_NODEDOWN = 3,
++diff --git a/man/cpg_initialize.3.in b/man/cpg_initialize.3.in
++index bdecc1e..38c7de5 100644
++--- a/man/cpg_initialize.3.in
+++++ b/man/cpg_initialize.3.in
++@@ -1,5 +1,5 @@
++ .\"/*
++-.\" * Copyright (c) 2006-2009 Red Hat, Inc.
+++.\" * Copyright (c) 2006-2019 Red Hat, Inc.
++ .\" *
++ .\" * All rights reserved.
++ .\" *
++@@ -31,7 +31,7 @@
++ .\" * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
++ .\" * THE POSSIBILITY OF SUCH DAMAGE.
++ .\" */
++-.TH CPG_INITIALIZE 3 2004-08-31 "corosync Man Page" "Corosync Cluster Engine Programmer's Manual"
+++.TH CPG_INITIALIZE 3 2019-04-16 "corosync Man Page" "Corosync Cluster Engine Programmer's Manual"
++ .SH NAME
++ cpg_initialize \- Create a new connection to the CPG service
++ .SH SYNOPSIS
++@@ -132,18 +132,20 @@ struct cpg_address {
++ .IP
++ .PP
++ where nodeid is a 32 bit unique node identifier, pid is the process ID of the process that has joined/left the group
++-or sent the message, and reason is an integer code indicating why the node joined/left the group.
+++or sent the message, and reason is an integer code indicating why the node joined/left the group (this value is not
+++set for the member_list items).
++ .PP
++ .IP
++ .RS
++ .ne 18
++ .nf
++ .PP
++-CPG_REASON_JOIN     - the process joined a group using cpg_join().
++-CPG_REASON_LEAVE    - the process left a group using cpg_leave()
++-CPG_REASON_NODEDOWN - the process left a group because the node left the cluster.
++-CPG_REASON_NODEUP   - the process joined a group because it was already a member of a group on a node that has just joined the cluster
++-CPG_REASON_PROCDOWN - the process left a group without calling cpg_leave()
+++CPG_REASON_JOIN      - the process joined a group using cpg_join().
+++CPG_REASON_LEAVE     - the process left a group using cpg_leave()
+++CPG_REASON_NODEDOWN  - the process left a group because the node left the cluster.
+++CPG_REASON_NODEUP    - the process joined a group because it was already a member of a group on a node that has just joined the cluster
+++CPG_REASON_PROCDOWN  - the process left a group without calling cpg_leave()
+++CPG_REASON_UNDEFINED - a special value used for the member_list items
++ .ta
++ .fi
++ .RE
++diff --git a/man/cpg_model_initialize.3.in b/man/cpg_model_initialize.3.in
++index e06325d..17ca16a 100644
++--- a/man/cpg_model_initialize.3.in
+++++ b/man/cpg_model_initialize.3.in
++@@ -1,5 +1,5 @@
++ .\"/*
++-.\" * Copyright (c) 2010 Red Hat, Inc.
+++.\" * Copyright (c) 2010-2019 Red Hat, Inc.
++ .\" *
++ .\" * All rights reserved.
++ .\" *
++@@ -32,7 +32,7 @@
++ .\" * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
++ .\" * THE POSSIBILITY OF SUCH DAMAGE.
++ .\" */
++-.TH CPG_MODEL_INITIALIZE 3 2010-04-07 "corosync Man Page" "Corosync Cluster Engine Programmer's Manual"
+++.TH CPG_MODEL_INITIALIZE 3 2019-04-16 "corosync Man Page" "Corosync Cluster Engine Programmer's Manual"
++ .SH NAME
++ cpg_model_initialize \- Create a new connection to the CPG service
++ .SH SYNOPSIS
++@@ -166,18 +166,20 @@ struct cpg_address {
++ .IP
++ .PP
++ where nodeid is a 32 bit unique node identifier, pid is the process ID of the process that has joined/left the group
++-or sent the message, and reason is an integer code indicating why the node joined/left the group.
+++or sent the message, and reason is an integer code indicating why the node joined/left the group (this value is not
+++set for the member_list items).
++ .PP
++ .IP
++ .RS
++ .ne 18
++ .nf
++ .PP
++-CPG_REASON_JOIN     - the process joined a group using cpg_join().
++-CPG_REASON_LEAVE    - the process left a group using cpg_leave()
++-CPG_REASON_NODEDOWN - the process left a group because the node left the cluster.
++-CPG_REASON_NODEUP   - the process joined a group because it was already a member of a group on a node that has just joined the cluster
++-CPG_REASON_PROCDOWN - the process left a group without calling cpg_leave()
+++CPG_REASON_JOIN      - the process joined a group using cpg_join().
+++CPG_REASON_LEAVE     - the process left a group using cpg_leave()
+++CPG_REASON_NODEDOWN  - the process left a group because the node left the cluster.
+++CPG_REASON_NODEUP    - the process joined a group because it was already a member of a group on a node that has just joined the cluster
+++CPG_REASON_PROCDOWN  - the process left a group without calling cpg_leave()
+++CPG_REASON_UNDEFINED - a special value used for the member_list items
++ .ta
++ .fi
++ .RE
++diff --git a/exec/cpg.c b/exec/cpg.c
++index b7ac579..e39ca34 100644
++--- a/exec/cpg.c
+++++ b/exec/cpg.c
++@@ -1,5 +1,5 @@
++ /*
++- * Copyright (c) 2006-2015 Red Hat, Inc.
+++ * Copyright (c) 2006-2019 Red Hat, Inc.
++  *
++  * All rights reserved.
++  *
++@@ -712,6 +712,7 @@ static int notify_lib_joinlist(
++ 			if (!founded) {
++ 				retgi->nodeid = pi->nodeid;
++ 				retgi->pid = pi->pid;
+++				retgi->reason = CPG_REASON_UNDEFINED;
++ 				retgi++;
++ 			}
++ 		}
+diff --git a/debian/patches/cpg-Add-more-comments-to-notify_lib_joinlist.patch b/debian/patches/cpg-Add-more-comments-to-notify_lib_joinlist.patch
+new file mode 100644
+index 00000000..e32102fa
+--- /dev/null
++++ b/debian/patches/cpg-Add-more-comments-to-notify_lib_joinlist.patch
+@@ -0,0 +1,193 @@
++From: Jan Friesse <jfriesse@redhat.com>
++Date: Wed, 15 May 2019 17:39:13 +0200
++Subject: cpg: Add more comments to notify_lib_joinlist
++
++And make handling of left_list more generic. Also free skiplist
++allocated by joinlist_inform_clients function. Last (but not least)
++remove czechlish founded (should have been pp of "find").
++
++Signed-off-by: Jan Friesse <jfriesse@redhat.com>
++(cherry picked from commit 10702c7e6c0cf8164ad8f05acb4e334461555973)
++---
++ exec/cpg.c | 91 +++++++++++++++++++++++++++++++++++++++++---------------------
++ 1 file changed, 60 insertions(+), 31 deletions(-)
++
++diff --git a/exec/cpg.c b/exec/cpg.c
++index e04ba57..2ecdc6b 100644
++--- a/exec/cpg.c
+++++ b/exec/cpg.c
++@@ -663,31 +663,37 @@ static int notify_lib_joinlist(
++ 	int size;
++ 	char *buf;
++ 	struct qb_list_head *iter;
++-	int count;
+++	int member_list_entries;
++ 	struct res_lib_cpg_confchg_callback *res;
++ 	mar_cpg_address_t *retgi;
+++	int i;
++ 
++-	count = 0;
+++	/*
+++	 * Find size of member_list (use process_info_list but remove items in left_list)
+++	 */
+++	member_list_entries = 0;
++ 
++ 	qb_list_for_each(iter, &process_info_list_head) {
++ 		struct process_info *pi = qb_list_entry (iter, struct process_info, list);
+++
++ 		if (mar_name_compare (&pi->group, group_name) == 0) {
++-			int i;
++-			int founded = 0;
+++			int in_left_list = 0;
++ 
++ 			for (i = 0; i < left_list_entries; i++) {
++ 				if (left_list[i].nodeid == pi->nodeid && left_list[i].pid == pi->pid) {
++-					founded++;
+++					in_left_list = 1;
+++					break ;
++ 				}
++ 			}
++ 
++-			if (!founded)
++-				count++;
+++			if (!in_left_list) {
+++				member_list_entries++;
+++			}
++ 		}
++ 	}
++ 
++ 	size = sizeof(struct res_lib_cpg_confchg_callback) +
++-		sizeof(mar_cpg_address_t) * (count + left_list_entries + joined_list_entries);
+++		sizeof(mar_cpg_address_t) * (member_list_entries + left_list_entries + joined_list_entries);
++ 	buf = alloca(size);
++ 	if (!buf)
++ 		return CS_ERR_LIBRARY;
++@@ -695,27 +701,30 @@ static int notify_lib_joinlist(
++ 	res = (struct res_lib_cpg_confchg_callback *)buf;
++ 	res->joined_list_entries = joined_list_entries;
++ 	res->left_list_entries = left_list_entries;
++-	res->member_list_entries = count;
+++	res->member_list_entries = member_list_entries;
++ 	retgi = res->member_list;
++ 	res->header.size = size;
++ 	res->header.id = id;
++ 	res->header.error = CS_OK;
++ 	memcpy(&res->group_name, group_name, sizeof(mar_cpg_name_t));
++ 
+++	/*
+++	 * Fill res->memberlist. Use process_info_list but remove items in left_list.
+++	 */
++ 	qb_list_for_each(iter, &process_info_list_head) {
++-		struct process_info *pi=qb_list_entry (iter, struct process_info, list);
+++		struct process_info *pi = qb_list_entry (iter, struct process_info, list);
++ 
++ 		if (mar_name_compare (&pi->group, group_name) == 0) {
++-			int i;
++-			int founded = 0;
+++			int in_left_list = 0;
++ 
++-			for (i = 0;i < left_list_entries; i++) {
+++			for (i = 0; i < left_list_entries; i++) {
++ 				if (left_list[i].nodeid == pi->nodeid && left_list[i].pid == pi->pid) {
++-					founded++;
+++					in_left_list = 1;
+++					break ;
++ 				}
++ 			}
++ 
++-			if (!founded) {
+++			if (!in_left_list) {
++ 				retgi->nodeid = pi->nodeid;
++ 				retgi->pid = pi->pid;
++ 				retgi->reason = CPG_REASON_UNDEFINED;
++@@ -724,23 +733,30 @@ static int notify_lib_joinlist(
++ 		}
++ 	}
++ 
+++	/*
+++	 * Fill res->left_list
+++	 */
++ 	if (left_list_entries) {
++ 		memcpy (retgi, left_list, left_list_entries * sizeof(mar_cpg_address_t));
++ 		retgi += left_list_entries;
++ 	}
++ 
++ 	if (joined_list_entries) {
++-		int i;
++-
+++		/*
+++		 * Fill res->joined_list
+++		 */
++ 		memcpy (retgi, joined_list, joined_list_entries * sizeof(mar_cpg_address_t));
++ 		retgi += joined_list_entries;
++ 
++-		for (i=0; i < joined_list_entries; i++) {
+++		/*
+++		 * Update cpd_state for all local joined processes in group
+++		 */
+++		for (i = 0; i < joined_list_entries; i++) {
++ 			if (joined_list[i].nodeid == api->totem_nodeid_get()) {
++-			qb_list_for_each(iter, &cpg_pd_list_head) {
+++				qb_list_for_each(iter, &cpg_pd_list_head) {
++ 					struct cpg_pd *cpd = qb_list_entry (iter, struct cpg_pd, list);
++-					if (mar_name_compare (&cpd->group_name, group_name) == 0 &&
++-					    joined_list[i].pid == cpd->pid) {
+++					if (joined_list[i].pid == cpd->pid &&
+++					    mar_name_compare (&cpd->group_name, group_name) == 0) {
++ 						cpd->cpd_state = CPD_STATE_JOIN_COMPLETED;
++ 					}
++ 				}
++@@ -748,6 +764,9 @@ static int notify_lib_joinlist(
++ 		}
++ 	}
++ 
+++	/*
+++	 * Send notification to all ipc clients joined in group_name
+++	 */
++ 	qb_list_for_each(iter, &cpg_pd_list_head) {
++ 		struct cpg_pd *cpd = qb_list_entry (iter, struct cpg_pd, list);
++ 		if (mar_name_compare (&cpd->group_name, group_name) == 0) {
++@@ -760,16 +779,25 @@ static int notify_lib_joinlist(
++ 		}
++ 	}
++ 
++-	if (left_list_entries &&
++-	    left_list[0].nodeid == api->totem_nodeid_get() &&
++-	    left_list[0].reason == CONFCHG_CPG_REASON_LEAVE) {
++-	qb_list_for_each(iter, &cpg_pd_list_head) {
++-			struct cpg_pd *cpd = qb_list_entry (iter, struct cpg_pd, list);
++-			if (mar_name_compare (&cpd->group_name, group_name) == 0 &&
++-			    left_list[0].pid == cpd->pid) {
++-				cpd->pid = 0;
++-				memset (&cpd->group_name, 0, sizeof(cpd->group_name));
++-				cpd->cpd_state = CPD_STATE_UNJOINED;
+++	if (left_list_entries) {
+++		/*
+++		 * Zero internal cpd state for all local processes leaving group
+++		 * (this loop is not strictly needed because left_list always either
+++		 *  contains exactly one process running on local node or more items
+++		 *  but none of them is running on local node)
+++		 */
+++		for (i = 0; i < joined_list_entries; i++) {
+++			if (left_list[i].nodeid == api->totem_nodeid_get() &&
+++			    left_list[i].reason == CONFCHG_CPG_REASON_LEAVE) {
+++				qb_list_for_each(iter, &cpg_pd_list_head) {
+++					struct cpg_pd *cpd = qb_list_entry (iter, struct cpg_pd, list);
+++					if (left_list[i].pid == cpd->pid &&
+++					    mar_name_compare (&cpd->group_name, group_name) == 0) {
+++						cpd->pid = 0;
+++						memset (&cpd->group_name, 0, sizeof(cpd->group_name));
+++						cpd->cpd_state = CPD_STATE_UNJOINED;
+++					}
+++				}
++ 			}
++ 		}
++ 	}
++@@ -966,6 +994,7 @@ static void joinlist_inform_clients (void)
++ 		free(jld);
++ 	}
++ 	qb_map_iter_free(miter);
+++	qb_map_destroy(group_notify_map);
++ 
++ 	joinlist_remove_zombie_pi_entries ();
++ }
+diff --git a/debian/patches/cpg-Move-filling-of-member_list-to-subfunction.patch b/debian/patches/cpg-Move-filling-of-member_list-to-subfunction.patch
+new file mode 100644
+index 00000000..9ec65353
+--- /dev/null
++++ b/debian/patches/cpg-Move-filling-of-member_list-to-subfunction.patch
+@@ -0,0 +1,130 @@
++From: Jan Friesse <jfriesse@redhat.com>
++Date: Thu, 16 May 2019 14:08:25 +0200
++Subject: cpg: Move filling of member_list to subfunction
++
++Signed-off-by: Jan Friesse <jfriesse@redhat.com>
++(cherry picked from commit 0c1de94461368b4a924b516b77691e6ec471dcb0)
++---
++ exec/cpg.c | 86 ++++++++++++++++++++++++++++++++++++--------------------------
++ 1 file changed, 50 insertions(+), 36 deletions(-)
++
++diff --git a/exec/cpg.c b/exec/cpg.c
++index 2ecdc6b..98a16a6 100644
++--- a/exec/cpg.c
+++++ b/exec/cpg.c
++@@ -652,26 +652,27 @@ static int notify_lib_totem_membership (
++ 	return CS_OK;
++ }
++ 
++-static int notify_lib_joinlist(
+++/*
+++ * Helper function for notify_lib_joinlist which prepares member_list using
+++ * process_info_list with removed left_list items.
+++ * member_list_entries - When not NULL it contains number of member_list entries
+++ * member_list - When not NULL it is used as pointer to start of preallocated
+++ *               array of members. Pointer is adjusted to the end of array on
+++ *               exit.
+++ */
+++static void notify_lib_joinlist_fill_member_list(
++ 	const mar_cpg_name_t *group_name,
++-	int joined_list_entries,
++-	mar_cpg_address_t *joined_list,
++ 	int left_list_entries,
++-	mar_cpg_address_t *left_list,
++-	int id)
+++	const mar_cpg_address_t *left_list,
+++	int *member_list_entries,
+++	mar_cpg_address_t **member_list)
++ {
++-	int size;
++-	char *buf;
++ 	struct qb_list_head *iter;
++-	int member_list_entries;
++-	struct res_lib_cpg_confchg_callback *res;
++-	mar_cpg_address_t *retgi;
++ 	int i;
++ 
++-	/*
++-	 * Find size of member_list (use process_info_list but remove items in left_list)
++-	 */
++-	member_list_entries = 0;
+++	if (member_list_entries != NULL) {
+++		*member_list_entries = 0;
+++	}
++ 
++ 	qb_list_for_each(iter, &process_info_list_head) {
++ 		struct process_info *pi = qb_list_entry (iter, struct process_info, list);
++@@ -687,10 +688,42 @@ static int notify_lib_joinlist(
++ 			}
++ 
++ 			if (!in_left_list) {
++-				member_list_entries++;
+++				if (member_list_entries != NULL) {
+++					(*member_list_entries)++;
+++				}
+++
+++				if (member_list != NULL) {
+++					(*member_list)->nodeid = pi->nodeid;
+++					(*member_list)->pid = pi->pid;
+++					(*member_list)->reason = CPG_REASON_UNDEFINED;
+++					(*member_list)++;
+++				}
++ 			}
++ 		}
++ 	}
+++}
+++
+++static int notify_lib_joinlist(
+++	const mar_cpg_name_t *group_name,
+++	int joined_list_entries,
+++	mar_cpg_address_t *joined_list,
+++	int left_list_entries,
+++	mar_cpg_address_t *left_list,
+++	int id)
+++{
+++	int size;
+++	char *buf;
+++	struct qb_list_head *iter;
+++	int member_list_entries;
+++	struct res_lib_cpg_confchg_callback *res;
+++	mar_cpg_address_t *retgi;
+++	int i;
+++
+++	/*
+++	 * Find size of member_list (use process_info_list but remove items in left_list)
+++	 */
+++	notify_lib_joinlist_fill_member_list(group_name, left_list_entries, left_list,
+++	    &member_list_entries, NULL);
++ 
++ 	size = sizeof(struct res_lib_cpg_confchg_callback) +
++ 		sizeof(mar_cpg_address_t) * (member_list_entries + left_list_entries + joined_list_entries);
++@@ -711,27 +744,8 @@ static int notify_lib_joinlist(
++ 	/*
++ 	 * Fill res->memberlist. Use process_info_list but remove items in left_list.
++ 	 */
++-	qb_list_for_each(iter, &process_info_list_head) {
++-		struct process_info *pi = qb_list_entry (iter, struct process_info, list);
++-
++-		if (mar_name_compare (&pi->group, group_name) == 0) {
++-			int in_left_list = 0;
++-
++-			for (i = 0; i < left_list_entries; i++) {
++-				if (left_list[i].nodeid == pi->nodeid && left_list[i].pid == pi->pid) {
++-					in_left_list = 1;
++-					break ;
++-				}
++-			}
++-
++-			if (!in_left_list) {
++-				retgi->nodeid = pi->nodeid;
++-				retgi->pid = pi->pid;
++-				retgi->reason = CPG_REASON_UNDEFINED;
++-				retgi++;
++-			}
++-		}
++-	}
+++	notify_lib_joinlist_fill_member_list(group_name, left_list_entries, left_list,
+++	    NULL, &retgi);
++ 
++ 	/*
++ 	 * Fill res->left_list
+diff --git a/debian/patches/cpg-notify_lib_joinlist-drop-conn-parameter.patch b/debian/patches/cpg-notify_lib_joinlist-drop-conn-parameter.patch
+new file mode 100644
+index 00000000..e1742bf9
+--- /dev/null
++++ b/debian/patches/cpg-notify_lib_joinlist-drop-conn-parameter.patch
+@@ -0,0 +1,112 @@
++From: =?utf-8?q?Fabian_Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
++Date: Wed, 15 May 2019 13:45:13 +0200
++Subject: cpg: notify_lib_joinlist: drop conn parameter
++
++since it is always set to NULL.
++
++(cherry picked from commit d5e9723695b2ae63162b238300013d785e875ea7)
++---
++ exec/cpg.c | 54 ++++++++++++++++++++++++------------------------------
++ 1 file changed, 24 insertions(+), 30 deletions(-)
++
++diff --git a/exec/cpg.c b/exec/cpg.c
++index e39ca34..b752cc1 100644
++--- a/exec/cpg.c
+++++ b/exec/cpg.c
++@@ -647,7 +647,6 @@ static int notify_lib_totem_membership (
++ 
++ static int notify_lib_joinlist(
++ 	const mar_cpg_name_t *group_name,
++-	void *conn,
++ 	int joined_list_entries,
++ 	mar_cpg_address_t *joined_list,
++ 	int left_list_entries,
++@@ -728,40 +727,35 @@ static int notify_lib_joinlist(
++ 		retgi += joined_list_entries;
++ 	}
++ 
++-	if (conn) {
++-		api->ipc_dispatch_send (conn, buf, size);
++-	} else {
++ 	qb_list_for_each(iter, &cpg_pd_list_head) {
++-			struct cpg_pd *cpd = qb_list_entry (iter, struct cpg_pd, list);
++-			if (mar_name_compare (&cpd->group_name, group_name) == 0) {
++-				assert (joined_list_entries <= 1);
++-				if (joined_list_entries) {
++-					if (joined_list[0].pid == cpd->pid &&
++-						joined_list[0].nodeid == api->totem_nodeid_get()) {
++-						cpd->cpd_state = CPD_STATE_JOIN_COMPLETED;
++-					}
+++		struct cpg_pd *cpd = qb_list_entry (iter, struct cpg_pd, list);
+++		if (mar_name_compare (&cpd->group_name, group_name) == 0) {
+++			assert (joined_list_entries <= 1);
+++			if (joined_list_entries) {
+++				if (joined_list[0].pid == cpd->pid &&
+++					joined_list[0].nodeid == api->totem_nodeid_get()) {
+++					cpd->cpd_state = CPD_STATE_JOIN_COMPLETED;
++ 				}
++-				if (cpd->cpd_state == CPD_STATE_JOIN_COMPLETED ||
++-					cpd->cpd_state == CPD_STATE_LEAVE_STARTED) {
+++			}
+++			if (cpd->cpd_state == CPD_STATE_JOIN_COMPLETED ||
+++				cpd->cpd_state == CPD_STATE_LEAVE_STARTED) {
++ 
++-					api->ipc_dispatch_send (cpd->conn, buf, size);
++-					cpd->transition_counter++;
++-				}
++-				if (left_list_entries) {
++-					if (left_list[0].pid == cpd->pid &&
++-						left_list[0].nodeid == api->totem_nodeid_get() &&
++-						left_list[0].reason == CONFCHG_CPG_REASON_LEAVE) {
++-
++-						cpd->pid = 0;
++-						memset (&cpd->group_name, 0, sizeof(cpd->group_name));
++-						cpd->cpd_state = CPD_STATE_UNJOINED;
++-					}
+++				api->ipc_dispatch_send (cpd->conn, buf, size);
+++				cpd->transition_counter++;
+++			}
+++			if (left_list_entries) {
+++				if (left_list[0].pid == cpd->pid &&
+++					left_list[0].nodeid == api->totem_nodeid_get() &&
+++					left_list[0].reason == CONFCHG_CPG_REASON_LEAVE) {
+++
+++					cpd->pid = 0;
+++					memset (&cpd->group_name, 0, sizeof(cpd->group_name));
+++					cpd->cpd_state = CPD_STATE_UNJOINED;
++ 				}
++ 			}
++ 		}
++ 	}
++ 
++-
++ 	/*
++ 	 * Traverse thru cpds and send totem membership for cpd, where it is not send yet
++ 	 */
++@@ -858,7 +852,7 @@ static void downlist_inform_clients (void)
++ 		}
++ 
++ 		/* send confchg event */
++-		notify_lib_joinlist(&group, NULL,
+++		notify_lib_joinlist(&group,
++ 			0, NULL,
++ 			pcd->left_list_entries,
++ 			pcd->left_list,
++@@ -1157,7 +1151,7 @@ static void do_proc_join(
++ 	notify_info.nodeid = nodeid;
++ 	notify_info.reason = reason;
++ 
++-	notify_lib_joinlist(&pi->group, NULL,
+++	notify_lib_joinlist(&pi->group,
++ 			    1, &notify_info,
++ 			    0, NULL,
++ 			    MESSAGE_RES_CPG_CONFCHG_CALLBACK);
++@@ -1177,7 +1171,7 @@ static void do_proc_leave(
++ 	notify_info.nodeid = nodeid;
++ 	notify_info.reason = reason;
++ 
++-	notify_lib_joinlist(name, NULL,
+++	notify_lib_joinlist(name,
++ 		0, NULL,
++ 		1, &notify_info,
++ 		MESSAGE_RES_CPG_CONFCHG_CALLBACK);
+diff --git a/debian/patches/cpg-send-single-confchg-event-per-group-on-joinlist.patch b/debian/patches/cpg-send-single-confchg-event-per-group-on-joinlist.patch
+new file mode 100644
+index 00000000..013baaa0
+--- /dev/null
++++ b/debian/patches/cpg-send-single-confchg-event-per-group-on-joinlist.patch
+@@ -0,0 +1,199 @@
++From: =?utf-8?q?Fabian_Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
++Date: Wed, 8 May 2019 16:31:15 +0200
++Subject: cpg: send single confchg event per group on joinlist
++MIME-Version: 1.0
++Content-Type: text/plain; charset="utf-8"
++Content-Transfer-Encoding: 8bit
++
++using a similar approach to
++
++43bead364514e8ae2ba00bcf07c460e31d0b1765 "Send one confchg event per CPG group to CPG client"
++
++which did the same for leave events on a network partition.
++
++Fixes: #351
++
++Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
++(cherry picked from commit 9c60289b831ef0b138142c3fc39c9a9da8a2ada2)
++---
++ exec/cpg.c | 97 ++++++++++++++++++++++++++++++++++++++++++++++----------------
++ 1 file changed, 73 insertions(+), 24 deletions(-)
++
++diff --git a/exec/cpg.c b/exec/cpg.c
++index b752cc1..e04ba57 100644
++--- a/exec/cpg.c
+++++ b/exec/cpg.c
++@@ -194,6 +194,12 @@ struct join_list_entry {
++ 	mar_cpg_name_t group_name;
++ };
++ 
+++struct join_list_confchg_data {
+++	mar_cpg_name_t cpg_group;
+++	mar_cpg_address_t join_list[CPG_MEMBERS_MAX];
+++	int join_list_entries;
+++};
+++
++ /*
++  * Service Interfaces required by service_message_handler struct
++  */
++@@ -312,7 +318,8 @@ static void do_proc_join(
++ 	const mar_cpg_name_t *name,
++ 	uint32_t pid,
++ 	unsigned int nodeid,
++-	int reason);
+++	int reason,
+++	qb_map_t *group_notify_map);
++ 
++ static void do_proc_leave(
++ 	const mar_cpg_name_t *name,
++@@ -723,35 +730,46 @@ static int notify_lib_joinlist(
++ 	}
++ 
++ 	if (joined_list_entries) {
+++		int i;
+++
++ 		memcpy (retgi, joined_list, joined_list_entries * sizeof(mar_cpg_address_t));
++ 		retgi += joined_list_entries;
+++
+++		for (i=0; i < joined_list_entries; i++) {
+++			if (joined_list[i].nodeid == api->totem_nodeid_get()) {
+++			qb_list_for_each(iter, &cpg_pd_list_head) {
+++					struct cpg_pd *cpd = qb_list_entry (iter, struct cpg_pd, list);
+++					if (mar_name_compare (&cpd->group_name, group_name) == 0 &&
+++					    joined_list[i].pid == cpd->pid) {
+++						cpd->cpd_state = CPD_STATE_JOIN_COMPLETED;
+++					}
+++				}
+++			}
+++		}
++ 	}
++ 
++ 	qb_list_for_each(iter, &cpg_pd_list_head) {
++ 		struct cpg_pd *cpd = qb_list_entry (iter, struct cpg_pd, list);
++ 		if (mar_name_compare (&cpd->group_name, group_name) == 0) {
++-			assert (joined_list_entries <= 1);
++-			if (joined_list_entries) {
++-				if (joined_list[0].pid == cpd->pid &&
++-					joined_list[0].nodeid == api->totem_nodeid_get()) {
++-					cpd->cpd_state = CPD_STATE_JOIN_COMPLETED;
++-				}
++-			}
++ 			if (cpd->cpd_state == CPD_STATE_JOIN_COMPLETED ||
++ 				cpd->cpd_state == CPD_STATE_LEAVE_STARTED) {
++ 
++ 				api->ipc_dispatch_send (cpd->conn, buf, size);
++ 				cpd->transition_counter++;
++ 			}
++-			if (left_list_entries) {
++-				if (left_list[0].pid == cpd->pid &&
++-					left_list[0].nodeid == api->totem_nodeid_get() &&
++-					left_list[0].reason == CONFCHG_CPG_REASON_LEAVE) {
++-
++-					cpd->pid = 0;
++-					memset (&cpd->group_name, 0, sizeof(cpd->group_name));
++-					cpd->cpd_state = CPD_STATE_UNJOINED;
++-				}
+++		}
+++	}
+++
+++	if (left_list_entries &&
+++	    left_list[0].nodeid == api->totem_nodeid_get() &&
+++	    left_list[0].reason == CONFCHG_CPG_REASON_LEAVE) {
+++	qb_list_for_each(iter, &cpg_pd_list_head) {
+++			struct cpg_pd *cpd = qb_list_entry (iter, struct cpg_pd, list);
+++			if (mar_name_compare (&cpd->group_name, group_name) == 0 &&
+++			    left_list[0].pid == cpd->pid) {
+++				cpd->pid = 0;
+++				memset (&cpd->group_name, 0, sizeof(cpd->group_name));
+++				cpd->cpd_state = CPD_STATE_UNJOINED;
++ 			}
++ 		}
++ 	}
++@@ -915,6 +933,11 @@ static void joinlist_inform_clients (void)
++ 	struct joinlist_msg *stored_msg;
++ 	struct qb_list_head *iter;
++ 	unsigned int i;
+++	qb_map_t *group_notify_map;
+++	qb_map_iter_t *miter;
+++	struct join_list_confchg_data *jld;
+++
+++	group_notify_map = qb_skiplist_create();
++ 
++ 	i = 0;
++ 	qb_list_for_each(iter, &joinlist_messages_head) {
++@@ -931,9 +954,19 @@ static void joinlist_inform_clients (void)
++ 		}
++ 
++ 		do_proc_join (&stored_msg->group_name, stored_msg->pid, stored_msg->sender_nodeid,
++-			CONFCHG_CPG_REASON_NODEUP);
+++			CONFCHG_CPG_REASON_NODEUP, group_notify_map);
++ 	}
++ 
+++	miter = qb_map_iter_create(group_notify_map);
+++	while (qb_map_iter_next(miter, (void **)&jld)) {
+++		notify_lib_joinlist(&jld->cpg_group,
+++				    jld->join_list_entries, jld->join_list,
+++				    0, NULL,
+++				    MESSAGE_RES_CPG_CONFCHG_CALLBACK);
+++		free(jld);
+++	}
+++	qb_map_iter_free(miter);
+++
++ 	joinlist_remove_zombie_pi_entries ();
++ }
++ 
++@@ -1111,13 +1144,15 @@ static void do_proc_join(
++ 	const mar_cpg_name_t *name,
++ 	uint32_t pid,
++ 	unsigned int nodeid,
++-	int reason)
+++	int reason,
+++	qb_map_t *group_notify_map)
++ {
++ 	struct process_info *pi;
++ 	struct process_info *pi_entry;
++ 	mar_cpg_address_t notify_info;
++ 	struct qb_list_head *list;
++ 	struct qb_list_head *list_to_add = NULL;
+++	int size;
++ 
++ 	if (process_info_find (name, pid, nodeid) != NULL) {
++ 		return ;
++@@ -1151,10 +1186,24 @@ static void do_proc_join(
++ 	notify_info.nodeid = nodeid;
++ 	notify_info.reason = reason;
++ 
++-	notify_lib_joinlist(&pi->group,
++-			    1, &notify_info,
++-			    0, NULL,
++-			    MESSAGE_RES_CPG_CONFCHG_CALLBACK);
+++	if (group_notify_map == NULL) {
+++		notify_lib_joinlist(&pi->group,
+++				    1, &notify_info,
+++				    0, NULL,
+++				    MESSAGE_RES_CPG_CONFCHG_CALLBACK);
+++	} else {
+++		struct join_list_confchg_data *jld = qb_map_get(group_notify_map, pi->group.value);
+++		if (jld == NULL) {
+++			jld = (struct join_list_confchg_data *)calloc(1, sizeof(struct join_list_confchg_data));
+++			memcpy(&jld->cpg_group, &pi->group, sizeof(mar_cpg_name_t));
+++			qb_map_put(group_notify_map, jld->cpg_group.value, jld);
+++		}
+++		size = jld->join_list_entries;
+++		jld->join_list[size].nodeid = notify_info.nodeid;
+++		jld->join_list[size].pid = notify_info.pid;
+++		jld->join_list[size].reason = notify_info.reason;
+++		jld->join_list_entries++;
+++	}
++ }
++ 
++ static void do_proc_leave(
++@@ -1219,7 +1268,7 @@ static void message_handler_req_exec_cpg_procjoin (
++ 
++ 	do_proc_join (&req_exec_cpg_procjoin->group_name,
++ 		req_exec_cpg_procjoin->pid, nodeid,
++-		CONFCHG_CPG_REASON_JOIN);
+++		CONFCHG_CPG_REASON_JOIN, NULL);
++ }
++ 
++ static void message_handler_req_exec_cpg_procleave (
+diff --git a/debian/patches/series b/debian/patches/series
+index 6f18c886..324cc365 100644
+--- a/debian/patches/series
++++ b/debian/patches/series
+@@ -12,3 +12,8 @@ set-totem.keyfile-and-totem.key-to-RO.patch
+ keygen-Reflect-change-in-knet.patch
+ totemconfig-Remove-support-for-3des.patch
+ crypto-re-introduce-secauth-parameter.patch
++cpg-Add-CPG_REASON_UNDEFINED.patch
++cpg-notify_lib_joinlist-drop-conn-parameter.patch
++cpg-send-single-confchg-event-per-group-on-joinlist.patch
++cpg-Add-more-comments-to-notify_lib_joinlist.patch
++cpg-Move-filling-of-member_list-to-subfunction.patch
