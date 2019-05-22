@@ -12,10 +12,10 @@ Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
  1 file changed, 7 insertions(+)
 
 diff --git a/debian/control b/debian/control
-index e105b0b2..8a2ed29e 100644
+index 8a0855ce..d5e2513a 100644
 --- a/debian/control
 +++ b/debian/control
-@@ -44,6 +44,11 @@ X-Common-Description: The Corosync Cluster Engine is a Group Communication
+@@ -43,6 +43,11 @@ X-Common-Description: The Corosync Cluster Engine is a Group Communication
    * A quorum system that notifies applications when quorum is achieved
      or lost.
  
@@ -26,7 +26,7 @@ index e105b0b2..8a2ed29e 100644
 +
  Package: corosync
  Architecture: any
- Pre-Depends: ${misc:Pre-Depends}
+ Pre-Depends:
 @@ -52,6 +57,8 @@ Depends: ${shlibs:Depends},
   lsb-base (>= 3.0-6),
   adduser,

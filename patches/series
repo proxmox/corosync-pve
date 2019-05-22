@@ -1,12 +1,7 @@
 0001-add-Provides-Replaces-corosync-pve.patch
 0002-don-t-install-default-corosync.conf.patch
-0003-Revert-Switch-to-Debhelper-compat-level-11.patch
-0004-restart-after-package-upgrade-is-complete.patch
-0005-remove-init-script.patch
-0006-add-corosync-pve-postinst-for-restart-on-dist-upgrad.patch
-0007-add-libcorosync4-pve-transitional-package.patch
-0008-only-start-corosync.service-if-conf-exists.patch
-0009-remove-unecessary-and-problematic-corosync-qdevice.i.patch
-0010-cpg-Inform-clients-about-left-nodes-during-pause.patch
-0011-d-control-bump-versioned-b-d-on-libqb.patch
-0012-bsys-disable-augeas-tools.patch
+0003-remove-init-script.patch
+0004-add-corosync-pve-postinst-for-restart-on-dist-upgrad.patch
+0005-add-libcorosync4-pve-transitional-package.patch
+0006-only-start-corosync.service-if-conf-exists.patch
+0007-bsys-disable-augeas-tools.patch

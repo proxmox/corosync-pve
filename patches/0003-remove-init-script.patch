@@ -8,16 +8,16 @@ Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
 ---
- debian/corosync.init | 122 -------------------------------------------
- 1 file changed, 122 deletions(-)
+ debian/corosync.init | 120 -------------------------------------------
+ 1 file changed, 120 deletions(-)
  delete mode 100644 debian/corosync.init
 
 diff --git a/debian/corosync.init b/debian/corosync.init
 deleted file mode 100644
-index f7b813a5..00000000
+index ff5ee9f7..00000000
 --- a/debian/corosync.init
 +++ /dev/null
-@@ -1,122 +0,0 @@
+@@ -1,120 +0,0 @@
 -#! /bin/sh
 -#
 -### BEGIN INIT INFO
@@ -47,9 +47,7 @@ index f7b813a5..00000000
 -[ -x "$DAEMON" ] || exit 0
 -
 -# Read configuration variable file if it is present
--set -a
 -[ -r /etc/default/corosync ] && . /etc/default/corosync
--set +a
 -
 -# Make sure the Resource Agents run dir exists. Otherwise create it.
 -[ -d "$RARUNDIR" ] || mkdir -p $RARUNDIR

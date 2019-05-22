@@ -2,7 +2,11 @@ From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
 Date: Wed, 24 Oct 2018 15:15:33 +0200
 Subject: [PATCH] only start corosync.service if conf exists
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
 ---
  ...tart-corosync.service-if-conf-exists.patch | 28 +++++++++++++++++++
  debian/patches/series                         |  1 +
@@ -44,11 +48,11 @@ index 00000000..18afb84e
 +2.19.1
 +
 diff --git a/debian/patches/series b/debian/patches/series
-index de0e277d..78b44c78 100644
+index 41866b14..fcba2944 100644
 --- a/debian/patches/series
 +++ b/debian/patches/series
-@@ -16,3 +16,4 @@ Fix-typo-sucesfully-successfully.patch
- qnetd-stay-with-the-DBM-NSS-DB-format.patch
- Fix-typo-defualt-default.patch
- Please-make-the-manpages-reproducible.patch
+@@ -5,3 +5,4 @@ corosync.conf.5-typography-fixes.patch
+ AC_PROG_SED-is-already-present.patch
+ Use-the-SED-variable-provided-by-configure.patch
+ Use-the-AWK-variable-provided-by-configure.patch
 +pve__only-start-corosync.service-if-conf-exists.patch

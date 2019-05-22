@@ -2,45 +2,36 @@ From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Thomas Lamprecht <t.lamprecht@proxmox.com>
 Date: Fri, 9 Nov 2018 13:24:18 +0100
 Subject: [PATCH] bsys: disable augeas-tools
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Thomas Lamprecht <t.lamprecht@proxmox.com>
+Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
 ---
- debian/control           | 1 -
- debian/rules             | 2 +-
- debian/corosync.install  | 2 --
+ debian/control          | 1 -
+ debian/corosync.install | 2 --
+ debian/rules            | 2 +-
  3 files changed, 1 insertion(+), 4 deletions(-)
 
 diff --git a/debian/control b/debian/control
-index e105b0b2..b58b8b66 100644
+index 7643c79e..c3e1608b 100644
 --- a/debian/control
 +++ b/debian/control
 @@ -7,7 +7,6 @@ Uploaders:
   Ferenc Wágner <wferi@debian.org>,
- Standards-Version: 4.1.4
+ Standards-Version: 4.3.0
  Build-Depends:
 - augeas-tools,
-  debhelper (>= 9~),
+  debhelper (>= 12~),
   dctrl-tools,
-  dh-exec,
-diff --git a/debian/rules b/debian/rules
-index 7108d92c..26a6a864 100755
---- a/debian/rules
-+++ b/debian/rules
-@@ -42,7 +42,7 @@ override_dh_auto_configure:
- 	    $(enable-rdma) \
- 	    $(enable-monitoring) \
- 	    $(enable-watchdog) \
--	    --enable-augeas \
-+	    --disable-augeas \
- 	    --enable-snmp \
- 	    --enable-xmlconf \
- 	    $(enable-systemd) \
+  groff,
 diff --git a/debian/corosync.install b/debian/corosync.install
-index 027a58db..e928228a 100755
+index c5b92661..dd3682b0 100644
 --- a/debian/corosync.install
 +++ b/debian/corosync.install
-@@ -26,10 +26,8 @@ usr/share/doc/corosync/README.recovery
- usr/share/doc/corosync/SECURITY
+@@ -23,8 +23,6 @@ usr/share/man/man8/cmap_keys.8
+ usr/share/doc/corosync/README.recovery
  usr/share/doc/corosync/AUTHORS
  usr/share/doc/corosync/INSTALL
 -usr/share/augeas/lenses/corosync.aug
@@ -48,3 +39,16 @@ index 027a58db..e928228a 100755
  etc/corosync/corosync.*example* usr/share/doc/corosync/examples
  etc/corosync/uidgid.d
  usr/share/corosync/xml2conf.xsl
+diff --git a/debian/rules b/debian/rules
+index 50d89e2a..ee051926 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -37,7 +37,7 @@ override_dh_auto_configure:
+ 	    --enable-dbus \
+ 	    $(enable-monitoring) \
+ 	    $(enable-watchdog) \
+-	    --enable-augeas \
++	    --disable-augeas \
+ 	    --enable-snmp \
+ 	    --enable-xmlconf \
+ 	    $(enable-systemd) \

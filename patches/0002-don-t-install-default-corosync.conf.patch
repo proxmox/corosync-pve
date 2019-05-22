@@ -1,6 +1,6 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
-Date: Tue, 7 Mar 2017 13:32:02 +0100
+Date: Wed, 22 May 2019 11:14:01 +0200
 Subject: [PATCH] don't install default corosync.conf
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -8,136 +8,120 @@ Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
 ---
- debian/corosync.conf    | 111 ----------------------------------------
- debian/corosync.install |   1 -
- 2 files changed, 112 deletions(-)
- delete mode 100644 debian/corosync.conf
+ .../Make-the-example-config-valid.patch       | 64 -------------------
+ debian/corosync.install                       |  2 +-
+ debian/patches/series                         |  1 -
+ debian/rules                                  |  3 -
+ 4 files changed, 1 insertion(+), 69 deletions(-)
+ delete mode 100644 debian/patches/Make-the-example-config-valid.patch
 
-diff --git a/debian/corosync.conf b/debian/corosync.conf
+diff --git a/debian/patches/Make-the-example-config-valid.patch b/debian/patches/Make-the-example-config-valid.patch
 deleted file mode 100644
-index 04444322..00000000
---- a/debian/corosync.conf
+index 5c2182f7..00000000
+--- a/debian/patches/Make-the-example-config-valid.patch
 +++ /dev/null
-@@ -1,111 +0,0 @@
--# Please read the corosync.conf.5 manual page
--totem {
--	version: 2
+@@ -1,64 +0,0 @@
+-From: =?utf-8?q?Ferenc_W=C3=A1gner?= <wferi@debian.org>
+-Date: Sun, 16 Dec 2018 22:51:46 +0100
+-Subject: Make the example config valid
 -
--	# Corosync itself works without a cluster name, but DLM needs one.
--	# The cluster name is also written into the VG metadata of newly
--	# created shared LVM volume groups, if lvmlockd uses DLM locking.
--	# It is also used for computing mcastaddr, unless overridden below.
--	cluster_name: debian
+----
+- conf/corosync.conf.example | 22 +++++++---------------
+- 1 file changed, 7 insertions(+), 15 deletions(-)
 -
--	# How long before declaring a token lost (ms)
--	token: 3000
--
--	# How many token retransmits before forming a new configuration
--	token_retransmits_before_loss_const: 10
--
--	# Limit generated nodeids to 31-bits (positive signed integers)
--	clear_node_high_bit: yes
--
--	# crypto_cipher and crypto_hash: Used for mutual node authentication.
--	# If you choose to enable this, then do remember to create a shared
--	# secret with "corosync-keygen".
--	# enabling crypto_cipher, requires also enabling of crypto_hash.
--	# crypto_cipher and crypto_hash should be used instead of deprecated
--	# secauth parameter.
--
--	# Valid values for crypto_cipher are none (no encryption), aes256, aes192,
--	# aes128 and  3des. Enabling crypto_cipher, requires also enabling of
--	# crypto_hash.
--	crypto_cipher: none
--
--	# Valid values for crypto_hash are  none  (no  authentication),  md5,  sha1,
--	# sha256, sha384 and sha512.
--	crypto_hash: none
--
--	# Optionally assign a fixed node id (integer)
--	# nodeid: 1234
--
--	# interface: define at least one interface to communicate
--	# over. If you define more than one interface stanza, you must
--	# also set rrp_mode.
--	interface {
--		# Rings must be consecutively numbered, starting at 0.
--		ringnumber: 0
--		# This is normally the *network* address of the
--		# interface to bind to. This ensures that you can use
--		# identical instances of this configuration file
--		# across all your cluster nodes, without having to
--		# modify this option.
--		bindnetaddr: 127.0.0.1
--		# However, if you have multiple physical network
--		# interfaces configured for the same subnet, then the
--		# network address alone is not sufficient to identify
--		# the interface Corosync should bind to. In that case,
--		# configure the *host* address of the interface
--		# instead:
--		# bindnetaddr: 192.168.1.1
--		# When selecting a multicast address, consider RFC
--		# 2365 (which, among other things, specifies that
--		# 239.255.x.x addresses are left to the discretion of
--		# the network administrator). Do not reuse multicast
--		# addresses across multiple Corosync clusters sharing
--		# the same network.
--		# mcastaddr: 239.255.1.1
--		# Corosync uses the port you specify here for UDP
--		# messaging, and also the immediately preceding
--		# port. Thus if you set this to 5405, Corosync sends
--		# messages over UDP ports 5405 and 5404.
--		mcastport: 5405
--		# Time-to-live for cluster communication packets. The
--		# number of hops (routers) that this ring will allow
--		# itself to pass. Note that multicast routing must be
--		# specifically enabled on most network routers.
--		ttl: 1
--	}
--}
--
--logging {
--	# Log the source file and line where messages are being
--	# generated. When in doubt, leave off. Potentially useful for
--	# debugging.
--	fileline: off
--	# Log to standard error. When in doubt, set to no. Useful when
--	# running in the foreground (when invoking "corosync -f")
--	to_stderr: no
--	# Log to a log file. When set to "no", the "logfile" option
--	# must not be set.
--	to_logfile: no
--	#logfile: /var/log/corosync/corosync.log
--	# Log to the system log daemon. When in doubt, set to yes.
--	to_syslog: yes
--	# Log with syslog facility daemon.
--	syslog_facility: daemon
--	# Log debug messages (very verbose). When in doubt, leave off.
--	debug: off
--	# Log messages with time stamps. When in doubt, set to on
--	# (unless you are only logging to syslog, where double
--	# timestamps can be annoying).
--	timestamp: on
--	logger_subsys {
--		subsys: QUORUM
--		debug: off
--	}
--}
--
--quorum {
--	# Enable and configure quorum subsystem (default: off)
--	# see also corosync.conf.5 and votequorum.5
--	provider: corosync_votequorum
--	expected_votes: 2
--}
+-diff --git a/conf/corosync.conf.example b/conf/corosync.conf.example
+-index 4658a86..91de572 100644
+---- a/conf/corosync.conf.example
+-+++ b/conf/corosync.conf.example
+-@@ -2,8 +2,10 @@
+- totem {
+- 	version: 2
+- 
+--	# Set name of the cluster
+--	cluster_name: ExampleCluster
+-+	# Corosync itself works without a cluster name, but DLM needs one.
+-+	# The cluster name is also written into the VG metadata of newly
+-+	# created shared LVM volume groups, if lvmlockd uses DLM locking.
+-+	cluster_name: debian
+- 
+- 	# crypto_cipher and crypto_hash: Used for mutual node authentication.
+- 	# If you choose to enable this, then do remember to create a shared
+-@@ -25,7 +27,7 @@ logging {
+- 	# Log to a log file. When set to "no", the "logfile" option
+- 	# must not be set.
+- 	to_logfile: yes
+--	logfile: /var/log/cluster/corosync.log
+-+	logfile: /var/log/corosync/corosync.log
+- 	# Log to the system log daemon. When in doubt, set to yes.
+- 	to_syslog: yes
+- 	# Log debug messages (very verbose). When in doubt, leave off.
+-@@ -41,7 +43,7 @@ logging {
+- quorum {
+- 	# Enable and configure quorum subsystem (default: off)
+- 	# see also corosync.conf.5 and votequorum.5
+--	#provider: corosync_votequorum
+-+	provider: corosync_votequorum
+- }
+- 
+- nodelist {
+-@@ -53,19 +55,9 @@ nodelist {
+- 		# Cluster membership node identifier
+- 		nodeid: 1
+- 		# Address of first link
+--		#ring0_addr: 192.168.0.1
+-+		ring0_addr: 127.0.0.1
+- 		# When knet transport is used it's possible to define up to 8 links
+- 		#ring1_addr: 192.168.1.1
+- 	}
+--	node {
+--		# Hostname of the node
+--		name: node2
+--		# Cluster membership node identifier
+--		nodeid: 2
+--		# Address of first link
+--		#ring0_addr: 192.168.0.2
+--		# When knet transport is used it's possible to define up to 8 links
+--		#ring1_addr: 192.168.1.2
+--	}
+- 	# ...
+- }
 diff --git a/debian/corosync.install b/debian/corosync.install
-index 027a58db..f38d1f78 100755
+index bfaca759..c5b92661 100644
 --- a/debian/corosync.install
 +++ b/debian/corosync.install
-@@ -30,6 +30,5 @@ usr/share/augeas/lenses/corosync.aug
+@@ -25,7 +25,7 @@ usr/share/doc/corosync/AUTHORS
+ usr/share/doc/corosync/INSTALL
+ usr/share/augeas/lenses/corosync.aug
  usr/share/augeas/lenses/tests/test_corosync.aug
- etc/corosync/corosync.*example* usr/share/doc/corosync/examples
+-etc/corosync/corosync.conf
++etc/corosync/corosync.*example* usr/share/doc/corosync/examples
  etc/corosync/uidgid.d
--debian/corosync.conf etc/corosync
  usr/share/corosync/xml2conf.xsl
  var/lib/corosync
+diff --git a/debian/patches/series b/debian/patches/series
+index 6b552ce1..41866b14 100644
+--- a/debian/patches/series
++++ b/debian/patches/series
+@@ -1,6 +1,5 @@
+ Fix-various-typos-in-ChangeLog.patch
+ Enable-PrivateTmp-in-the-systemd-service-files.patch
+-Make-the-example-config-valid.patch
+ corosync.conf.5-fix-grammar.patch
+ corosync.conf.5-typography-fixes.patch
+ AC_PROG_SED-is-already-present.patch
+diff --git a/debian/rules b/debian/rules
+index 52ff4699..50d89e2a 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -54,11 +54,8 @@ override_dh_auto_test-indep:
+ override_dh_auto_install-indep:
+ 	$(MAKE) -C man DESTDIR="$(CURDIR)/debian/tmp" install
+ 
+-CONF=debian/tmp/etc/corosync/corosync.conf
+ override_dh_auto_install-arch:
+ 	dh_auto_install
+-# We patched the example into a working config file:
+-	mv -v $(CONF).example $(CONF)
+ 	rm -v debian/tmp/usr/lib/*/lib*.la
+ # we don't need the upstream license
+ 	rm debian/tmp/usr/share/doc/corosync/LICENSE
