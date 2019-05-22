@@ -1,8 +1,8 @@
 include /usr/share/dpkg/architecture.mk
 
-CSVERSION=2.4.4
+CSVERSION=3.0.1
 CSRELEASE=pve1
-DEBRELEASE=3
+DEBRELEASE=2
 CSDIR=corosync-${CSVERSION}
 CSSRC=corosync_${CSVERSION}.orig.tar.gz
 
