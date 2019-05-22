@@ -1,7 +1,3 @@
-RELEASE=5.0
-
-# source from http://www.corosync.org
-
 CSVERSION=2.4.4
 CSRELEASE=pve1
 DEBRELEASE=3
