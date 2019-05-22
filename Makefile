@@ -1,3 +1,5 @@
+include /usr/share/dpkg/architecture.mk
+
 CSVERSION=2.4.4
 CSRELEASE=pve1
 DEBRELEASE=3
@@ -11,42 +13,42 @@ MAIN_DEB=corosync-pve_${CSVERSION}-${CSRELEASE}_all.deb
 
 OTHER_DEBS=\
 libcorosync4-pve_${CSVERSION}-${CSRELEASE}_all.deb \
-corosync_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-corosync-notifyd_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-corosync-qdevice_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-corosync-qnetd_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
+corosync_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+corosync-notifyd_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+corosync-qdevice_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+corosync-qnetd_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 corosync-doc_${CSVERSION}-${CSRELEASE}_all.deb \
 corosync-dev_${CSVERSION}-${CSRELEASE}_all.deb \
-libcfg6_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libcmap4_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libcorosync-common4_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libcpg4_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libquorum5_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libsam4_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libtotem-pg5_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libvotequorum8_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libcfg-dev_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libcmap-dev_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libcorosync-common-dev_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libcpg-dev_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libquorum-dev_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libsam-dev_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libtotem-pg-dev_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libvotequorum-dev_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
+libcfg6_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libcmap4_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libcorosync-common4_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libcpg4_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libquorum5_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libsam4_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libtotem-pg5_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libvotequorum8_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libcfg-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libcmap-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libcorosync-common-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libcpg-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libquorum-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libsam-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libtotem-pg-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libvotequorum-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 
 DBG_DEBS=\
-corosync-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-corosync-notifyd-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-corosync-qdevice-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-corosync-qnetd-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libcfg6-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libcmap4-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libcorosync-common4-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libcpg4-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libquorum5-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libsam4-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libtotem-pg5-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
-libvotequorum8-dbgsym_${CSVERSION}-${CSRELEASE}_${ARCH}.deb \
+corosync-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+corosync-notifyd-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+corosync-qdevice-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+corosync-qnetd-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libcfg6-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libcmap4-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libcorosync-common4-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libcpg4-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libquorum5-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libsam4-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libtotem-pg5-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libvotequorum8-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 
 DEBS=${MAIN_DEB} ${OTHER_DEBS} ${DBG_DEBS}
 
@@ -86,7 +88,7 @@ download:
 
 .PHONY: upload
 upload: ${DEBS}
-	tar cf - ${DEBS} | ssh -X repoman@repo.proxmox.com -- upload --product pve --dist stretch --arch ${ARCH}
+	tar cf - ${DEBS} | ssh -X repoman@repo.proxmox.com -- upload --product pve --dist stretch --arch ${DEB_BUILD_ARCH}
 
 distclean: clean
 
