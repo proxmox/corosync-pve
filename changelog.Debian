@@ -1,3 +1,19 @@
+corosync (3.0.1-pve1) pve; urgency=medium
+
+  * update to Corosync 3.0.1-2
+
+  * cherry-pick crypto changes for upgrade compatibility
+
+  * cherry-pick CPG callback joinlist merging (PR 468)
+
+  * drop transitional corosync-pve/libcorosync4-pve packages
+
+  * corosync-qdevice/corosync-qnetd are now shipped separately
+
+  * drop discontinued libtotem-pq library packages
+
+ -- Proxmox Support Team <support@proxmox.com>  Wed, 22 May 2019 12:40:27 +0200
+
 corosync (2.4.4-pve1) unstable; urgency=medium
 
   * update to corosync 2.4.4
