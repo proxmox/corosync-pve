@@ -9,16 +9,13 @@ CSSRC=corosync_${CSVERSION}.orig.tar.gz
 ARCH:=$(shell dpkg-architecture -qDEB_BUILD_ARCH)
 GITVERSION:=$(shell git rev-parse HEAD)
 
-MAIN_DEB=corosync-pve_${CSVERSION}-${CSRELEASE}_all.deb
+MAIN_DEB=corosync_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 
 OTHER_DEBS=\
-libcorosync4-pve_${CSVERSION}-${CSRELEASE}_all.deb \
-corosync_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 corosync-notifyd_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 corosync-qdevice_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 corosync-qnetd_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 corosync-doc_${CSVERSION}-${CSRELEASE}_all.deb \
-corosync-dev_${CSVERSION}-${CSRELEASE}_all.deb \
 libcfg6_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libcmap4_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libcorosync-common4_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \

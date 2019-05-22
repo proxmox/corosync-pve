@@ -15,7 +15,7 @@ Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
  3 files changed, 1 insertion(+), 4 deletions(-)
 
 diff --git a/debian/control b/debian/control
-index 7643c79e..c3e1608b 100644
+index 8a0855ce..717638e1 100644
 --- a/debian/control
 +++ b/debian/control
 @@ -7,7 +7,6 @@ Uploaders:

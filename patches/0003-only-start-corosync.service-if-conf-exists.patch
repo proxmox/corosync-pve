@@ -8,23 +8,22 @@ Content-Transfer-Encoding: 8bit
 
 Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
 ---
- ...tart-corosync.service-if-conf-exists.patch | 28 +++++++++++++++++++
+ ...tart-corosync.service-if-conf-exists.patch | 24 +++++++++++++++++++
  debian/patches/series                         |  1 +
- 2 files changed, 29 insertions(+)
+ 2 files changed, 25 insertions(+)
  create mode 100644 debian/patches/pve__only-start-corosync.service-if-conf-exists.patch
 
 diff --git a/debian/patches/pve__only-start-corosync.service-if-conf-exists.patch b/debian/patches/pve__only-start-corosync.service-if-conf-exists.patch
 new file mode 100644
-index 00000000..18afb84e
+index 00000000..edbc5eb0
 --- /dev/null
 +++ b/debian/patches/pve__only-start-corosync.service-if-conf-exists.patch
-@@ -0,0 +1,28 @@
-+From 306692e2627b0fe072bfae21ddb5d501189c57c5 Mon Sep 17 00:00:00 2001
-+From: =?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
+@@ -0,0 +1,24 @@
++From: =?utf-8?q?Fabian_Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
 +Date: Mon, 13 Mar 2017 13:27:49 +0100
-+Subject: [PATCH] only start corosync.service if conf exists
++Subject: only start corosync.service if conf exists
 +MIME-Version: 1.0
-+Content-Type: text/plain; charset=UTF-8
++Content-Type: text/plain; charset="utf-8"
 +Content-Transfer-Encoding: 8bit
 +
 +Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
@@ -33,7 +32,7 @@ index 00000000..18afb84e
 + 1 file changed, 1 insertion(+)
 +
 +diff --git a/init/corosync.service.in b/init/corosync.service.in
-+index 7733a98c..1b65c94b 100644
++index dc99a4a..28046ca 100644
 +--- a/init/corosync.service.in
 ++++ b/init/corosync.service.in
 +@@ -2,6 +2,7 @@
@@ -43,10 +42,7 @@ index 00000000..18afb84e
 ++ConditionPathExists=/etc/corosync/corosync.conf
 + Requires=network-online.target
 + After=network-online.target
-+ 
-+-- 
-+2.19.1
-+
++ StopWhenUnneeded=yes
 diff --git a/debian/patches/series b/debian/patches/series
 index 41866b14..fcba2944 100644
 --- a/debian/patches/series

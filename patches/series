@@ -1,7 +1,4 @@
-0001-add-Provides-Replaces-corosync-pve.patch
-0002-don-t-install-default-corosync.conf.patch
-0003-remove-init-script.patch
-0004-add-corosync-pve-postinst-for-restart-on-dist-upgrad.patch
-0005-add-libcorosync4-pve-transitional-package.patch
-0006-only-start-corosync.service-if-conf-exists.patch
-0007-bsys-disable-augeas-tools.patch
+0001-don-t-install-default-corosync.conf.patch
+0002-remove-init-script.patch
+0003-only-start-corosync.service-if-conf-exists.patch
+0004-bsys-disable-augeas-tools.patch
