@@ -20,7 +20,6 @@ libcorosync-common4_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libcpg4_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libquorum5_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libsam4_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libtotem-pg5_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libvotequorum8_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libcfg-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libcmap-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
@@ -28,7 +27,6 @@ libcorosync-common-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libcpg-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libquorum-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libsam-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libtotem-pg-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libvotequorum-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 
 DBG_DEBS=\
@@ -40,7 +38,6 @@ libcorosync-common4-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libcpg4-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libquorum5-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libsam4-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libtotem-pg5-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libvotequorum8-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 
 DEBS=${MAIN_DEB} ${OTHER_DEBS} ${DBG_DEBS}
