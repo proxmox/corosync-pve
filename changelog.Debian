@@ -1,6 +1,6 @@
-corosync (3.0.1-pve1) pve; urgency=medium
+corosync (3.0.1-pve1~bpo9) pve; urgency=medium
 
-  * update to Corosync 3.0.1-2
+  * update to Corosync 3.0.1-2 for Debian Stretch PVE 5
 
   * cherry-pick crypto changes for upgrade compatibility
 
