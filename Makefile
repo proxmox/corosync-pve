@@ -14,7 +14,7 @@ MAIN_DEB=corosync_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 OTHER_DEBS=\
 corosync-notifyd_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 corosync-doc_${CSVERSION}-${CSRELEASE}_all.deb \
-libcfg6_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libcfg7_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libcmap4_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libcorosync-common4_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libcpg4_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
@@ -32,7 +32,7 @@ libvotequorum-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 DBG_DEBS=\
 corosync-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 corosync-notifyd-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libcfg6-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+libcfg7-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libcmap4-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libcorosync-common4-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libcpg4-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
