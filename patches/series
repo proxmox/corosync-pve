@@ -6,3 +6,4 @@
 0006-Revert-init-Enable-StopWhenUnneeded.patch
 0007-add-crypto-patches.patch
 0008-CPG-callback-merging.patch
+0009-d-control-switch-back-to-comapt-level-10-for-stretch.patch

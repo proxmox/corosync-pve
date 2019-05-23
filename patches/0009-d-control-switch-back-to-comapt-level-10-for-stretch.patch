@@ -1,0 +1,34 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Thomas Lamprecht <t.lamprecht@proxmox.com>
+Date: Thu, 23 May 2019 20:37:06 +0200
+Subject: [PATCH] d/control: switch back to comapt level 11 for stretch
+
+Signed-off-by: Thomas Lamprecht <t.lamprecht@proxmox.com>
+---
+ debian/compat  | 2 +-
+ debian/control | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/debian/compat b/debian/compat
+index 48082f72..b4de3947 100644
+--- a/debian/compat
++++ b/debian/compat
+@@ -1 +1 @@
+-12
++10
+diff --git a/debian/control b/debian/control
+index 8a0855ce..903241ce 100644
+--- a/debian/control
++++ b/debian/control
+@@ -5,9 +5,9 @@ Maintainer: Debian HA Maintainers <debian-ha-maintainers@lists.alioth.debian.org
+ Uploaders:
+  Adrian Vondendriesch <adrian.vondendriesch@credativ.de>,
+  Ferenc Wágner <wferi@debian.org>,
+-Standards-Version: 4.3.0
++Standards-Version: 4.1.3
+ Build-Depends:
+- debhelper (>= 12~),
++ debhelper (>= 10~),
+  dctrl-tools,
+  groff,
+  libdbus-1-dev,
