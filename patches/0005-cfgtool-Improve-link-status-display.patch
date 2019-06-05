@@ -10,11 +10,84 @@ cherry-picked from upstream master
 
 Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
 ---
+ .../cfgtool-Fix-link-status-display.patch     |  65 +++++++++
  .../cfgtool-Improve-link-status-display.patch | 134 ++++++++++++++++++
- debian/patches/series                         |   1 +
- 2 files changed, 135 insertions(+)
+ debian/patches/series                         |   2 +
+ 3 files changed, 201 insertions(+)
+ create mode 100644 debian/patches/cfgtool-Fix-link-status-display.patch
  create mode 100644 debian/patches/cfgtool-Improve-link-status-display.patch
 
+diff --git a/debian/patches/cfgtool-Fix-link-status-display.patch b/debian/patches/cfgtool-Fix-link-status-display.patch
+new file mode 100644
+index 00000000..37b8508c
+--- /dev/null
++++ b/debian/patches/cfgtool-Fix-link-status-display.patch
+@@ -0,0 +1,65 @@
++From: =?utf-8?q?Fabian_Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
++Date: Wed, 29 May 2019 14:57:09 +0200
++Subject: cfgtool: Fix link status display
++MIME-Version: 1.0
++Content-Type: text/plain; charset="utf-8"
++Content-Transfer-Encoding: 8bit
++
++instead of the nodeid, this displayed arbitrary values (usually '1')
++from other cmap keys under nodelist.node.XX.
++
++sscanf returns the number of conversions even on mismatch, e.g. it also
++returns 1 for
++
++nodelist.node.2.quorum_votes
++nodelist.node.2.ring0_addr
++nodelist.node.2.name
++...
++
++instead of just
++
++nodelist.node.2.nodeid
++
++which leads to the value of (at least) quorum_votes being stored in
++nodeid_list in addition to the actual nodeid.
++
++storing the returned int in a cs_error_t enum also potentially masks
++errors, so just compare the result with the expectation directly.
++
++Fixes: c0d14485c3ebdeb2332f7c48acd155163e5b7fc1
++
++Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
++Reviewed-by: Jan Friesse <jfriesse@redhat.com>
++(cherry picked from commit ef2569d323c68633a63dc15e59805ec491b69348)
++---
++ tools/corosync-cfgtool.c | 10 +++++++---
++ 1 file changed, 7 insertions(+), 3 deletions(-)
++
++diff --git a/tools/corosync-cfgtool.c b/tools/corosync-cfgtool.c
++index ed29694..2808961 100644
++--- a/tools/corosync-cfgtool.c
+++++ b/tools/corosync-cfgtool.c
++@@ -100,7 +100,7 @@ linkstatusget_do (char *interface_name, int brief)
++ 	unsigned int i;
++ 	cmap_iter_handle_t iter;
++ 	unsigned int nodeid;
++-	unsigned int node_pos;
+++	int nodeid_match_guard;
++ 	cmap_value_types_t type;
++ 	size_t value_len;
++ 	int rc = 0;
++@@ -128,8 +128,12 @@ linkstatusget_do (char *interface_name, int brief)
++ 	}
++ 
++ 	while ((cmap_iter_next(cmap_handle, iter, iter_key, &value_len, &type)) == CS_OK) {
++-		result = sscanf(iter_key, "nodelist.node.%u.nodeid", &node_pos);
++-		if (result != 1) {
+++		nodeid_match_guard = 0;
+++		if (sscanf(iter_key, "nodelist.node.%*u.nodeid%n", &nodeid_match_guard) != 0) {
+++			continue;
+++		}
+++		/* check for exact match */
+++		if (nodeid_match_guard != strlen(iter_key)) {
++ 			continue;
++ 		}
++ 		if (cmap_get_uint32(cmap_handle, iter_key, &nodeid) == CS_OK) {
 diff --git a/debian/patches/cfgtool-Improve-link-status-display.patch b/debian/patches/cfgtool-Improve-link-status-display.patch
 new file mode 100644
 index 00000000..93ee9937
@@ -156,11 +229,12 @@ index 00000000..93ee9937
 + 	return rc;
 + }
 diff --git a/debian/patches/series b/debian/patches/series
-index fcba2944..32007175 100644
+index fcba2944..83f51959 100644
 --- a/debian/patches/series
 +++ b/debian/patches/series
-@@ -6,3 +6,4 @@ AC_PROG_SED-is-already-present.patch
+@@ -6,3 +6,5 @@ AC_PROG_SED-is-already-present.patch
  Use-the-SED-variable-provided-by-configure.patch
  Use-the-AWK-variable-provided-by-configure.patch
  pve__only-start-corosync.service-if-conf-exists.patch
 +cfgtool-Improve-link-status-display.patch
++cfgtool-Fix-link-status-display.patch

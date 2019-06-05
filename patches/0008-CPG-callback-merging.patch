@@ -844,10 +844,10 @@ index 00000000..013baaa0
 + 
 + static void message_handler_req_exec_cpg_procleave (
 diff --git a/debian/patches/series b/debian/patches/series
-index 6f18c886..324cc365 100644
+index 76328bab..7dbb1f50 100644
 --- a/debian/patches/series
 +++ b/debian/patches/series
-@@ -12,3 +12,8 @@ set-totem.keyfile-and-totem.key-to-RO.patch
+@@ -13,3 +13,8 @@ set-totem.keyfile-and-totem.key-to-RO.patch
  keygen-Reflect-change-in-knet.patch
  totemconfig-Remove-support-for-3des.patch
  crypto-re-introduce-secauth-parameter.patch

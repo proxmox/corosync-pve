@@ -53,11 +53,11 @@ index 00000000..8b7f240c
 + [Service]
 + EnvironmentFile=-@INITCONFIGDIR@/corosync
 diff --git a/debian/patches/series b/debian/patches/series
-index 32007175..2caabe1c 100644
+index 83f51959..3b4e2901 100644
 --- a/debian/patches/series
 +++ b/debian/patches/series
-@@ -7,3 +7,4 @@ Use-the-SED-variable-provided-by-configure.patch
- Use-the-AWK-variable-provided-by-configure.patch
+@@ -8,3 +8,4 @@ Use-the-AWK-variable-provided-by-configure.patch
  pve__only-start-corosync.service-if-conf-exists.patch
  cfgtool-Improve-link-status-display.patch
+ cfgtool-Fix-link-status-display.patch
 +Revert-init-Enable-StopWhenUnneeded.patch
