@@ -10,9 +10,8 @@ Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
 ---
  .../Make-the-example-config-valid.patch       | 64 -------------------
  debian/corosync.install                       |  2 +-
- debian/patches/series                         |  1 -
  debian/rules                                  |  3 -
- 4 files changed, 1 insertion(+), 69 deletions(-)
+ 3 files changed, 1 insertion(+), 68 deletions(-)
  delete mode 100644 debian/patches/Make-the-example-config-valid.patch
 
 diff --git a/debian/patches/Make-the-example-config-valid.patch b/debian/patches/Make-the-example-config-valid.patch
@@ -98,17 +97,6 @@ index bfaca759..c5b92661 100644
  etc/corosync/uidgid.d
  usr/share/corosync/xml2conf.xsl
  var/lib/corosync
-diff --git a/debian/patches/series b/debian/patches/series
-index 6b552ce1..41866b14 100644
---- a/debian/patches/series
-+++ b/debian/patches/series
-@@ -1,6 +1,5 @@
- Fix-various-typos-in-ChangeLog.patch
- Enable-PrivateTmp-in-the-systemd-service-files.patch
--Make-the-example-config-valid.patch
- corosync.conf.5-fix-grammar.patch
- corosync.conf.5-typography-fixes.patch
- AC_PROG_SED-is-already-present.patch
 diff --git a/debian/rules b/debian/rules
 index 52ff4699..50d89e2a 100755
 --- a/debian/rules

@@ -15,7 +15,7 @@ Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
 
 diff --git a/debian/patches/pve__only-start-corosync.service-if-conf-exists.patch b/debian/patches/pve__only-start-corosync.service-if-conf-exists.patch
 new file mode 100644
-index 00000000..edbc5eb0
+index 00000000..d3bd7ac5
 --- /dev/null
 +++ b/debian/patches/pve__only-start-corosync.service-if-conf-exists.patch
 @@ -0,0 +1,24 @@
@@ -32,7 +32,7 @@ index 00000000..edbc5eb0
 + 1 file changed, 1 insertion(+)
 +
 +diff --git a/init/corosync.service.in b/init/corosync.service.in
-+index dc99a4a..28046ca 100644
++index 0c74306..adf7080 100644
 +--- a/init/corosync.service.in
 ++++ b/init/corosync.service.in
 +@@ -2,6 +2,7 @@
@@ -42,13 +42,13 @@ index 00000000..edbc5eb0
 ++ConditionPathExists=/etc/corosync/corosync.conf
 + Requires=network-online.target
 + After=network-online.target
-+ StopWhenUnneeded=yes
++ 
 diff --git a/debian/patches/series b/debian/patches/series
-index 41866b14..fcba2944 100644
+index ea6e04ea..803038e4 100644
 --- a/debian/patches/series
 +++ b/debian/patches/series
-@@ -5,3 +5,4 @@ corosync.conf.5-typography-fixes.patch
- AC_PROG_SED-is-already-present.patch
- Use-the-SED-variable-provided-by-configure.patch
- Use-the-AWK-variable-provided-by-configure.patch
+@@ -51,3 +51,4 @@ vqsim-Check-result-of-icmap_set_uint32.patch
+ vqsim-Check-length-of-copied-optarg.patch
+ Fix-various-typos-in-ChangeLog.patch
+ Enable-PrivateTmp-in-the-systemd-service-files.patch
 +pve__only-start-corosync.service-if-conf-exists.patch

@@ -1,8 +1,7 @@
-0001-don-t-install-default-corosync.conf.patch
-0002-remove-init-script.patch
-0003-only-start-corosync.service-if-conf-exists.patch
+0001-cherry-pick-3.0.2-as-patches.patch
+0002-don-t-install-default-corosync.conf.patch
+0003-remove-init-script.patch
 0004-bsys-disable-augeas-tools.patch
-0005-cfgtool-Improve-link-status-display.patch
-0006-Revert-init-Enable-StopWhenUnneeded.patch
-0007-add-crypto-patches.patch
-0008-CPG-callback-merging.patch
+0005-only-start-corosync.service-if-conf-exists.patch
+0006-CPG-callback-merging.patch
+0007-bump-version-to-3.0.2.patch
