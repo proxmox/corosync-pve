@@ -1,8 +1,9 @@
 include /usr/share/dpkg/architecture.mk
 
-CSVERSION=3.0.1
+CSVERSION=3.0.2
 CSRELEASE=pve1~bpo9
-DEBRELEASE=2
+# note: 3.0.2 cherry-picked as patches!
+DEBRELEASE=INVALID
 CSDIR=corosync-${CSVERSION}
 CSSRC=corosync_${CSVERSION}.orig.tar.gz
 
