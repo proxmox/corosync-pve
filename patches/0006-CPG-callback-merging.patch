@@ -14,177 +14,17 @@ in network load on bigger clusters running pmxcfs.
 
 Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
 ---
- .../cpg-Add-CPG_REASON_UNDEFINED.patch        | 152 +++++++++++++
  ...more-comments-to-notify_lib_joinlist.patch | 193 +++++++++++++++++
  ...illing-of-member_list-to-subfunction.patch | 130 ++++++++++++
  ...ify_lib_joinlist-drop-conn-parameter.patch | 112 ++++++++++
  ...-confchg-event-per-group-on-joinlist.patch | 199 ++++++++++++++++++
- debian/patches/series                         |   5 +
- 6 files changed, 791 insertions(+)
- create mode 100644 debian/patches/cpg-Add-CPG_REASON_UNDEFINED.patch
+ debian/patches/series                         |   4 +
+ 5 files changed, 638 insertions(+)
  create mode 100644 debian/patches/cpg-Add-more-comments-to-notify_lib_joinlist.patch
  create mode 100644 debian/patches/cpg-Move-filling-of-member_list-to-subfunction.patch
  create mode 100644 debian/patches/cpg-notify_lib_joinlist-drop-conn-parameter.patch
  create mode 100644 debian/patches/cpg-send-single-confchg-event-per-group-on-joinlist.patch
 
-diff --git a/debian/patches/cpg-Add-CPG_REASON_UNDEFINED.patch b/debian/patches/cpg-Add-CPG_REASON_UNDEFINED.patch
-new file mode 100644
-index 00000000..a69b53ac
---- /dev/null
-+++ b/debian/patches/cpg-Add-CPG_REASON_UNDEFINED.patch
-@@ -0,0 +1,152 @@
-+From: Jan Friesse <jfriesse@redhat.com>
-+Date: Tue, 16 Apr 2019 12:52:31 +0200
-+Subject: cpg: Add CPG_REASON_UNDEFINED
-+
-+Previously the reason field for the member_list items
-+in cpg_totem_confchg_fn was unset what may be little confusing.
-+
-+Solution is to add a special value CPG_REASON_UNDEFINED and use it for
-+the member_list items.
-+
-+Signed-off-by: Jan Friesse <jfriesse@redhat.com>
-+Reviewed-by: Christine Caulfield <ccaulfie@redhat.com>
-+(cherry picked from commit 41f9e966bb1cfa70d0f6ec1ce46d9c845845b599)
-+---
-+ include/corosync/cpg.h        |  3 ++-
-+ man/cpg_initialize.3.in       | 18 ++++++++++--------
-+ man/cpg_model_initialize.3.in | 18 ++++++++++--------
-+ exec/cpg.c                    |  3 ++-
-+ 4 files changed, 24 insertions(+), 18 deletions(-)
-+
-+diff --git a/include/corosync/cpg.h b/include/corosync/cpg.h
-+index 5ebd478..600bbf7 100644
-+--- a/include/corosync/cpg.h
-++++ b/include/corosync/cpg.h
-+@@ -1,5 +1,5 @@
-+ /*
-+- * Copyright (c) 2006-2011 Red Hat, Inc.
-++ * Copyright (c) 2006-2019 Red Hat, Inc.
-+  *
-+  * All rights reserved.
-+  *
-+@@ -80,6 +80,7 @@ typedef enum {
-+  * @brief The cpg_reason_t enum
-+  */
-+ typedef enum {
-++	CPG_REASON_UNDEFINED = 0,
-+ 	CPG_REASON_JOIN = 1,
-+ 	CPG_REASON_LEAVE = 2,
-+ 	CPG_REASON_NODEDOWN = 3,
-+diff --git a/man/cpg_initialize.3.in b/man/cpg_initialize.3.in
-+index bdecc1e..38c7de5 100644
-+--- a/man/cpg_initialize.3.in
-++++ b/man/cpg_initialize.3.in
-+@@ -1,5 +1,5 @@
-+ .\"/*
-+-.\" * Copyright (c) 2006-2009 Red Hat, Inc.
-++.\" * Copyright (c) 2006-2019 Red Hat, Inc.
-+ .\" *
-+ .\" * All rights reserved.
-+ .\" *
-+@@ -31,7 +31,7 @@
-+ .\" * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-+ .\" * THE POSSIBILITY OF SUCH DAMAGE.
-+ .\" */
-+-.TH CPG_INITIALIZE 3 2004-08-31 "corosync Man Page" "Corosync Cluster Engine Programmer's Manual"
-++.TH CPG_INITIALIZE 3 2019-04-16 "corosync Man Page" "Corosync Cluster Engine Programmer's Manual"
-+ .SH NAME
-+ cpg_initialize \- Create a new connection to the CPG service
-+ .SH SYNOPSIS
-+@@ -132,18 +132,20 @@ struct cpg_address {
-+ .IP
-+ .PP
-+ where nodeid is a 32 bit unique node identifier, pid is the process ID of the process that has joined/left the group
-+-or sent the message, and reason is an integer code indicating why the node joined/left the group.
-++or sent the message, and reason is an integer code indicating why the node joined/left the group (this value is not
-++set for the member_list items).
-+ .PP
-+ .IP
-+ .RS
-+ .ne 18
-+ .nf
-+ .PP
-+-CPG_REASON_JOIN     - the process joined a group using cpg_join().
-+-CPG_REASON_LEAVE    - the process left a group using cpg_leave()
-+-CPG_REASON_NODEDOWN - the process left a group because the node left the cluster.
-+-CPG_REASON_NODEUP   - the process joined a group because it was already a member of a group on a node that has just joined the cluster
-+-CPG_REASON_PROCDOWN - the process left a group without calling cpg_leave()
-++CPG_REASON_JOIN      - the process joined a group using cpg_join().
-++CPG_REASON_LEAVE     - the process left a group using cpg_leave()
-++CPG_REASON_NODEDOWN  - the process left a group because the node left the cluster.
-++CPG_REASON_NODEUP    - the process joined a group because it was already a member of a group on a node that has just joined the cluster
-++CPG_REASON_PROCDOWN  - the process left a group without calling cpg_leave()
-++CPG_REASON_UNDEFINED - a special value used for the member_list items
-+ .ta
-+ .fi
-+ .RE
-+diff --git a/man/cpg_model_initialize.3.in b/man/cpg_model_initialize.3.in
-+index e06325d..17ca16a 100644
-+--- a/man/cpg_model_initialize.3.in
-++++ b/man/cpg_model_initialize.3.in
-+@@ -1,5 +1,5 @@
-+ .\"/*
-+-.\" * Copyright (c) 2010 Red Hat, Inc.
-++.\" * Copyright (c) 2010-2019 Red Hat, Inc.
-+ .\" *
-+ .\" * All rights reserved.
-+ .\" *
-+@@ -32,7 +32,7 @@
-+ .\" * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
-+ .\" * THE POSSIBILITY OF SUCH DAMAGE.
-+ .\" */
-+-.TH CPG_MODEL_INITIALIZE 3 2010-04-07 "corosync Man Page" "Corosync Cluster Engine Programmer's Manual"
-++.TH CPG_MODEL_INITIALIZE 3 2019-04-16 "corosync Man Page" "Corosync Cluster Engine Programmer's Manual"
-+ .SH NAME
-+ cpg_model_initialize \- Create a new connection to the CPG service
-+ .SH SYNOPSIS
-+@@ -166,18 +166,20 @@ struct cpg_address {
-+ .IP
-+ .PP
-+ where nodeid is a 32 bit unique node identifier, pid is the process ID of the process that has joined/left the group
-+-or sent the message, and reason is an integer code indicating why the node joined/left the group.
-++or sent the message, and reason is an integer code indicating why the node joined/left the group (this value is not
-++set for the member_list items).
-+ .PP
-+ .IP
-+ .RS
-+ .ne 18
-+ .nf
-+ .PP
-+-CPG_REASON_JOIN     - the process joined a group using cpg_join().
-+-CPG_REASON_LEAVE    - the process left a group using cpg_leave()
-+-CPG_REASON_NODEDOWN - the process left a group because the node left the cluster.
-+-CPG_REASON_NODEUP   - the process joined a group because it was already a member of a group on a node that has just joined the cluster
-+-CPG_REASON_PROCDOWN - the process left a group without calling cpg_leave()
-++CPG_REASON_JOIN      - the process joined a group using cpg_join().
-++CPG_REASON_LEAVE     - the process left a group using cpg_leave()
-++CPG_REASON_NODEDOWN  - the process left a group because the node left the cluster.
-++CPG_REASON_NODEUP    - the process joined a group because it was already a member of a group on a node that has just joined the cluster
-++CPG_REASON_PROCDOWN  - the process left a group without calling cpg_leave()
-++CPG_REASON_UNDEFINED - a special value used for the member_list items
-+ .ta
-+ .fi
-+ .RE
-+diff --git a/exec/cpg.c b/exec/cpg.c
-+index b7ac579..e39ca34 100644
-+--- a/exec/cpg.c
-++++ b/exec/cpg.c
-+@@ -1,5 +1,5 @@
-+ /*
-+- * Copyright (c) 2006-2015 Red Hat, Inc.
-++ * Copyright (c) 2006-2019 Red Hat, Inc.
-+  *
-+  * All rights reserved.
-+  *
-+@@ -712,6 +712,7 @@ static int notify_lib_joinlist(
-+ 			if (!founded) {
-+ 				retgi->nodeid = pi->nodeid;
-+ 				retgi->pid = pi->pid;
-++				retgi->reason = CPG_REASON_UNDEFINED;
-+ 				retgi++;
-+ 			}
-+ 		}
 diff --git a/debian/patches/cpg-Add-more-comments-to-notify_lib_joinlist.patch b/debian/patches/cpg-Add-more-comments-to-notify_lib_joinlist.patch
 new file mode 100644
 index 00000000..e32102fa
@@ -844,14 +684,13 @@ index 00000000..013baaa0
 + 
 + static void message_handler_req_exec_cpg_procleave (
 diff --git a/debian/patches/series b/debian/patches/series
-index 76328bab..7dbb1f50 100644
+index 803038e4..fec11c03 100644
 --- a/debian/patches/series
 +++ b/debian/patches/series
-@@ -13,3 +13,8 @@ set-totem.keyfile-and-totem.key-to-RO.patch
- keygen-Reflect-change-in-knet.patch
- totemconfig-Remove-support-for-3des.patch
- crypto-re-introduce-secauth-parameter.patch
-+cpg-Add-CPG_REASON_UNDEFINED.patch
+@@ -52,3 +52,7 @@ vqsim-Check-length-of-copied-optarg.patch
+ Fix-various-typos-in-ChangeLog.patch
+ Enable-PrivateTmp-in-the-systemd-service-files.patch
+ pve__only-start-corosync.service-if-conf-exists.patch
 +cpg-notify_lib_joinlist-drop-conn-parameter.patch
 +cpg-send-single-confchg-event-per-group-on-joinlist.patch
 +cpg-Add-more-comments-to-notify_lib_joinlist.patch
