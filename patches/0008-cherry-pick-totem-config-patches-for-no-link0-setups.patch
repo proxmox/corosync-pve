@@ -1,0 +1,127 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Thomas Lamprecht <t.lamprecht@proxmox.com>
+Date: Fri, 21 Jun 2019 14:19:44 +0200
+Subject: [PATCH] cherry-pick totem config patches for no link0 setups
+
+Signed-off-by: Thomas Lamprecht <t.lamprecht@proxmox.com>
+---
+ debian/patches/series                         |  2 +
+ ...if-all-nodes-have-name-attrs-in-mult.patch | 48 +++++++++++++++++++
+ ...if-all-nodes-have-same-number-of-lin.patch | 40 ++++++++++++++++
+ 3 files changed, 90 insertions(+)
+ create mode 100644 debian/patches/totem-fix-check-if-all-nodes-have-name-attrs-in-mult.patch
+ create mode 100644 debian/patches/totem-fix-check-if-all-nodes-have-same-number-of-lin.patch
+
+diff --git a/debian/patches/series b/debian/patches/series
+index 36735b84..5c91cd38 100644
+--- a/debian/patches/series
++++ b/debian/patches/series
+@@ -57,3 +57,5 @@ cpg-send-single-confchg-event-per-group-on-joinlist.patch
+ cpg-Add-more-comments-to-notify_lib_joinlist.patch
+ cpg-Move-filling-of-member_list-to-subfunction.patch
+ bump-version-to-3.0.2.patch
++totem-fix-check-if-all-nodes-have-name-attrs-in-mult.patch
++totem-fix-check-if-all-nodes-have-same-number-of-lin.patch
+diff --git a/debian/patches/totem-fix-check-if-all-nodes-have-name-attrs-in-mult.patch b/debian/patches/totem-fix-check-if-all-nodes-have-name-attrs-in-mult.patch
+new file mode 100644
+index 00000000..9a6cc3ab
+--- /dev/null
++++ b/debian/patches/totem-fix-check-if-all-nodes-have-name-attrs-in-mult.patch
+@@ -0,0 +1,48 @@
++From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
++From: Thomas Lamprecht <t.lamprecht@proxmox.com>
++Date: Fri, 14 Jun 2019 18:31:16 +0200
++Subject: [PATCH] totem: fix check if all nodes have name attrs in multi-link
++ setups
++
++As totem_config->interfaces entries are _all_ possible links and not
++only the configured ones we cannot trust that interface[0] is
++configured at the time of checking, and thus has a valid
++member_count. So set the members variable to the member_count entry
++from an actually configured interface and loop over that one.
++
++This fixes a case where the check for the name property on all nodes
++for multi links was skipped if link 0 was not configured, as then its
++member_count was 0.
++
++Signed-off-by: Thomas Lamprecht <t.lamprecht@proxmox.com>
++Reviewed-by: Christine Caulfield <ccaulfie@redhat.com>
++Reviewed-by: Jan Friesse <jfriesse@redhat.com>
++(cherry picked from commit 7ada508a82680dcf23510e585ec295b10ac5da11)
++Signed-off-by: Thomas Lamprecht <t.lamprecht@proxmox.com>
++---
++ exec/totemconfig.c | 7 ++++---
++ 1 file changed, 4 insertions(+), 3 deletions(-)
++
++diff --git a/exec/totemconfig.c b/exec/totemconfig.c
++index d57562ae..0c2b5320 100644
++--- a/exec/totemconfig.c
+++++ b/exec/totemconfig.c
++@@ -388,14 +388,15 @@ static int totem_volatile_config_validate (
++ 	num_configured = 0;
++ 	for (i = 0; i < INTERFACE_MAX; i++) {
++ 		if (totem_config->interfaces[i].configured) {
+++			if (num_configured == 0) {
+++				members = totem_config->interfaces[i].member_count;
+++			}
++ 			num_configured++;
++ 		}
++ 	}
++ 
++ 	if (num_configured > 1) {
++-		members = totem_config->interfaces[0].member_count;
++-
++-		for (i=0; i<totem_config->interfaces[0].member_count; i++) {
+++		for (i=0; i < members; i++) {
++ 			snprintf(name_key, sizeof(name_key), "nodelist.node.%d.name", i);
++ 
++ 			if (icmap_get_string(name_key, &name_str) != CS_OK) {
+diff --git a/debian/patches/totem-fix-check-if-all-nodes-have-same-number-of-lin.patch b/debian/patches/totem-fix-check-if-all-nodes-have-same-number-of-lin.patch
+new file mode 100644
+index 00000000..2f061de5
+--- /dev/null
++++ b/debian/patches/totem-fix-check-if-all-nodes-have-same-number-of-lin.patch
+@@ -0,0 +1,40 @@
++From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
++From: Thomas Lamprecht <t.lamprecht@proxmox.com>
++Date: Fri, 14 Jun 2019 18:56:57 +0200
++Subject: [PATCH] totem: fix check if all nodes have same number of links
++
++configured links may not come in order in the interfaces array, which
++holds an entry for _all_ possible links, not just configured ones.
++
++So iterate through all interfaces, but skip those which are not
++configured. This allows to start corosync with a configuration where
++link 0 is currently not mentioned, as else it was checked but had
++member_count = 0 from it's default initialization, which then made
++this code report a false positive for the "Not all nodes have the
++same number of links" check even on a correct config.
++
++Signed-off-by: Thomas Lamprecht <t.lamprecht@proxmox.com>
++Reviewed-by: Christine Caulfield <ccaulfie@redhat.com>
++Reviewed-by: Jan Friesse <jfriesse@redhat.com>
++(cherry picked from commit 816324c94cfb917b11f43954b8757424db28b390)
++Signed-off-by: Thomas Lamprecht <t.lamprecht@proxmox.com>
++---
++ exec/totemconfig.c | 5 ++++-
++ 1 file changed, 4 insertions(+), 1 deletion(-)
++
++diff --git a/exec/totemconfig.c b/exec/totemconfig.c
++index 0c2b5320..d2b3ed72 100644
++--- a/exec/totemconfig.c
+++++ b/exec/totemconfig.c
++@@ -406,7 +406,10 @@ static int totem_volatile_config_validate (
++ 			}
++ 		}
++ 
++-		for (i=0; i<num_configured; i++) {
+++		for (i=0; i < INTERFACE_MAX; i++) {
+++			if (!totem_config->interfaces[i].configured) {
+++				continue;
+++			}
++ 			if (totem_config->interfaces[i].member_count != members) {
++ 				snprintf (local_error_reason, sizeof(local_error_reason),
++ 					  "Not all nodes have the same number of links");
+-- 
+2.20.1
+

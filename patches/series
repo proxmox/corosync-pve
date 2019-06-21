@@ -5,4 +5,5 @@
 0005-only-start-corosync.service-if-conf-exists.patch
 0006-CPG-callback-merging.patch
 0007-bump-version-to-3.0.2.patch
-0008-d-control-switch-back-to-comapt-level-10-for-stretch.patch
+0008-cherry-pick-totem-config-patches-for-no-link0-setups.patch
+0009-d-control-switch-back-to-comapt-level-10-for-stretch.patch
