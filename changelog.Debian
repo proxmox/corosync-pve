@@ -1,3 +1,10 @@
+corosync (3.0.2-pve2~bpo9) pve; urgency=medium
+
+  * cherry pick totem config patches to improve compatibillity with setups
+    without a (currently) configured link0
+
+ -- Proxmox Support Team <support@proxmox.com>  Fri, 21 Jun 2019 14:26:28 +0200
+
 corosync (3.0.2-pve1~bpo9) pve; urgency=medium
 
   * update backport to Corosync 3.0.2
