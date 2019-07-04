@@ -111,7 +111,7 @@ download-qdev:
 
 .PHONY: upload
 upload: ${DEBS}
-	tar cf - ${DEBS} | ssh -X repoman@repo.proxmox.com -- upload --product pve --dist stretch --arch ${DEB_BUILD_ARCH}
+	tar cf - ${DEBS} | ssh -X repoman@repo.proxmox.com -- upload --product corosync-3 --dist stretch --arch ${DEB_BUILD_ARCH}
 
 distclean: clean
 
