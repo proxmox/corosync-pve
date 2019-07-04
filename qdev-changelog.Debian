@@ -1,0 +1,7 @@
+corosync-qdevice (3.0.0-4~bpo9) pve; urgency=medium
+
+  * build corosync qdevice for Proxmox VE 5 / Debian Stretch transitional
+    corosync 3 repository
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 04 Jul 2019 17:45:04 +0200
+

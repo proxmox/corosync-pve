@@ -7,6 +7,12 @@ DEBRELEASE=INVALID
 CSDIR=corosync-${CSVERSION}
 CSSRC=corosync_${CSVERSION}.orig.tar.gz
 
+QDEV_SRC=corosync-qdevice
+QDEV_VERS=3.0.0
+QDEV_BUILD=${QDEV_SRC}-${QDEV_VERS}
+QDEV_DEBDOWNLOADRELEASe=4
+QDEV_DEBRELEASE=4~bpo9
+
 ARCH:=$(shell dpkg-architecture -qDEB_BUILD_ARCH)
 GITVERSION:=$(shell git rev-parse HEAD)
 
@@ -41,7 +47,15 @@ libquorum5-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libsam4-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 libvotequorum8-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
 
-DEBS=${MAIN_DEB} ${OTHER_DEBS} ${DBG_DEBS}
+QDEV_DEBS=\
+corosync-qdevice_${QDEV_VERS}-${QDEV_DEBRELEASE}_${DEB_BUILD_ARCH}.deb \
+corosync-qnetd_${QDEV_VERS}-${QDEV_DEBRELEASE}_${DEB_BUILD_ARCH}.deb \
+
+QDEV_DBG_DEBS=\
+corosync-qdevice-dbgsym_${QDEV_VERS}-${QDEV_DEBRELEASE}_${DEB_BUILD_ARCH}.deb \
+corosync-qnetd-dbgsym_${QDEV_VERS}-${QDEV_DEBRELEASE}_${DEB_BUILD_ARCH}.deb \
+
+DEBS=${MAIN_DEB} ${OTHER_DEBS} ${DBG_DEBS} ${QDEV_DEBS} ${QDEV_DBG_DEBS}
 
 DSC=corosync-pve_${CSVERSION}-${CSRELEASE}.dsc
 
@@ -65,6 +79,17 @@ ${OTHER_DEBS} ${DBG_DEBS}: ${MAIN_DEB}
 ${MAIN_DEB}: ${CSDIR}
 	cd ${CSDIR}; dpkg-buildpackage -b -us -uc
 
+.PHONY: qdev-deb
+qdev-deb: ${QDEV_DEBS} ${QDEV_DBG_DEBS}
+${QDEV_DEBS} ${QDEV_DBG_DEBS}: ${QDEV_SRC}
+	rm -rf ${QDEV_BUILD} ${QDEV_BUILD}.tmp
+	cp -a ${QDEV_SRC} ${QDEV_BUILD}.tmp
+	cd ${QDEV_BUILD}.tmp; patch -p1 < ../qdev-patches/QDEVICE-switch-debian-compat-to-10.patch
+	mv ${QDEV_BUILD}.tmp/debian/changelog ${QDEV_BUILD}.tmp/debian/changelog.org
+	cat qdev-changelog.Debian ${QDEV_BUILD}.tmp/debian/changelog.org > ${QDEV_BUILD}.tmp/debian/changelog
+	mv ${QDEV_BUILD}.tmp ${QDEV_BUILD}
+	cd ${QDEV_BUILD}; dpkg-buildpackage -b -us -uc
+
 .PHONY: dsc
 dsc: ${DSC}
 ${DSC}: ${CSDIR}
@@ -77,6 +102,13 @@ download:
 	tar czf ${CSSRC}.tmp ${CSDIR}
 	mv ${CSSRC}.tmp ${CSSRC}
 
+.PHONY: download-qdev
+download-qdev:
+	rm -rf ${QDEV_SRC} ${QDEV_SRC}.tmp
+	git clone https://salsa.debian.org/ha-team/corosync-qdevice.git -b debian/${QDEV_VERS}-${QDEV_DEBDOWNLOADRELEASe} ${QDEV_SRC}.tmp
+	rm -rf ${QDEV_SRC}.tmp/.git
+	mv ${QDEV_SRC}.tmp ${QDEV_SRC}
+
 .PHONY: upload
 upload: ${DEBS}
 	tar cf - ${DEBS} | ssh -X repoman@repo.proxmox.com -- upload --product pve --dist stretch --arch ${DEB_BUILD_ARCH}
@@ -85,7 +117,7 @@ distclean: clean
 
 .PHONY: clean
 clean:
-	rm -rf *.deb *.changes *.dsc *.buildinfo ${CSDIR} *.debian.tar.xz
+	rm -rf *.deb *.changes *.dsc *.buildinfo ${CSDIR} ${QDEV_BUILD}* *.debian.tar.xz
 	find . -name '*~' -exec rm {} ';'
 
 .PHONY: dinstall

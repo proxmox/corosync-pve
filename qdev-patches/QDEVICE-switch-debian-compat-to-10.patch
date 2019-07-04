@@ -1,0 +1,23 @@
+diff --git a/debian/compat b/debian/compat
+index 48082f7..f599e28 100644
+--- a/debian/compat
++++ b/debian/compat
+@@ -1 +1 @@
+-12
++10
+diff --git a/debian/control b/debian/control
+index 99bac51..16d22cc 100644
+--- a/debian/control
++++ b/debian/control
+@@ -5,9 +5,9 @@ Maintainer: Debian HA Maintainers <debian-ha-maintainers@lists.alioth.debian.org
+ Uploaders:
+  Ferenc Wágner <wferi@debian.org>,
+  Valentin Vidic <vvidic@debian.org>,
+-Standards-Version: 4.3.0
++Standards-Version: 4.1.3
+ Build-Depends:
+- debhelper (>= 12~),
++ debhelper (>= 10~),
+  libcmap-dev,
+  libcorosync-common-dev,
+  libnss3-dev,
