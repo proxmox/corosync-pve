@@ -1,0 +1,7 @@
+lib/systemd/system/corosync-qdevice.service
+usr/sbin/corosync-qdevice
+usr/sbin/corosync-qdevice-net-certutil
+usr/sbin/corosync-qdevice-tool
+usr/share/man/man8/corosync-qdevice.8
+usr/share/man/man8/corosync-qdevice-net-certutil.8
+usr/share/man/man8/corosync-qdevice-tool.8

@@ -1,0 +1,198 @@
+2018-11-26  Jan Friesse  <jfriesse@redhat.com>
+
+	certutils: Fix warnings found by coverity
+
+2018-11-15  Jan Friesse  <jfriesse@redhat.com>
+
+	init: Fix init scripts to work with containers
+	Previously init scripts were not using pid file so pidof was used. This
+	is usually not a problem, but when containers are used it may result to
+	killing improper instance when issued on host.
+
+	Solution is to always use pidfile.
+
+	Also try to use LSB complaint status codes.
+
+	Reviewed-by: Christine Caulfield <ccaulfie@redhat.com>
+
+2018-11-07  Jan Friesse  <jfriesse@redhat.com>
+
+	configure: move to AC_COMPILE_IFELSE
+	from AC_PREPROC_IFELSE which is strongly discouraged.
+
+	Our detection system was very weak and recent versions of clang did
+	show that PREPROC_IFELFE (cpp) would enable warning options that
+	the compiler does not support (clang).
+
+	Use a full compilation test to detect what works and what doesn't.
+
+	Based on knet patch 88491f27375a9e8aceb946853a1abf4d23ebb8f3.
+
+	Reviewed-by: Fabio M. Di Nitto <fdinitto@redhat.com>
+
+2018-09-03  Jan Friesse  <jfriesse@redhat.com>
+
+	git-version-gen: Fail on UNKNOWN version
+	Reviewed-by: Christine Caulfield <ccaulfie@redhat.com>
+
+	build: Support for git archive stored tags
+	Attempt to solve problem with git archive generated tarballs
+	(used for example by github when release is downloaded) which are no
+	longer git tree and (in contrast to officially released tarballs) also
+	doesn't contain .tarball-version file so git-version-gen script simply
+	cannot obtain valid version info.
+
+	Solution is based on using gitattributes which is instructs git to
+	replace string in the .gitarchivever file by known ref names.
+	git-version-gen is enhanced to support this file and tries to parse
+	any string which looks like "tag: v[0-9]+.[0-9]+.[0-9]". If such string
+	is found it's used as a version. This file is used as a last attempt and
+	other methods (.tarball-version, git abbrev) have precedence.
+
+	Based on idea stated by Jan Pokorný <jpokorny@redhat.com>.
+
+	Reviewed-by: Christine Caulfield <ccaulfie@redhat.com>
+
+2018-08-27  Jan Friesse  <jfriesse@redhat.com>
+
+	qdevice: Propagate error to exit code
+	Net model never returned error when qdevice_model_run was called. This
+	was incorrect because with exception of local ipc close all other
+	disconnect reasons are errors.
+
+	Solution is to return proper error code.
+
+	Also instead of exit right after qdevice_model_run it's better to store
+	result value, try clean resources and use stored value to return correct
+	exit code.
+
+2018-08-22  Jan Friesse  <jfriesse@redhat.com>
+
+	build: Remove WITH_LIST
+	WITH_LIST is replaced in favor of bcond generator.
+
+	spec: Autogenerate bcond options based on config
+	Inspired by kronosnet spec file generator.
+
+2018-08-21  Jan Friesse  <jfriesse@redhat.com>
+
+	spec: add exlicit docdir
+	OpenSUSE does not ship docs in the normal dir and their rpm macro
+	does not appear to set it for us.
+
+	Based on corosync 30c7f3319f003efa1abeb2173eef9e5c7943ae5b.
+
+	spec: Use different BuildRequires for SUSE
+
+	init: disable stderr output in systemd unit file
+	Usually both syslog and stderr are enabled so log entries are duplicated
+	in journal. Solution is to use similar patch as corosync
+	c34208ad402b45f52b5d3ee8d2a08df0779ec9aa and disable stderr.
+
+	tests: Enlarge timeout for process-list test
+
+2018-08-09  Jan Friesse  <jfriesse@redhat.com>
+
+	spec: Add explicit gcc build dependency
+
+	config: Remove unneeded qb includes
+
+	qnetd-certutil: Add -G option
+
+	man: Document NSS database conversion
+	This is not needed at least for cert8 -> cert9, but it's still nice to
+	have it documented. Also document NSS_IGNORE_SYSTEM_POLICY=1 workaround.
+
+	qdevice-net-certutil: Implement scp wrapper
+	Standard scp doesn't handle copy of file from remote machine to remote
+	machine very well when agent forwarding is used and no key exists
+	between the machines.
+
+	certutil: Add support for new NSS database format
+	New NSS database uses files cert9.db, key4.db and pkcs11.txt. Add
+	support for these files into cert utilities.
+
+	gitignore: Add testsuite results
+
+2018-08-08  Jan Friesse  <jfriesse@redhat.com>
+
+	qdevice-cmap: Fix compiler warning on Sparc/ARM
+
+	tests: Notify process-list after trap was created
+	Previously there was no waiting for establish of bash trap.
+	This may result in situation when sigint/term was send before trap
+	making test fail.
+
+	Solution is to catch the sigusr1 and sigusr2 signals in tests and wait
+	till these signals are sent by bash after trap is established.
+
+2018-05-02  Jan Friesse  <jfriesse@redhat.com>
+
+	unix-socket: Fix snprintf warning
+	Base N on sizeof sun_path instead of strlen of input path.
+
+2018-04-27  Jan Friesse  <jfriesse@redhat.com>
+
+	tests: enlarge process-list timeouts
+
+	tests: process-list add stdlib include
+
+	tests: Fix process-list test to work on FreeBSD
+	FreeBSD true and false commands are installed in the /usr/bin prefix
+	instead of Linux /bin.
+
+2018-04-20  Ferenc Wágner  <wferi@debian.org>
+
+	Fix typo: sucesfully -> successfully
+	Reviewed-by: Jan Friesse <jfriesse@redhat.com>
+
+2018-04-19  Bin Liu  <bliu@suse.com>
+
+	qdevice: optarg should be str in init_from_cmap
+	Reviewed-by: Jan Friesse <jfriesse@redhat.com>
+
+2018-04-12  Jan Friesse  <jfriesse@redhat.com>
+
+	spec: Remove unused clean section
+
+2018-04-03  Jan Friesse  <jfriesse@redhat.com>
+
+	msgio: Remove unused code
+	Blocking version of send was used in the very early phases of qdevice
+	development and it's not used any longer, so it make sense to delete
+	it.
+
+2018-03-23  Jan Friesse  <jfriesse@redhat.com>
+
+	msgio: Fix reading of msg longer than PR_INT32_MAX
+
+2018-03-02  Jan Friesse  <jfriesse@redhat.com>
+
+	qnetd: Replace strtol by strtonum
+
+	qdevice: Replace strtol by strtonum
+
+	Add safer wrapper of strtoll
+
+	Check if user_data can be dereferenced
+
+	Nodelist is set into string not array
+
+	Fix NULL pointer dereference
+
+	Quote certutils scripts properly
+	Also remove unused variables.
+
+	init: Quote subshell result properly
+
+2018-01-25  Jan Friesse  <jfriesse@redhat.com>
+
+	spec: Modernize spec file a bit
+	Thanks to Robert-André Mauchin <zebob.m@gmail.com> for spec file review
+	and comments.
+
+2018-01-23  Jan Friesse  <jfriesse@redhat.com>
+
+	Initial import from corosync codebase
+	Used the code from corosync master
+	(31ddba64a2726bcedf81eb84df2e2da4846832f7)

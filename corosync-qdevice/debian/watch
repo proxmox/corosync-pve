@@ -1,0 +1,4 @@
+version=4
+opts="pgpsigurlmangle=s/$/.asc/" \
+  https://github.com/corosync/@PACKAGE@/releases \
+  .*/@PACKAGE@@ANY_VERSION@@ARCHIVE_EXT@

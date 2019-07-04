@@ -1,0 +1,46 @@
+#!/bin/sh
+
+set -e
+
+# setup TLS certificates
+corosync-qdevice-net-certutil -i -c /etc/corosync/qnetd/nssdb/qnetd-cacert.crt 2>&1
+corosync-qdevice-net-certutil -r -n debian 2>&1
+corosync-qnetd-certutil -s -c /etc/corosync/qdevice/net/nssdb/qdevice-net-node.crq -n debian 2>&1
+corosync-qdevice-net-certutil -M -c /etc/corosync/qnetd/nssdb/cluster-debian.crt 2>&1
+
+# service config
+cat >>/etc/corosync/corosync.conf <<EOF
+quorum {
+        device {
+                model: net
+                votes: 1
+
+                net {
+                        host: 127.0.0.1
+                }
+        }
+}
+EOF
+
+# service start
+corosync-cfgtool -R
+service corosync-qdevice start
+
+# service status
+service corosync status
+service corosync-qnetd status
+service corosync-qdevice status
+
+# wait for qdevice to connect
+sleep 3
+
+# quorum status
+printf "\n=== corosync-qdevice-tool ===\n"
+corosync-qdevice-tool -v -s
+
+printf "\n=== corosync-qnetd-tool ===\n"
+corosync-qnetd-tool -v -s
+corosync-qnetd-tool -v -l
+
+printf "\n=== corosync-quorumtool ===\n"
+corosync-quorumtool || true

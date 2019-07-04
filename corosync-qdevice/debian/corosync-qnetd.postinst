@@ -1,0 +1,30 @@
+#!/bin/sh
+
+set -e
+
+dir=/etc/corosync/qnetd
+db="$dir/nssdb"
+pwdfile="$db/pwdfile.txt"
+user=coroqnetd
+
+if [ "$1" = configure ]; then
+    adduser --system --group --quiet --home "$dir" \
+        --no-create-home --disabled-login "$user"
+
+    # https://fedoraproject.org/wiki/Changes/NSSDefaultFileFormatSql
+    if ! [ -f "$db/cert9.db" ]; then
+	if [ -f "$dir/nssdb/cert8.db" ]; then
+	    # password file should have an empty line to be accepted
+	    [ -f "$pwdfile" -a ! -s "$pwdfile" ] && echo > "$pwdfile"
+
+	    # upgrade to SQLite database
+	    certutil -N -d "sql:$db" -f "$pwdfile" -@ "$pwdfile"
+	    chmod g+r "$db/cert9.db" "$db/key4.db"
+	else
+            corosync-qnetd-certutil -i -G
+	fi
+	chgrp "$user" "$db" "$db/cert9.db" "$db/key4.db"
+    fi
+fi
+
+#DEBHELPER#

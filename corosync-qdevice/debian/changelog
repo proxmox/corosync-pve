@@ -1,0 +1,37 @@
+corosync-qdevice (3.0.0-4) unstable; urgency=medium
+
+  * [c680521] Revert "Require pacemaker for qdevice autopkgtest"
+    The actual bug is the Corosync daemon not running after installation,
+    which was fixed by switching to Debhelper compatibility level 12 in the
+    3.0.1-2 upload of Corosync.
+
+ -- Ferenc Wágner <wferi@debian.org>  Mon, 04 Feb 2019 00:33:24 +0100
+
+corosync-qdevice (3.0.0-3) unstable; urgency=medium
+
+  * [2772eac] Fix Vcs-Browser URL
+  * [8041dc0] Require pacemaker for qdevice autopkgtest (Closes: #921265)
+  * [fd9d7ba] Use minimal upstream signing key
+
+ -- Valentin Vidic <vvidic@debian.org>  Sun, 03 Feb 2019 23:11:20 +0100
+
+corosync-qdevice (3.0.0-2) unstable; urgency=medium
+
+  * [ee08d93] Fix cert database upgrade (Closes: #919901)
+  * [631309b] Add autopkgtests
+  * [d03ebb2] Add myself to Uploaders
+
+ -- Valentin Vidic <vvidic@debian.org>  Wed, 30 Jan 2019 21:34:53 +0100
+
+corosync-qdevice (3.0.0-1) unstable; urgency=medium
+
+  * [8264197] Initial packaging after the split from Corosync
+  * [b2bcd82] Get rid of the empty default files
+  * [6fbd903] Do not enable corosync-qdevice the Debhelper 12 way
+  * [70cddbb] Do not generate HTML versions of the man pages
+  * [d31f9b1] Skip dh_dwz until further investigation
+  * [f3ccfeb] Update the qnetd NSS DB if necessary
+  * [320d791] New patch: Use PrivateTmp=yes for hardening in systemd service
+    files
+
+ -- Ferenc Wágner <wferi@debian.org>  Fri, 04 Jan 2019 02:45:19 +0100

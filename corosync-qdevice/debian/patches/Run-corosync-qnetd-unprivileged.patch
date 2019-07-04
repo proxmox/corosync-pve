@@ -1,0 +1,22 @@
+From: =?utf-8?q?Ferenc_W=C3=A1gner?= <wferi@debian.org>
+Date: Fri, 28 Oct 2016 16:19:30 +0200
+Subject: Run corosync-qnetd unprivileged
+
+---
+ init/corosync-qnetd.service.in | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/init/corosync-qnetd.service.in b/init/corosync-qnetd.service.in
+index a8d6a7e..54e91c9 100644
+--- a/init/corosync-qnetd.service.in
++++ b/init/corosync-qnetd.service.in
+@@ -11,8 +11,7 @@ ExecStart=@BINDIR@/corosync-qnetd -f $COROSYNC_QNETD_OPTIONS
+ Type=notify
+ StandardError=null
+ Restart=on-abnormal
+-# Uncomment and set user who should be used for executing qnetd
+-#User=coroqnetd
++User=coroqnetd
+ RuntimeDirectory=corosync-qnetd
+ RuntimeDirectoryMode=0770
+ 

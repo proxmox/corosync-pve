@@ -1,0 +1,7 @@
+Depends: corosync-qnetd
+Restrictions: needs-root, isolation-container
+Tests: qnetd
+
+Depends: corosync-qnetd, corosync-qdevice
+Restrictions: needs-root, isolation-container
+Tests: qdevice

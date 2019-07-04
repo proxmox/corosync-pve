@@ -1,0 +1,2 @@
+Run-corosync-qnetd-unprivileged.patch
+Use-PrivateTmp-yes-for-hardening-in-systemd-service-files.patch

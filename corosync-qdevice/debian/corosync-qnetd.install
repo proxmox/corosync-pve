@@ -1,0 +1,8 @@
+etc/corosync/qnetd
+lib/systemd/system/corosync-qnetd.service
+usr/bin/corosync-qnetd
+usr/bin/corosync-qnetd-certutil
+usr/bin/corosync-qnetd-tool
+usr/share/man/man8/corosync-qnetd.8
+usr/share/man/man8/corosync-qnetd-certutil.8
+usr/share/man/man8/corosync-qnetd-tool.8

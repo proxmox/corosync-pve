@@ -1,0 +1,55 @@
+#!/bin/sh
+# kFreeBSD do not accept scripts as interpreters, using #!/bin/sh and sourcing.
+if [ true != "$INIT_D_SCRIPT_SOURCED" ] ; then
+    set "$0" "$@"; INIT_D_SCRIPT_SOURCED=true . /lib/init/init-d-script
+fi
+### BEGIN INIT INFO
+# Provides:		corosync-qdevice
+# Required-Start:	$remote_fs $syslog corosync
+# Required-Stop:	$remote_fs $syslog corosync
+# Default-Start:	
+# Default-Stop:		0 1 6
+# Short-Description:	Corosync Qdevice daemon
+# Description:		Starts and stops Corosync Qdevice daemon.
+### END INIT INFO
+
+NAME="corosync-qdevice"
+DESC="Corosync Qdevice daemon"
+DAEMON="/usr/sbin/$NAME"
+PIDFILE="/run/$NAME/$NAME.pid"
+
+CONFIG="/etc/default/$NAME"
+[ -f "$CONFIG" ] && . "$CONFIG"
+
+DAEMON_ARGS="$COROSYNC_QDEVICE_OPTIONS"
+
+do_start_prepare() {
+    if grep -q nocluster /proc/cmdline; then
+        log_failure_msg "not configured to run at boot"
+        exit 1
+    fi
+}
+
+# do_{start,stop}_cmd from init-d-script, but without the --name option.
+# corosync-qdevice is too long for a process name, it gets truncated,
+# which makes it incompatible with the --name option.  See #843419.
+do_start_cmd() {
+	start-stop-daemon --start --quiet ${PIDFILE:+--pidfile ${PIDFILE}} \
+	    $START_ARGS \
+	    --startas $DAEMON --exec $DAEMON --test > /dev/null \
+	    || return 1
+	start-stop-daemon --start --quiet ${PIDFILE:+--pidfile ${PIDFILE}} \
+	    $START_ARGS \
+	    --startas $DAEMON --exec $DAEMON -- $DAEMON_ARGS \
+	    || return 2
+}
+do_stop_cmd() {
+	start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 \
+	    $STOP_ARGS \
+	    ${PIDFILE:+--pidfile ${PIDFILE}} --exec $DAEMON
+	RETVAL="$?"
+	[ "$RETVAL" = 2 ] && return 2
+	# Many daemons don't delete their pidfiles when they exit.
+	rm -f $PIDFILE
+	return $RETVAL
+}
