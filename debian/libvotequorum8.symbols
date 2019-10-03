@@ -1,0 +1,21 @@
+libvotequorum.so.8 libvotequorum8 #MINVER#
+* Build-Depends-Package: libvotequorum-dev
+ COROSYNC_VOTEQUORUM_1.0@COROSYNC_VOTEQUORUM_1.0 2.4.2
+ (arch=!ppc64el !hppa !hurd-i386 !powerpc !powerpcspe !ppc64)__start___verbose@Base 2.4.3
+ (arch=!ppc64el !hppa !hurd-i386 !powerpc !powerpcspe !ppc64)__stop___verbose@Base 2.4.3
+ votequorum_context_get@COROSYNC_VOTEQUORUM_1.0 2.4.2
+ votequorum_context_set@COROSYNC_VOTEQUORUM_1.0 2.4.2
+ votequorum_dispatch@Base 2.4.2
+ votequorum_fd_get@Base 2.4.2
+ votequorum_finalize@COROSYNC_VOTEQUORUM_1.0 2.4.2
+ votequorum_getinfo@COROSYNC_VOTEQUORUM_1.0 2.4.2
+ votequorum_initialize@COROSYNC_VOTEQUORUM_1.0 2.4.2
+ votequorum_qdevice_master_wins@Base 2.4.2
+ votequorum_qdevice_poll@COROSYNC_VOTEQUORUM_1.0 2.4.2
+ votequorum_qdevice_register@COROSYNC_VOTEQUORUM_1.0 2.4.2
+ votequorum_qdevice_unregister@COROSYNC_VOTEQUORUM_1.0 2.4.2
+ votequorum_qdevice_update@Base 2.4.2
+ votequorum_setexpected@COROSYNC_VOTEQUORUM_1.0 2.4.2
+ votequorum_setvotes@COROSYNC_VOTEQUORUM_1.0 2.4.2
+ votequorum_trackstart@COROSYNC_VOTEQUORUM_1.0 2.4.2
+ votequorum_trackstop@COROSYNC_VOTEQUORUM_1.0 2.4.2

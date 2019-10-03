@@ -1,0 +1,5 @@
+usr/include/corosync/cpg.h
+usr/lib/*/libcpg.so
+usr/lib/*/pkgconfig/libcpg.pc
+usr/share/man/man3/cpg_*.3
+usr/share/man/man3/cpg_overview.3

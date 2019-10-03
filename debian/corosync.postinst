@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = "configure" ]; then
+	echo 'This file is here to keep the log dir around after package removal
+until #588515 is fixed.' >/var/log/corosync/.empty
+	# really was empty before 2.3.5-1
+fi
+
+#DEBHELPER#

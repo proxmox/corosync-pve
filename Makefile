@@ -1,11 +1,13 @@
+include /usr/share/dpkg/pkg-info.mk
 include /usr/share/dpkg/architecture.mk
 
-CSVERSION=3.0.2
+PACKAGE=corosync
+
+CSVERSION=${DEB_VERSION_UPSTREAM}
 CSRELEASE=pve2
-# note: 3.0.2 cherry-picked as patches!
-DEBRELEASE=INVALID
-CSDIR=corosync-${CSVERSION}
-CSSRC=corosync_${CSVERSION}.orig.tar.gz
+
+BUILDDIR=${PACKAGE}-${CSVERSION}
+CSSRC=upstream
 
 ARCH:=$(shell dpkg-architecture -qDEB_BUILD_ARCH)
 GITVERSION:=$(shell git rev-parse HEAD)
@@ -48,44 +50,35 @@ DSC=corosync-pve_${CSVERSION}-${CSRELEASE}.dsc
 all: ${DEBS}
 	echo ${DEBS}
 
-${CSDIR}: ${CSSRC} patches changelog.Debian
+${BUILDDIR}: submodule debian/changelog
 	rm -rf $@ $@.tmp
-	mkdir $@.tmp
-	tar -C $@.tmp --strip-components=1 -xf ${CSSRC}
-	mv $@.tmp/debian/changelog $@.tmp/debian/changelog.org
-	cat changelog.Debian $@.tmp/debian/changelog.org > $@.tmp/debian/changelog
-	cd $@.tmp; ln -s ../patches patches
-	cd $@.tmp; quilt push -a
-	cd $@.tmp; rm -rf .pc ./patches
+	cp -a ${CSSRC} $@.tmp
+	cp -a debian $@.tmp
 	mv $@.tmp $@
 
 .PHONY: deb
 deb: ${DEBS}
 ${OTHER_DEBS} ${DBG_DEBS}: ${MAIN_DEB}
-${MAIN_DEB}: ${CSDIR}
-	cd ${CSDIR}; dpkg-buildpackage -b -us -uc
+${MAIN_DEB}: ${BUILDDIR}
+	cd ${BUILDDIR}; dpkg-buildpackage -b -us -uc
 
 .PHONY: dsc
 dsc: ${DSC}
-${DSC}: ${CSDIR}
-	cd ${CSDIR}; dpkg-buildpackage -S -us -uc -d -nc
+${DSC}: ${BUILDDIR}
+	cd ${BUILDDIR}; dpkg-buildpackage -S -us -uc -d -nc
 
-.PHONY: download
-download:
-	rm -rf ${CSSRC} ${CSSRC}.tmp ${CSDIR}
-	git clone https://salsa.debian.org/ha-team/corosync.git -b debian/${CSVERSION}-${DEBRELEASE} ${CSDIR}
-	tar czf ${CSSRC}.tmp ${CSDIR}
-	mv ${CSSRC}.tmp ${CSSRC}
+.PHONY: submodule
+submodule:
+	test -f "${CSSRC}/INSTALL" || git submodule update --init ${CSSRC}
 
 .PHONY: upload
 upload: ${DEBS}
 	tar cf - ${DEBS} | ssh -X repoman@repo.proxmox.com -- upload --product pve --dist buster --arch ${DEB_BUILD_ARCH}
 
-distclean: clean
-
 .PHONY: clean
+distclean: clean
 clean:
-	rm -rf *.deb *.changes *.dsc *.buildinfo ${CSDIR} *.debian.tar.xz
+	rm -rf *.deb *.changes *.dsc *.buildinfo ${BUILDDIR}
 	find . -name '*~' -exec rm {} ';'
 
 .PHONY: dinstall

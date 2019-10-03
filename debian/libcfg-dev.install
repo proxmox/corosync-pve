@@ -1,0 +1,3 @@
+usr/include/corosync/cfg.h
+usr/lib/*/libcfg.so
+usr/lib/*/pkgconfig/libcfg.pc

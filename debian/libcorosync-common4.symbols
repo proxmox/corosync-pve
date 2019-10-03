@@ -1,0 +1,5 @@
+libcorosync_common.so.4 libcorosync-common4 #MINVER#
+* Build-Depends-Package: libcorosync-common-dev
+ cs_strerror@Base 1.99.9
+ hdb_error_to_cs@Base 1.99.9
+ qb_to_cs_error@Base 1.99.9

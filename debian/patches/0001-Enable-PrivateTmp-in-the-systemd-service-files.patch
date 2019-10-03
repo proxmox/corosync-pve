@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Ferenc=20W=C3=A1gner?= <wferi@debian.org>
+Date: Mon, 10 Dec 2018 18:55:40 +0100
+Subject: [PATCH] Enable PrivateTmp in the systemd service files
+
+Signed-off-by: Thomas Lamprecht <t.lamprecht@proxmox.com>
+---
+ init/corosync-notifyd.service.in | 1 +
+ init/corosync.service.in         | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/init/corosync-notifyd.service.in b/init/corosync-notifyd.service.in
+index 410a6837..9247cbcf 100644
+--- a/init/corosync-notifyd.service.in
++++ b/init/corosync-notifyd.service.in
+@@ -9,6 +9,7 @@ EnvironmentFile=-@INITCONFIGDIR@/corosync-notifyd
+ ExecStart=@SBINDIR@/corosync-notifyd -f $OPTIONS
+ Type=notify
+ Restart=on-failure
++PrivateTmp=yes
+ 
+ [Install]
+ WantedBy=multi-user.target
+diff --git a/init/corosync.service.in b/init/corosync.service.in
+index 654e41fc..0c74306b 100644
+--- a/init/corosync.service.in
++++ b/init/corosync.service.in
+@@ -28,6 +28,7 @@ StandardError=null
+ #RestartSec=70
+ #  rewrite according to environment.
+ #ExecStartPre=/sbin/modprobe softdog
++PrivateTmp=yes
+ 
+ [Install]
+ WantedBy=multi-user.target

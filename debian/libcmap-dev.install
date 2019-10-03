@@ -1,0 +1,5 @@
+usr/include/corosync/cmap.h
+usr/lib/*/libcmap.so
+usr/lib/*/pkgconfig/libcmap.pc
+usr/share/man/man3/cmap_*.3
+usr/share/man/man3/cmap_overview.3
