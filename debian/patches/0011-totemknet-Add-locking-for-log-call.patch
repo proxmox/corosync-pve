@@ -1,0 +1,93 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jan Friesse <jfriesse@redhat.com>
+Date: Mon, 9 Sep 2019 17:47:24 +0200
+Subject: [PATCH] totemknet: Add locking for log call
+
+Knet callbacks may be called from different thread than main thread. If
+this happens, log messages may be lost. Most prominent example is when
+link goes up (logged by main thread) and host_change_callback_fn is
+called.
+
+Implemented solution is adding mutex for every log call in totemknet.
+
+Signed-off-by: Jan Friesse <jfriesse@redhat.com>
+Reviewed-by: Fabio M. Di Nitto <fdinitto@redhat.com>
+(cherry picked from commit 1cf1558fe745de0f81147ca33ea1f27ac152308d)
+Signed-off-by: Thomas Lamprecht <t.lamprecht@proxmox.com>
+---
+ exec/totemknet.c | 30 +++++++++++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
+
+diff --git a/exec/totemknet.c b/exec/totemknet.c
+index 38b69e7b..a372ea75 100644
+--- a/exec/totemknet.c
++++ b/exec/totemknet.c
+@@ -51,6 +51,7 @@
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <errno.h>
++#include <pthread.h>
+ #include <sched.h>
+ #include <time.h>
+ #include <sys/time.h>
+@@ -171,6 +172,8 @@ struct totemknet_instance {
+ 
+ 	int logpipes[2];
+ 	int knet_fd;
++
++	pthread_mutex_t log_mutex;
+ #ifdef HAVE_LIBNOZZLE
+ 	char *nozzle_name;
+ 	char *nozzle_ipaddr;
+@@ -203,20 +206,36 @@ static void log_flush_messages (
+ 
+ static void totemknet_instance_initialize (struct totemknet_instance *instance)
+ {
++	int res;
++
+ 	memset (instance, 0, sizeof (struct totemknet_instance));
++	res = pthread_mutex_init(&instance->log_mutex, NULL);
++	/*
++	 * There is not too much else what can be done.
++	 */
++	assert(res == 0);
+ }
+ 
++#define knet_log_printf_lock(level, subsys, function, file, line, format, args...)	\
++do {											\
++	(void)pthread_mutex_lock(&instance->log_mutex);					\
++	instance->totemknet_log_printf (						\
++		level, subsys, function, file, line,					\
++		(const char *)format, ##args);						\
++	(void)pthread_mutex_unlock(&instance->log_mutex);				\
++} while (0);
++
+ #define knet_log_printf(level, format, args...)		\
+ do {							\
+-        instance->totemknet_log_printf (		\
++        knet_log_printf_lock (				\
+ 		level, instance->totemknet_subsys_id,	\
+                 __FUNCTION__, __FILE__, __LINE__,	\
+ 		(const char *)format, ##args);		\
+ } while (0);
+ 
+-#define libknet_log_printf(level, format, args...)		\
++#define libknet_log_printf(level, format, args...)	\
+ do {							\
+-        instance->totemknet_log_printf (		\
++        knet_log_printf_lock (				\
+ 		level, instance->knet_subsys_id,	\
+                 __FUNCTION__, "libknet.h", __LINE__,	\
+ 		(const char *)format, ##args);		\
+@@ -603,6 +622,11 @@ finalise_error:
+ 
+ 	log_flush_messages(instance);
+ 
++	/*
++	 * Error is deliberately ignored
++	 */
++	(void)pthread_mutex_destroy(&instance->log_mutex);
++
+ 	return (res);
+ }
+ 
