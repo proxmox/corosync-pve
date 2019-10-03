@@ -1,0 +1,19 @@
+#!/bin/sh -e
+
+cd debian
+
+pkgs=$(grep-dctrl -sPackage -n -FSection libdevel control)
+
+for p in $pkgs; do
+    includes="$includes -I $p/usr/include"
+done
+
+for pkg in $pkgs; do
+  {
+    printf 'header:Depends='
+    for header in $(find "$pkg" -name "*.h"); do
+        gcc -MM -MT '' -E $includes $header
+    done | sed "s|^:||;s|^ *||;\|^$pkg/|d;s|/.*| (= \${binary:Version}),|" | sort -u | tr '\n' ' '
+    printf '\n'
+  } >>"$pkg.substvars"
+done

@@ -1,0 +1,2 @@
+# This tiny library does not even need libc
+shared-lib-without-dependency-information usr/lib/*/libcorosync_common.so.4.0.0

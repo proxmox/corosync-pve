@@ -1,11 +1,13 @@
+include /usr/share/dpkg/pkg-info.mk
 include /usr/share/dpkg/architecture.mk
 
-CSVERSION=3.0.2
-CSRELEASE=pve2~bpo9
-# note: 3.0.2 cherry-picked as patches!
-DEBRELEASE=INVALID
-CSDIR=corosync-${CSVERSION}
-CSSRC=corosync_${CSVERSION}.orig.tar.gz
+PACKAGE=corosync
+
+CSVERSION=${DEB_VERSION_UPSTREAM}
+CSRELEASE=pve2
+
+BUILDDIR=${PACKAGE}-${CSVERSION}
+CSSRC=upstream
 
 QDEV_SRC=corosync-qdevice
 QDEV_VERS=3.0.0
@@ -62,22 +64,17 @@ DSC=corosync-pve_${CSVERSION}-${CSRELEASE}.dsc
 all: ${DEBS}
 	echo ${DEBS}
 
-${CSDIR}: ${CSSRC} patches changelog.Debian
+${BUILDDIR}: submodule debian/changelog
 	rm -rf $@ $@.tmp
-	mkdir $@.tmp
-	tar -C $@.tmp --strip-components=1 -xf ${CSSRC}
-	mv $@.tmp/debian/changelog $@.tmp/debian/changelog.org
-	cat changelog.Debian $@.tmp/debian/changelog.org > $@.tmp/debian/changelog
-	cd $@.tmp; ln -s ../patches patches
-	cd $@.tmp; quilt push -a
-	cd $@.tmp; rm -rf .pc ./patches
+	cp -a ${CSSRC} $@.tmp
+	cp -a debian $@.tmp
 	mv $@.tmp $@
 
 .PHONY: deb
 deb: ${DEBS}
 ${OTHER_DEBS} ${DBG_DEBS}: ${MAIN_DEB}
-${MAIN_DEB}: ${CSDIR}
-	cd ${CSDIR}; dpkg-buildpackage -b -us -uc
+${MAIN_DEB}: ${BUILDDIR}
+	cd ${BUILDDIR}; dpkg-buildpackage -b -us -uc
 
 .PHONY: qdev-deb
 qdev-deb: ${QDEV_DEBS} ${QDEV_DBG_DEBS}
@@ -92,15 +89,12 @@ ${QDEV_DEBS} ${QDEV_DBG_DEBS}: ${QDEV_SRC}
 
 .PHONY: dsc
 dsc: ${DSC}
-${DSC}: ${CSDIR}
-	cd ${CSDIR}; dpkg-buildpackage -S -us -uc -d -nc
+${DSC}: ${BUILDDIR}
+	cd ${BUILDDIR}; dpkg-buildpackage -S -us -uc -d -nc
 
-.PHONY: download
-download:
-	rm -rf ${CSSRC} ${CSSRC}.tmp ${CSDIR}
-	git clone https://salsa.debian.org/ha-team/corosync.git -b debian/${CSVERSION}-${DEBRELEASE} ${CSDIR}
-	tar czf ${CSSRC}.tmp ${CSDIR}
-	mv ${CSSRC}.tmp ${CSSRC}
+.PHONY: submodule
+submodule:
+	test -f "${CSSRC}/INSTALL" || git submodule update --init ${CSSRC}
 
 .PHONY: download-qdev
 download-qdev:
@@ -113,11 +107,10 @@ download-qdev:
 upload: ${DEBS}
 	tar cf - ${DEBS} | ssh -X repoman@repo.proxmox.com -- upload --product corosync-3 --dist stretch --arch ${DEB_BUILD_ARCH}
 
-distclean: clean
-
 .PHONY: clean
+distclean: clean
 clean:
-	rm -rf *.deb *.changes *.dsc *.buildinfo ${CSDIR} ${QDEV_BUILD}* *.debian.tar.xz
+	rm -rf *.deb *.changes *.dsc *.buildinfo ${BUILDDIR} ${QDEV_BUILD}
 	find . -name '*~' -exec rm {} ';'
 
 .PHONY: dinstall

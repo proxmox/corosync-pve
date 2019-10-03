@@ -1,0 +1,25 @@
+libcpg.so.4 libcpg4 #MINVER#
+* Build-Depends-Package: libcpg-dev
+ COROSYNC_CPG_1.0@COROSYNC_CPG_1.0 1.0.0
+ (arch=!ppc64el !hppa !hurd-i386 !powerpc !powerpcspe !ppc64)__start___verbose@Base 2.4.3
+ (arch=!ppc64el !hppa !hurd-i386 !powerpc !powerpcspe !ppc64)__stop___verbose@Base 2.4.3
+ cpg_context_get@COROSYNC_CPG_1.0 1.0.0
+ cpg_context_set@COROSYNC_CPG_1.0 1.0.0
+ cpg_dispatch@COROSYNC_CPG_1.0 1.0.0
+ cpg_fd_get@COROSYNC_CPG_1.0 1.0.0
+ cpg_finalize@COROSYNC_CPG_1.0 1.0.0
+ cpg_flow_control_state_get@Base 1.0.0
+ cpg_initialize@COROSYNC_CPG_1.0 1.0.0
+ cpg_iteration_finalize@Base 1.1.0
+ cpg_iteration_initialize@Base 1.1.0
+ cpg_iteration_next@Base 1.1.0
+ cpg_join@COROSYNC_CPG_1.0 1.0.0
+ cpg_leave@COROSYNC_CPG_1.0 1.0.0
+ cpg_local_get@Base 1.0.0
+ cpg_max_atomic_msgsize_get@Base 2.3.5
+ cpg_mcast_joined@COROSYNC_CPG_1.0 1.0.0
+ cpg_membership_get@COROSYNC_CPG_1.0 1.0.0
+ cpg_model_initialize@Base 1.3.0
+ cpg_zcb_alloc@COROSYNC_CPG_1.0 1.0.0
+ cpg_zcb_free@COROSYNC_CPG_1.0 1.0.0
+ cpg_zcb_mcast_joined@Base 1.0.0

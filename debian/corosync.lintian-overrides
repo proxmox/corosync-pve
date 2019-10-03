@@ -1,0 +1,2 @@
+# This file contains configuration instructions as well
+package-contains-upstream-installation-documentation usr/share/doc/corosync/INSTALL.gz

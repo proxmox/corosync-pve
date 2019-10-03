@@ -1,0 +1,5 @@
+usr/include/corosync/votequorum.h
+usr/lib/*/libvotequorum.so
+usr/lib/*/pkgconfig/libvotequorum.pc
+usr/share/man/man3/votequorum_*.3
+usr/share/man/man3/votequorum_overview.3

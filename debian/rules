@@ -1,0 +1,71 @@
+#!/usr/bin/make -f
+
+# see FEATURE AREAS in dpkg-buildflags(1)
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+# Ensure that we link against all needed libraries (cf. Policy 10.2)
+export DEB_LDFLAGS_MAINT_APPEND=-Wl,-z,defs
+
+ifneq ($(wildcard /usr/include/statgrab.h),)
+enable-monitoring=--enable-monitoring
+endif
+
+ifneq ($(wildcard /usr/include/linux/watchdog.h),)
+enable-watchdog=--enable-watchdog
+endif
+
+ifneq ($(wildcard /usr/include/systemd/sd-daemon.h),)
+enable-systemd=--enable-systemd
+initscript-dir=usr/share/corosync
+else
+initscript-dir=etc/init.d
+endif
+
+%:
+	dh $@
+
+# Avoid useless dependencies in the libraries
+override_dh_autoreconf:
+	dh_autoreconf --as-needed
+
+# Explicit BASHPATH fixes reproducible build on merged-usr vs non-merged:
+override_dh_auto_configure:
+	dh_auto_configure -- \
+	    BASHPATH=/bin/bash \
+	    --with-initconfigdir=/etc/default \
+	    --with-logdir=/var/log/corosync \
+	    --enable-dbus \
+	    $(enable-monitoring) \
+	    $(enable-watchdog) \
+	    --disable-augeas \
+	    --enable-snmp \
+	    --enable-xmlconf \
+	    $(enable-systemd) \
+	    --disable-static
+
+override_dh_auto_build-indep:
+	$(MAKE) -C man
+	$(MAKE) doxygen
+	find doc/api/html -name "*.md5" -print -delete
+
+# The check target would unnecessarily build the software
+override_dh_auto_test-indep:
+
+override_dh_auto_install-indep:
+	$(MAKE) -C man DESTDIR="$(CURDIR)/debian/tmp" install
+
+override_dh_auto_install-arch:
+	dh_auto_install
+	rm -v debian/tmp/usr/lib/*/lib*.la
+# we don't need the upstream license
+	rm debian/tmp/usr/share/doc/corosync/LICENSE
+
+override_dh_missing:
+	dh_missing --fail-missing
+
+override_dh_gencontrol:
+	debian/check_header_deps
+	dh_gencontrol
+
+# dwz fails with "Allocatable section in [...] after non-allocatable ones"
+override_dh_dwz:

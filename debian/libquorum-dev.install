@@ -1,0 +1,5 @@
+usr/lib/*/libquorum.so
+usr/lib/*/pkgconfig/libquorum.pc
+usr/include/corosync/quorum.h
+usr/share/man/man3/quorum_*.3
+usr/share/man/man3/quorum_overview.3

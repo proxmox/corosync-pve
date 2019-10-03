@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Fabian=20Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>
+Date: Wed, 24 Oct 2018 15:15:33 +0200
+Subject: [PATCH] only start corosync.service if conf exists
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
+Signed-off-by: Thomas Lamprecht <t.lamprecht@proxmox.com>
+---
+ init/corosync.service.in | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/init/corosync.service.in b/init/corosync.service.in
+index 0c74306b..adf7080f 100644
+--- a/init/corosync.service.in
++++ b/init/corosync.service.in
+@@ -2,6 +2,7 @@
+ Description=Corosync Cluster Engine
+ Documentation=man:corosync man:corosync.conf man:corosync_overview
+ ConditionKernelCommandLine=!nocluster
++ConditionPathExists=/etc/corosync/corosync.conf
+ Requires=network-online.target
+ After=network-online.target
+ 

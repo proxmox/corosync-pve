@@ -1,0 +1,2 @@
+# Send DBUS signals on all events (see corosync-notifyd(8) for options)
+OPTIONS="-d"

@@ -1,0 +1,48 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Thomas Lamprecht <t.lamprecht@proxmox.com>
+Date: Fri, 14 Jun 2019 18:31:16 +0200
+Subject: [PATCH] totem: fix check if all nodes have name attrs in multi-link
+ setups
+
+As totem_config->interfaces entries are _all_ possible links and not
+only the configured ones we cannot trust that interface[0] is
+configured at the time of checking, and thus has a valid
+member_count. So set the members variable to the member_count entry
+from an actually configured interface and loop over that one.
+
+This fixes a case where the check for the name property on all nodes
+for multi links was skipped if link 0 was not configured, as then its
+member_count was 0.
+
+Signed-off-by: Thomas Lamprecht <t.lamprecht@proxmox.com>
+Reviewed-by: Christine Caulfield <ccaulfie@redhat.com>
+Reviewed-by: Jan Friesse <jfriesse@redhat.com>
+(cherry picked from commit 7ada508a82680dcf23510e585ec295b10ac5da11)
+Signed-off-by: Thomas Lamprecht <t.lamprecht@proxmox.com>
+---
+ exec/totemconfig.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/exec/totemconfig.c b/exec/totemconfig.c
+index ff86e232..dfde90df 100644
+--- a/exec/totemconfig.c
++++ b/exec/totemconfig.c
+@@ -449,14 +449,15 @@ static int totem_volatile_config_validate (
+ 	num_configured = 0;
+ 	for (i = 0; i < INTERFACE_MAX; i++) {
+ 		if (totem_config->interfaces[i].configured) {
++			if (num_configured == 0) {
++				members = totem_config->interfaces[i].member_count;
++			}
+ 			num_configured++;
+ 		}
+ 	}
+ 
+ 	if (num_configured > 1) {
+-		members = totem_config->interfaces[0].member_count;
+-
+-		for (i=0; i<totem_config->interfaces[0].member_count; i++) {
++		for (i=0; i < members; i++) {
+ 			snprintf(name_key, sizeof(name_key), "nodelist.node.%d.name", i);
+ 
+ 			if (icmap_get_string(name_key, &name_str) != CS_OK) {
