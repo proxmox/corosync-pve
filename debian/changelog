@@ -1,3 +1,15 @@
+corosync (3.0.2-pve3) pve; urgency=medium
+
+  * totemknet: Disable forwarding on shutdown to make knet flush all messages
+    (especially LEAVE one)
+
+  * totemknet: Add locking for log call to ensure no log message is lost from
+    different threads
+
+  * totempg: Check sanity (length) of received message
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 03 Oct 2019 16:13:54 +0200
+
 corosync (3.0.2-pve2) pve; urgency=medium
 
   * cherry pick totem config patches to improve compatibillity with setups
