@@ -4,7 +4,6 @@ include /usr/share/dpkg/architecture.mk
 PACKAGE=corosync
 
 CSVERSION=${DEB_VERSION_UPSTREAM}
-CSRELEASE=pve2
 
 BUILDDIR=${PACKAGE}-${CSVERSION}
 CSSRC=upstream
@@ -18,36 +17,36 @@ QDEV_DEBRELEASE=4~bpo9
 ARCH:=$(shell dpkg-architecture -qDEB_BUILD_ARCH)
 GITVERSION:=$(shell git rev-parse HEAD)
 
-MAIN_DEB=corosync_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+MAIN_DEB=corosync_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
 
 OTHER_DEBS=\
-corosync-notifyd_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-corosync-doc_${CSVERSION}-${CSRELEASE}_all.deb \
-libcfg7_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libcmap4_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libcorosync-common4_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libcpg4_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libquorum5_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libsam4_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libvotequorum8_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libcfg-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libcmap-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libcorosync-common-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libcpg-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libquorum-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libsam-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libvotequorum-dev_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+corosync-notifyd_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
+corosync-doc_${DEB_VERSION}_all.deb \
+libcfg7_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
+libcmap4_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
+libcorosync-common4_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
+libcpg4_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
+libquorum5_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
+libsam4_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
+libvotequorum8_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
+libcfg-dev_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
+libcmap-dev_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
+libcorosync-common-dev_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
+libcpg-dev_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
+libquorum-dev_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
+libsam-dev_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
+libvotequorum-dev_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
 
 DBG_DEBS=\
-corosync-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-corosync-notifyd-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libcfg7-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libcmap4-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libcorosync-common4-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libcpg4-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libquorum5-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libsam4-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
-libvotequorum8-dbgsym_${CSVERSION}-${CSRELEASE}_${DEB_BUILD_ARCH}.deb \
+corosync-dbgsym_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
+corosync-notifyd-dbgsym_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
+libcfg7-dbgsym_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
+libcmap4-dbgsym_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
+libcorosync-common4-dbgsym_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
+libcpg4-dbgsym_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
+libquorum5-dbgsym_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
+libsam4-dbgsym_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
+libvotequorum8-dbgsym_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
 
 QDEV_DEBS=\
 corosync-qdevice_${QDEV_VERS}-${QDEV_DEBRELEASE}_${DEB_BUILD_ARCH}.deb \
@@ -59,7 +58,7 @@ corosync-qnetd-dbgsym_${QDEV_VERS}-${QDEV_DEBRELEASE}_${DEB_BUILD_ARCH}.deb \
 
 DEBS=${MAIN_DEB} ${OTHER_DEBS} ${DBG_DEBS} ${QDEV_DEBS} ${QDEV_DBG_DEBS}
 
-DSC=corosync-pve_${CSVERSION}-${CSRELEASE}.dsc
+DSC=corosync-pve_${DEB_VERSION}.dsc
 
 all: ${DEBS}
 	echo ${DEBS}
