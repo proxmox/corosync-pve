@@ -1,3 +1,10 @@
+corosync (3.0.2-pve4) pve; urgency=medium
+
+  * backport a fix ensuring that the messages during recovery (retransmission)
+    do not exceed the maximum possible KNET package size.
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 10 Oct 2019 18:16:02 +0200
+
 corosync (3.0.2-pve3) pve; urgency=medium
 
   * totemknet: Disable forwarding on shutdown to make knet flush all messages
