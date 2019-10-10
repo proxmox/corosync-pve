@@ -10,3 +10,4 @@
 0010-logging-Add-CS_PRI_NODE_ID-and-CS_PRI_RING_ID.patch
 0011-totemknet-Add-locking-for-log-call.patch
 0012-totempg-Check-sanity-length-of-received-message.patch
+0013-totemsrp-Reduce-MTU-to-left-room-second-mcast.patch
