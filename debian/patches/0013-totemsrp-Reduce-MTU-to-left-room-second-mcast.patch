@@ -1,0 +1,44 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Jan Friesse <jfriesse@redhat.com>
+Date: Mon, 7 Oct 2019 15:26:22 +0200
+Subject: [PATCH] totemsrp: Reduce MTU to left room second mcast
+
+Messages sent during recovery phase are encapsulated so such message has
+extra size of mcast structure. This is not so big problem for UDPU,
+because most of the switches are able to fragment and defragment packet
+but it is problem for knet, because totempg is using maximum packet size
+(65536 bytes) and when another header is added during retransmition,
+then packet is too large.
+
+Solution is to reduce mtu by 2 * sizeof (struct mcast).
+
+Signed-off-by: Jan Friesse <jfriesse@redhat.com>
+Reviewed-by: Fabio M. Di Nitto <fdinitto@redhat.com>
+(cherry picked from commit ee8b8993d98b3f6af9c058194228fc534fcd0796)
+Signed-off-by: Thomas Lamprecht <t.lamprecht@proxmox.com>
+---
+ exec/totemsrp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/exec/totemsrp.c b/exec/totemsrp.c
+index e988c531..9ea3d689 100644
+--- a/exec/totemsrp.c
++++ b/exec/totemsrp.c
+@@ -805,7 +805,7 @@ static void totempg_mtu_changed(void *context, int net_mtu)
+ {
+ 	struct totemsrp_instance *instance = context;
+ 
+-	instance->totem_config->net_mtu = net_mtu - sizeof (struct mcast);
++	instance->totem_config->net_mtu = net_mtu - 2 * sizeof (struct mcast);
+ 
+ 	log_printf (instance->totemsrp_log_level_debug,
+ 		    "Net MTU changed to %d, new value is %d",
+@@ -5092,7 +5092,7 @@ void main_iface_change_fn (
+ }
+ 
+ void totemsrp_net_mtu_adjust (struct totem_config *totem_config) {
+-	totem_config->net_mtu -= sizeof (struct mcast);
++	totem_config->net_mtu -= 2 * sizeof (struct mcast);
+ }
+ 
+ void totemsrp_service_ready_register (
