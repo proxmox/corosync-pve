@@ -2,9 +2,6 @@ Source: corosync
 Section: admin
 Priority: optional
 Maintainer: Proxmox Support Team <support@proxmox.com>
-Uploaders:
- Adrian Vondendriesch <adrian.vondendriesch@credativ.de>,
- Ferenc Wágner <wferi@debian.org>,
 Standards-Version: 4.3.0
 Build-Depends:
  debhelper (>= 12~),
@@ -25,8 +22,8 @@ Build-Depends-Indep:
  doxygen,
  graphviz,
 Homepage: https://corosync.github.io/corosync/
-Vcs-Git: https://salsa.debian.org/ha-team/corosync.git
-Vcs-Browser: https://salsa.debian.org/ha-team/corosync
+Vcs-Git: git://git.proxmox.com/git/corosync-pve
+Vcs-Browser: https://git.proxmox.com/?p=corosync-pve.git
 X-Common-Description: The Corosync Cluster Engine is a Group Communication
  System with additional features for implementing high availability within
  applications. The project provides four C Application Programming Interface
