@@ -1,13 +1,2 @@
 0001-Enable-PrivateTmp-in-the-systemd-service-files.patch
 0002-only-start-corosync.service-if-conf-exists.patch
-0003-cpg-notify_lib_joinlist-drop-conn-parameter.patch
-0004-cpg-send-single-confchg-event-per-group-on-joinlist.patch
-0005-cpg-Add-more-comments-to-notify_lib_joinlist.patch
-0006-cpg-Move-filling-of-member_list-to-subfunction.patch
-0007-totem-fix-check-if-all-nodes-have-name-attrs-in-mult.patch
-0008-totem-fix-check-if-all-nodes-have-same-number-of-lin.patch
-0009-totemknet-Disable-forwarding-on-shutdown.patch
-0010-logging-Add-CS_PRI_NODE_ID-and-CS_PRI_RING_ID.patch
-0011-totemknet-Add-locking-for-log-call.patch
-0012-totempg-Check-sanity-length-of-received-message.patch
-0013-totemsrp-Reduce-MTU-to-left-room-second-mcast.patch
