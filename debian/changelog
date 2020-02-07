@@ -1,3 +1,9 @@
+corosync (3.0.3-pve1~bpo9) pve; urgency=medium
+
+  * update backport to Corosync 3.0.3
+
+ -- Proxmox Support Team <support@proxmox.com>  Fri, 07 Feb 2020 11:15:22 +0100
+
 corosync (3.0.2-pve4~bpo9) pve; urgency=medium
 
   * backport a fix ensuring that the messages during recovery (retransmission)
