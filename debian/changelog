@@ -1,3 +1,9 @@
+corosync (3.0.4-pve1) pve; urgency=medium
+
+  * update to Corosync 3.0.4
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 25 Jun 2020 17:02:11 +0200
+
 corosync (3.0.3-pve1) pve; urgency=medium
 
   * update to Corosync 3.0.3
