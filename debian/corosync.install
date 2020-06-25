@@ -19,7 +19,7 @@ usr/share/man/man8/corosync-quorumtool.8
 usr/share/man/man8/corosync-xmlproc.8
 usr/share/man/man8/corosync.8
 usr/share/man/man7/corosync_overview.7
-usr/share/man/man8/cmap_keys.8
+usr/share/man/man7/cmap_keys.7
 usr/share/doc/corosync/README.recovery
 usr/share/doc/corosync/AUTHORS
 usr/share/doc/corosync/INSTALL
