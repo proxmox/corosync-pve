@@ -1,3 +1,9 @@
+corosync (3.0.4-pve1~bpo9) pve; urgency=medium
+
+  * update backport to Corosync 3.0.4
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 25 Jun 2020 17:23:33 +0200
+
 corosync (3.0.3-pve1~bpo9) pve; urgency=medium
 
   * update backport to Corosync 3.0.3
