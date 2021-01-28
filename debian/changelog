@@ -1,3 +1,14 @@
+corosync (3.1.0-pve1) pve; urgency=medium
+
+  * update to Corosync 3.1.0
+    + Configuration system is rewritten and reload became atomic operation.
+    + Quorum service got improved API with ability to register new totem
+      members change callback.
+    + Default token timeout was changed from 1 seconds to 3 seconds.
+    + Support for changing crypto configuration during runtime.
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 28 Jan 2021 11:39:25 +0100
+
 corosync (3.0.4-pve1) pve; urgency=medium
 
   * update to Corosync 3.0.4
