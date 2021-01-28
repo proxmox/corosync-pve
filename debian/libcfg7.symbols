@@ -10,6 +10,7 @@ libcfg.so.7 libcfg7 #MINVER#
  corosync_cfg_initialize@COROSYNC_CFG_0.82 2.99.5
  corosync_cfg_kill_node@Base 2.99.5
  corosync_cfg_local_get@Base 2.99.5
+ corosync_cfg_node_status_get@COROSYNC_CFG_0.82 3.1.0
  corosync_cfg_reload_config@Base 2.99.5
  corosync_cfg_reopen_log_files@Base 2.99.5
  corosync_cfg_replyto_shutdown@Base 2.99.5

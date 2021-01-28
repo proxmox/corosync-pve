@@ -1,0 +1,54 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Ferenc=20W=C3=A1gner?= <wferi@debian.org>
+Date: Sun, 8 Nov 2020 20:49:15 +0100
+Subject: [PATCH 3/6] The ring id file needn't be executable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+At the same time simplify the overwrite logic and stop clearing the
+umask (which is unexpected and quite pointless here, as applications
+can't really protect the users from their own pathological settings).
+
+Signed-off-by: Ferenc Wágner <wferi@debian.org>
+Reviewed-by: Jan Friesse <jfriesse@redhat.com>
+Signed-off-by: Thomas Lamprecht <t.lamprecht@proxmox.com>
+---
+ exec/main.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/exec/main.c b/exec/main.c
+index f1496eb9..1c4c009d 100644
+--- a/exec/main.c
++++ b/exec/main.c
+@@ -640,7 +640,7 @@ static void corosync_ring_id_create_or_load (
+ 
+ 	snprintf (filename, sizeof(filename), "%s/ringid_%u",
+ 		get_state_dir(), nodeid);
+-	fd = open (filename, O_RDONLY, 0700);
++	fd = open (filename, O_RDONLY);
+ 	/*
+ 	 * If file can be opened and read, read the ring id
+ 	 */
+@@ -653,8 +653,7 @@ static void corosync_ring_id_create_or_load (
+ 	 */
+ 	if ((fd == -1) || (res != sizeof (uint64_t))) {
+ 		memb_ring_id->seq = 0;
+-		umask(0);
+-		fd = open (filename, O_CREAT|O_RDWR, 0700);
++		fd = creat (filename, 0600);
+ 		if (fd != -1) {
+ 			res = write (fd, &memb_ring_id->seq, sizeof (uint64_t));
+ 			close (fd);
+@@ -686,10 +685,7 @@ static void corosync_ring_id_store (
+ 	snprintf (filename, sizeof(filename), "%s/ringid_%u",
+ 		get_state_dir(), nodeid);
+ 
+-	fd = open (filename, O_WRONLY, 0700);
+-	if (fd == -1) {
+-		fd = open (filename, O_CREAT|O_RDWR, 0700);
+-	}
++	fd = creat (filename, 0600);
+ 	if (fd == -1) {
+ 		LOGSYS_PERROR(errno, LOGSYS_LEVEL_ERROR,
+ 			"Couldn't store new ring id " CS_PRI_RING_ID_SEQ " to stable storage",

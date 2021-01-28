@@ -1,2 +1,6 @@
 0001-Enable-PrivateTmp-in-the-systemd-service-files.patch
 0002-only-start-corosync.service-if-conf-exists.patch
+0003-The-ring-id-file-needn-t-be-executable.patch
+0004-totemknet-Check-both-cipher-and-hash-for-crypto.patch
+0005-cfg-New-API-to-get-extended-node-link-infomation.patch
+0006-cfg-Improve-nodestatusget-versioning.patch
