@@ -10,5 +10,6 @@ libquorum.so.5 libquorum5 #MINVER#
  quorum_finalize@COROSYNC_QUORUM_1.0 1.99.9
  quorum_getquorate@COROSYNC_QUORUM_1.0 1.99.9
  quorum_initialize@COROSYNC_QUORUM_1.0 1.99.9
+ quorum_model_initialize@Base 3.1.0
  quorum_trackstart@Base 1.99.9
  quorum_trackstop@Base 1.99.9
