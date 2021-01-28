@@ -1,2 +1,2 @@
-usr/lib/*/libquorum.so.5
-usr/lib/*/libquorum.so.5.0.0
+usr/lib/*/libquorum.so.*
+usr/lib/*/libquorum.so.*
