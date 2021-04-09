@@ -8,7 +8,6 @@ CSVERSION=${DEB_VERSION_UPSTREAM}
 BUILDDIR=${PACKAGE}-${CSVERSION}
 CSSRC=upstream
 
-ARCH:=$(shell dpkg-architecture -qDEB_BUILD_ARCH)
 GITVERSION:=$(shell git rev-parse HEAD)
 
 MAIN_DEB=corosync_${DEB_VERSION}_${DEB_BUILD_ARCH}.deb \
