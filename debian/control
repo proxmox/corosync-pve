@@ -14,6 +14,7 @@ Build-Depends:
  libnozzle-dev,
 # protect backports from silent log loss (#898266):
  libqb-dev (>= 1.0.3),
+ libreadline-dev,
  libsnmp-dev,
 # libstatgrab is Linux-only until #823899 and #823900 gets fixed:
  libstatgrab-dev [linux-any],
@@ -70,6 +71,18 @@ Description: cluster engine notification daemon
  ${S:X-Common-Description}
  .
  This package contains the DBus/SNMP notification daemon for Corosync events.
+
+Package: corosync-vqsim
+Architecture: any
+Pre-Depends:
+ ${misc:Pre-Depends},
+Depends: ${shlibs:Depends},
+ ${misc:Depends},
+Description: cluster engine votequorum simulator
+ ${S:X-Common-Description}
+ .
+ This package contains the Corosync votequorum simulator.  It
+ can simulate multiple nodes, network splits and a basic quorum device.
 
 Package: corosync-doc
 Section: doc
