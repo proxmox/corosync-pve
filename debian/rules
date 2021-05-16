@@ -67,6 +67,3 @@ override_dh_missing:
 override_dh_gencontrol:
 	debian/check_header_deps
 	dh_gencontrol
-
-# dwz fails with "Allocatable section in [...] after non-allocatable ones"
-override_dh_dwz:

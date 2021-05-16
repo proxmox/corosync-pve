@@ -6,6 +6,8 @@ Standards-Version: 4.5.1
 Build-Depends:
  debhelper (>= 12~),
  dctrl-tools,
+# maybe too strict, but the buster dwz failed:
+ dwz (>= 0.13-5),
  groff,
  libdbus-1-dev,
  libknet-dev,
