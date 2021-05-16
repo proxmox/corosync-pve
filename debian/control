@@ -11,6 +11,7 @@ Build-Depends:
  groff,
  libdbus-1-dev,
  libknet-dev,
+ libnozzle-dev,
 # protect backports from silent log loss (#898266):
  libqb-dev (>= 1.0.3),
  libsnmp-dev,

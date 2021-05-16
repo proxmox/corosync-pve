@@ -39,6 +39,7 @@ override_dh_auto_configure:
 	    $(enable-monitoring) \
 	    $(enable-watchdog) \
 	    --disable-augeas \
+	    --enable-nozzle \
 	    --enable-snmp \
 	    --enable-xmlconf \
 	    $(enable-systemd) \
