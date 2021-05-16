@@ -1,3 +1,13 @@
+corosync (3.1.2-pve2) bullseye; urgency=medium
+
+  * re-build for Debian 11 Bullseye / Proxmox VE 7
+
+  * package corosync-vqsim
+
+  * enable kronosnet's nozzle support
+
+ -- Proxmox Support Team <support@proxmox.com>  Sun, 16 May 2021 17:53:59 +0200
+
 corosync (3.1.2-pve1) pve; urgency=medium
 
   * update to Corosync 3.1.2
