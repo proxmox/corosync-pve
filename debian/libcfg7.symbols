@@ -13,6 +13,6 @@ libcfg.so.7 libcfg7 #MINVER#
  corosync_cfg_reopen_log_files@Base 2.99.5
  corosync_cfg_replyto_shutdown@Base 2.99.5
  corosync_cfg_ring_status_get@COROSYNC_CFG_0.82 2.99.5
- corosync_cfg_trackstart@COROSYNC_CFG_0.82 3.1.1
- corosync_cfg_trackstop@COROSYNC_CFG_0.82 3.1.1
+ corosync_cfg_trackstart@COROSYNC_CFG_0.82 3.1.2-pve1
+ corosync_cfg_trackstop@COROSYNC_CFG_0.82 3.1.2-pve1
  corosync_cfg_try_shutdown@Base 2.99.5
