@@ -2,7 +2,7 @@ Source: corosync
 Section: admin
 Priority: optional
 Maintainer: Proxmox Support Team <support@proxmox.com>
-Standards-Version: 4.3.0
+Standards-Version: 4.5.1
 Build-Depends:
  debhelper (>= 12~),
  dctrl-tools,
