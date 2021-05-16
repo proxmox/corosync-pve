@@ -71,7 +71,7 @@ submodule:
 
 .PHONY: upload
 upload: ${DEBS}
-	tar cf - ${DEBS} | ssh -X repoman@repo.proxmox.com -- upload --product pve --dist buster --arch ${DEB_BUILD_ARCH}
+	tar cf - ${DEBS} | ssh -X repoman@repo.proxmox.com -- upload --product pve --dist bullseye --arch ${DEB_BUILD_ARCH}
 
 .PHONY: clean
 distclean: clean
