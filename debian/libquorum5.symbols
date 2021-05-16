@@ -1,8 +1,6 @@
 libquorum.so.5 libquorum5 #MINVER#
 * Build-Depends-Package: libquorum-dev
  COROSYNC_QUORUM_1.0@COROSYNC_QUORUM_1.0 1.99.9
- (arch=!ppc64el !hppa !hurd-i386 !powerpc !powerpcspe !ppc64)__start___verbose@Base 2.4.3
- (arch=!ppc64el !hppa !hurd-i386 !powerpc !powerpcspe !ppc64)__stop___verbose@Base 2.4.3
  quorum_context_get@Base 1.99.9
  quorum_context_set@Base 1.99.9
  quorum_dispatch@COROSYNC_QUORUM_1.0 1.99.9

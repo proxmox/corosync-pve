@@ -1,8 +1,6 @@
 libcfg.so.7 libcfg7 #MINVER#
 * Build-Depends-Package: libcfg-dev
  COROSYNC_CFG_0.82@COROSYNC_CFG_0.82 2.99.5
- (arch=!ppc64el !hppa !hurd-i386 !powerpc !powerpcspe !ppc64)__start___verbose@Base 2.99.5
- (arch=!ppc64el !hppa !hurd-i386 !powerpc !powerpcspe !ppc64)__stop___verbose@Base 2.99.5
  corosync_cfg_dispatch@COROSYNC_CFG_0.82 2.99.5
  corosync_cfg_fd_get@COROSYNC_CFG_0.82 2.99.5
  corosync_cfg_finalize@COROSYNC_CFG_0.82 2.99.5
@@ -15,4 +13,6 @@ libcfg.so.7 libcfg7 #MINVER#
  corosync_cfg_reopen_log_files@Base 2.99.5
  corosync_cfg_replyto_shutdown@Base 2.99.5
  corosync_cfg_ring_status_get@COROSYNC_CFG_0.82 2.99.5
+ corosync_cfg_trackstart@COROSYNC_CFG_0.82 3.1.1
+ corosync_cfg_trackstop@COROSYNC_CFG_0.82 3.1.1
  corosync_cfg_try_shutdown@Base 2.99.5

@@ -1,8 +1,6 @@
 libsam.so.4 libsam4 #MINVER#
 * Build-Depends-Package: libsam-dev
  COROSYNC_SAM_1.0@COROSYNC_SAM_1.0 1.2.0
- (arch=!ppc64el !hppa !hurd-i386 !powerpc !powerpcspe !ppc64)__start___verbose@Base 2.4.3
- (arch=!ppc64el !hppa !hurd-i386 !powerpc !powerpcspe !ppc64)__stop___verbose@Base 2.4.3
  sam_data_getsize@Base 1.99.9
  sam_data_restore@Base 1.99.9
  sam_data_store@Base 1.99.9

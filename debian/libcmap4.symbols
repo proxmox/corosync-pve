@@ -1,8 +1,6 @@
 libcmap.so.4 libcmap4 #MINVER#
 * Build-Depends-Package: libcmap-dev
  COROSYNC_CMAP_1.0@COROSYNC_CMAP_1.0 1.99.9
- (arch=!ppc64el !hppa !hurd-i386 !powerpc !powerpcspe !ppc64)__start___verbose@Base 2.4.3
- (arch=!ppc64el !hppa !hurd-i386 !powerpc !powerpcspe !ppc64)__stop___verbose@Base 2.4.3
  cmap_context_get@Base 1.99.9
  cmap_context_set@Base 1.99.9
  cmap_dec@Base 1.99.9

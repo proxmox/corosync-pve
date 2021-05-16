@@ -1,8 +1,6 @@
 libcpg.so.4 libcpg4 #MINVER#
 * Build-Depends-Package: libcpg-dev
  COROSYNC_CPG_1.0@COROSYNC_CPG_1.0 1.0.0
- (arch=!ppc64el !hppa !hurd-i386 !powerpc !powerpcspe !ppc64)__start___verbose@Base 2.4.3
- (arch=!ppc64el !hppa !hurd-i386 !powerpc !powerpcspe !ppc64)__stop___verbose@Base 2.4.3
  cpg_context_get@COROSYNC_CPG_1.0 1.0.0
  cpg_context_set@COROSYNC_CPG_1.0 1.0.0
  cpg_dispatch@COROSYNC_CPG_1.0 1.0.0
