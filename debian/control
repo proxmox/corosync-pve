@@ -24,6 +24,7 @@ Build-Depends:
 Build-Depends-Indep:
  doxygen,
  graphviz,
+Rules-Requires-Root: no
 Homepage: https://corosync.github.io/corosync/
 Vcs-Git: git://git.proxmox.com/git/corosync-pve
 Vcs-Browser: https://git.proxmox.com/?p=corosync-pve.git
