@@ -1,3 +1,11 @@
+corosync (3.1.5-pve2) bullseye; urgency=medium
+
+  * cherry-pick fix for high retransmit load
+
+  * cherry-pick fix for CPG corruption during membership change bug
+
+ -- Proxmox Support Team <support@proxmox.com>  Tue, 9 Nov 2021 11:50:52 +0100
+
 corosync (3.1.5-pve1) bullseye; urgency=medium
 
   * update to v3.1.5 upstream release
