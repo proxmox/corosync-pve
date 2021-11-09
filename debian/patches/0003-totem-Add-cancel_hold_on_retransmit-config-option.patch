@@ -1,0 +1,132 @@
+From cdf72925db5a81e546ca8e8d7d8291ee1fc77be4 Mon Sep 17 00:00:00 2001
+From: Jan Friesse <jfriesse@redhat.com>
+Date: Wed, 11 Aug 2021 17:34:05 +0200
+Subject: [PATCH 3/4] totem: Add cancel_hold_on_retransmit config option
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Previously, existence of retransmit messages canceled holding
+of token (and never allowed representative to enter token hold
+state).
+
+This makes token rotating maximum speed and keeps processor
+resending messages over and over again - overloading network
+and reducing chance to successfully deliver the messages.
+
+Also there were reports of various Antivirus / IPS / IDS which slows
+down delivery of packets with certain sizes (packets bigger than token)
+what make Corosync retransmit messages over and over again.
+
+Proposed solution is to allow representative to enter token hold
+state when there are only retransmit messages. This allows network to
+handle overload and/or gives Antivirus/IPS/IDS enough time scan and
+deliver packets without corosync entering "FAILED TO RECEIVE" state and
+adding more load to network.
+
+Signed-off-by: Jan Friesse <jfriesse@redhat.com>
+Reviewed-by: Christine Caulfield <ccaulfie@redhat.com>
+Signed-off-by: Fabian Grünbichler <f.gruenbichler@proxmox.com>
+---
+ include/corosync/totem/totem.h |  2 ++
+ exec/totemconfig.c             |  6 ++++++
+ exec/totemsrp.c                |  5 +++--
+ man/corosync.conf.5            | 15 ++++++++++++++-
+ 4 files changed, 25 insertions(+), 3 deletions(-)
+
+diff --git a/include/corosync/totem/totem.h b/include/corosync/totem/totem.h
+index 8b166566..bdb6a15f 100644
+--- a/include/corosync/totem/totem.h
++++ b/include/corosync/totem/totem.h
+@@ -244,6 +244,8 @@ struct totem_config {
+ 
+ 	unsigned int block_unlisted_ips;
+ 
++	unsigned int cancel_token_hold_on_retransmit;
++
+ 	void (*totem_memb_ring_id_create_or_load) (
+ 	    struct memb_ring_id *memb_ring_id,
+ 	    unsigned int nodeid);
+diff --git a/exec/totemconfig.c b/exec/totemconfig.c
+index 57a1587a..46e09952 100644
+--- a/exec/totemconfig.c
++++ b/exec/totemconfig.c
+@@ -81,6 +81,7 @@
+ #define MAX_MESSAGES				17
+ #define MISS_COUNT_CONST			5
+ #define BLOCK_UNLISTED_IPS			1
++#define CANCEL_TOKEN_HOLD_ON_RETRANSMIT		0
+ /* This constant is not used for knet */
+ #define UDP_NETMTU                              1500
+ 
+@@ -144,6 +145,8 @@ static void *totem_get_param_by_name(struct totem_config *totem_config, const ch
+ 		return totem_config->knet_compression_model;
+ 	if (strcmp(param_name, "totem.block_unlisted_ips") == 0)
+ 		return &totem_config->block_unlisted_ips;
++	if (strcmp(param_name, "totem.cancel_token_hold_on_retransmit") == 0)
++		return &totem_config->cancel_token_hold_on_retransmit;
+ 
+ 	return NULL;
+ }
+@@ -365,6 +368,9 @@ void totem_volatile_config_read (struct totem_config *totem_config, icmap_map_t
+ 
+ 	totem_volatile_config_set_boolean_value(totem_config, temp_map, "totem.block_unlisted_ips", deleted_key,
+ 	    BLOCK_UNLISTED_IPS);
++
++	totem_volatile_config_set_boolean_value(totem_config, temp_map, "totem.cancel_token_hold_on_retransmit",
++	    deleted_key, CANCEL_TOKEN_HOLD_ON_RETRANSMIT);
+ }
+ 
+ int totem_volatile_config_validate (
+diff --git a/exec/totemsrp.c b/exec/totemsrp.c
+index 949d367b..d24b11fa 100644
+--- a/exec/totemsrp.c
++++ b/exec/totemsrp.c
+@@ -3981,8 +3981,9 @@ static int message_handler_orf_token (
+ 		transmits_allowed = fcc_calculate (instance, token);
+ 		mcasted_retransmit = orf_token_rtr (instance, token, &transmits_allowed);
+ 
+-		if (instance->my_token_held == 1 &&
+-			(token->rtr_list_entries > 0 || mcasted_retransmit > 0)) {
++		if (instance->totem_config->cancel_token_hold_on_retransmit &&
++		    instance->my_token_held == 1 &&
++		    (token->rtr_list_entries > 0 || mcasted_retransmit > 0)) {
+ 			instance->my_token_held = 0;
+ 			forward_token = 1;
+ 		}
+diff --git a/man/corosync.conf.5 b/man/corosync.conf.5
+index 0588ad1e..a3771ea7 100644
+--- a/man/corosync.conf.5
++++ b/man/corosync.conf.5
+@@ -32,7 +32,7 @@
+ .\" * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ .\" * THE POSSIBILITY OF SUCH DAMAGE.
+ .\" */
+-.TH COROSYNC_CONF 5 2021-07-23 "corosync Man Page" "Corosync Cluster Engine Programmer's Manual"
++.TH COROSYNC_CONF 5 2021-08-11 "corosync Man Page" "Corosync Cluster Engine Programmer's Manual"
+ .SH NAME
+ corosync.conf - corosync executive configuration file
+ 
+@@ -584,6 +584,19 @@ with an old configuration.
+ 
+ The default value is yes.
+ 
++.TP
++cancel_token_hold_on_retransmit
++Allows Corosync to hold token by representative when there is too much
++retransmit messages. This allows network to process increased load without
++overloading it. Used mechanism is same as described for
++.B hold
++directive.
++
++Some deployments may prefer to never hold token when there is
++retransmit messages. If so, option should be set to yes.
++
++The default value is no.
++
+ .PP
+ Within the
+ .B logging
+-- 
+2.30.2
+

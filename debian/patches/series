@@ -1,2 +1,4 @@
 0001-Enable-PrivateTmp-in-the-systemd-service-files.patch
 0002-only-start-corosync.service-if-conf-exists.patch
+0003-totem-Add-cancel_hold_on_retransmit-config-option.patch
+0004-totemsrp-Switch-totempg-buffers-at-the-right-time.patch
