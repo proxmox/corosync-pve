@@ -1,3 +1,9 @@
+corosync (3.1.7-pve1) bullseye; urgency=medium
+
+  *  update to Corosync 3.1.7
+
+ -- Proxmox Support Team <support@proxmox.com>  Wed, 16 Nov 2022 09:10:33 +0100
+
 corosync (3.1.5-pve2) bullseye; urgency=medium
 
   * cherry-pick fix for high retransmit load
