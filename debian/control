@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Proxmox Support Team <support@proxmox.com>
 Standards-Version: 4.5.1
 Build-Depends:
- debhelper (>= 12~),
+ debhelper-compat (= 13),
  dctrl-tools,
 # maybe too strict, but the buster dwz failed:
  dwz (>= 0.13-5),
