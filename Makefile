@@ -6,10 +6,12 @@ PACKAGE=corosync
 CSVERSION=$(DEB_VERSION_UPSTREAM)
 
 BUILDDIR=$(PACKAGE)-$(CSVERSION)
+ORIG_SRC_TAR=$(PACKAGE)_$(DEB_VERSION_UPSTREAM).orig.tar.gz
 CSSRC=upstream
 
 GITVERSION:=$(shell git rev-parse HEAD)
 
+DSC=$(PACKAGE)_$(DEB_VERSION).dsc
 MAIN_DEB=corosync_$(DEB_VERSION)_$(DEB_BUILD_ARCH).deb \
 
 OTHER_DEBS=\
@@ -43,8 +45,6 @@ libvotequorum8-dbgsym_$(DEB_VERSION)_$(DEB_BUILD_ARCH).deb \
 
 DEBS=$(MAIN_DEB) $(OTHER_DEBS) $(DBG_DEBS)
 
-DSC=corosync-pve_$(DEB_VERSION).dsc
-
 all: $(DEBS)
 	echo $(DEBS)
 
@@ -60,10 +60,14 @@ $(OTHER_DEBS) $(DBG_DEBS): $(MAIN_DEB)
 $(MAIN_DEB): $(BUILDDIR)
 	cd $(BUILDDIR); dpkg-buildpackage -b -us -uc
 
+$(ORIG_SRC_TAR): $(BUILDDIR)
+	tar czf $(ORIG_SRC_TAR) -C $(BUILDDIR) .
+
 .PHONY: dsc
 dsc: $(DSC)
-$(DSC): $(BUILDDIR)
-	cd $(BUILDDIR); dpkg-buildpackage -S -us -uc -d -nc
+$(DSC): $(ORIG_SRC_TAR) $(BUILDDIR)
+	cd $(BUILDDIR); dpkg-buildpackage -S -us -uc -d
+	lintian $(DSC)
 
 .PHONY: submodule
 submodule:
