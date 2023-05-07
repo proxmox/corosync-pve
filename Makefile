@@ -68,6 +68,9 @@ $(DSC): $(ORIG_SRC_TAR) $(BUILDDIR)
 	cd $(BUILDDIR); dpkg-buildpackage -S -us -uc -d
 	lintian $(DSC)
 
+sbuild: $(DSC)
+	sbuild $(DSC)
+
 .PHONY: submodule
 submodule:
 	test -f "$(CSSRC)/INSTALL" || git submodule update --init $(CSSRC)
