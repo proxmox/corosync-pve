@@ -1,3 +1,9 @@
+corosync (3.1.7-pve3) bookworm; urgency=medium
+
+  * d/control: do not depend on obsolete lsb-base
+
+ -- Proxmox Support Team <support@proxmox.com>  Sun, 07 May 2023 14:43:01 +0200
+
 corosync (3.1.7-pve2) bookworm; urgency=medium
 
   * re-build for Debian 12 Bullseye / Proxmox VE 8
