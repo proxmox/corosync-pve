@@ -83,8 +83,7 @@ upload: $(DEBS)
 .PHONY: clean
 distclean: clean
 clean:
-	rm -rf *.deb *.changes *.dsc *.buildinfo $(BUILDDIR)
-	find . -name '*~' -exec rm () ';'
+	rm -rf *.deb *.changes *.dsc *.buildinfo *.build $(PACKAGE)-[0-9]*/ *.tar.?z
 
 .PHONY: dinstall
 dinstall: $(DEBS)
