@@ -1,5 +1,4 @@
-include /usr/share/dpkg/pkg-info.mk
-include /usr/share/dpkg/architecture.mk
+include /usr/share/dpkg/default.mk
 
 PACKAGE=corosync
 
@@ -74,8 +73,9 @@ submodule:
 	test -f "$(CSSRC)/INSTALL" || git submodule update --init $(CSSRC)
 
 .PHONY: upload
+upload: UPLOAD_DIST ?= $(DEB_DISTRIBUTION)
 upload: $(DEBS)
-	tar cf - $(DEBS) | ssh -X repoman@repo.proxmox.com -- upload --product pve --dist bookworm --arch $(DEB_BUILD_ARCH)
+	tar cf - $(DEBS) | ssh -X repoman@repo.proxmox.com -- upload --product pve --dist $(UPLOAD_DIST) --arch $(DEB_BUILD_ARCH)
 
 .PHONY: clean
 distclean: clean
