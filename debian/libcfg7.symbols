@@ -4,15 +4,15 @@ libcfg.so.7 libcfg7 #MINVER#
  corosync_cfg_dispatch@COROSYNC_CFG_0.82 2.99.5
  corosync_cfg_fd_get@COROSYNC_CFG_0.82 2.99.5
  corosync_cfg_finalize@COROSYNC_CFG_0.82 2.99.5
- corosync_cfg_get_node_addrs@Base 2.99.5
+ corosync_cfg_get_node_addrs@COROSYNC_CFG_0.82 2.99.5
  corosync_cfg_initialize@COROSYNC_CFG_0.82 2.99.5
- corosync_cfg_kill_node@Base 2.99.5
- corosync_cfg_local_get@Base 2.99.5
+ corosync_cfg_kill_node@COROSYNC_CFG_0.82 2.99.5
+ corosync_cfg_local_get@COROSYNC_CFG_0.82 2.99.5
  corosync_cfg_node_status_get@COROSYNC_CFG_0.82 3.1.0
- corosync_cfg_reload_config@Base 2.99.5
- corosync_cfg_reopen_log_files@Base 2.99.5
- corosync_cfg_replyto_shutdown@Base 2.99.5
+ corosync_cfg_reload_config@COROSYNC_CFG_0.82 2.99.5
+ corosync_cfg_reopen_log_files@COROSYNC_CFG_0.82 2.99.5
+ corosync_cfg_replyto_shutdown@COROSYNC_CFG_0.82 2.99.5
  corosync_cfg_ring_status_get@COROSYNC_CFG_0.82 2.99.5
  corosync_cfg_trackstart@COROSYNC_CFG_0.82 3.1.2-pve1
  corosync_cfg_trackstop@COROSYNC_CFG_0.82 3.1.2-pve1
- corosync_cfg_try_shutdown@Base 2.99.5
+ corosync_cfg_try_shutdown@COROSYNC_CFG_0.82 2.99.5

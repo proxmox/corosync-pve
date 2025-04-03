@@ -1,15 +1,15 @@
 libsam.so.4 libsam4 #MINVER#
 * Build-Depends-Package: libsam-dev
  COROSYNC_SAM_1.0@COROSYNC_SAM_1.0 1.2.0
- sam_data_getsize@Base 1.99.9
- sam_data_restore@Base 1.99.9
- sam_data_store@Base 1.99.9
+ sam_data_getsize@COROSYNC_SAM_1.0 1.99.9
+ sam_data_restore@COROSYNC_SAM_1.0 1.99.9
+ sam_data_store@COROSYNC_SAM_1.0 1.99.9
  sam_finalize@COROSYNC_SAM_1.0 1.2.0
  sam_hc_callback_register@COROSYNC_SAM_1.0 1.2.0
  sam_hc_send@COROSYNC_SAM_1.0 1.2.0
- sam_initialize@Base 1.2.0
- sam_mark_failed@Base 1.99.9
+ sam_initialize@COROSYNC_SAM_1.0 1.2.0
+ sam_mark_failed@COROSYNC_SAM_1.0 1.99.9
  sam_register@COROSYNC_SAM_1.0 1.2.0
  sam_start@COROSYNC_SAM_1.0 1.2.0
  sam_stop@COROSYNC_SAM_1.0 1.2.0
- sam_warn_signal_set@Base 1.2.7
+ sam_warn_signal_set@COROSYNC_SAM_1.0 1.2.7
