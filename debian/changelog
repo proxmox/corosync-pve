@@ -1,3 +1,10 @@
+corosync (3.1.9-pve1) bookworm; urgency=medium
+
+  * update to Corosync 3.1.9
+  * cherry-pick fix for post-auth buffer overflow
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 03 Apr 2025 15:36:12 +0200
+
 corosync (3.1.7-pve3) bookworm; urgency=medium
 
   * d/control: do not depend on obsolete lsb-base
