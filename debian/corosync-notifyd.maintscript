@@ -1,1 +1,1 @@
-rm_conffile /etc/init/corosync-notifyd.conf 2.4.3-1~
+rm_conffile /etc/dbus-1/system.d/corosync-signals.conf 3.1.8-1~

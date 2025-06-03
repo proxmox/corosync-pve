@@ -6,18 +6,18 @@ libcpg.so.4 libcpg4 #MINVER#
  cpg_dispatch@COROSYNC_CPG_1.0 1.0.0
  cpg_fd_get@COROSYNC_CPG_1.0 1.0.0
  cpg_finalize@COROSYNC_CPG_1.0 1.0.0
- cpg_flow_control_state_get@COROSYNC_CPG_1.0 1.0.0
+ cpg_flow_control_state_get@COROSYNC_CPG_1.0 3.1.9
  cpg_initialize@COROSYNC_CPG_1.0 1.0.0
- cpg_iteration_finalize@COROSYNC_CPG_1.0 1.1.0
- cpg_iteration_initialize@COROSYNC_CPG_1.0 1.1.0
- cpg_iteration_next@COROSYNC_CPG_1.0 1.1.0
+ cpg_iteration_finalize@COROSYNC_CPG_1.0 3.1.9
+ cpg_iteration_initialize@COROSYNC_CPG_1.0 3.1.9
+ cpg_iteration_next@COROSYNC_CPG_1.0 3.1.9
  cpg_join@COROSYNC_CPG_1.0 1.0.0
  cpg_leave@COROSYNC_CPG_1.0 1.0.0
- cpg_local_get@COROSYNC_CPG_1.0 1.0.0
- cpg_max_atomic_msgsize_get@COROSYNC_CPG_1.0 2.3.5
+ cpg_local_get@COROSYNC_CPG_1.0 3.1.9
+ cpg_max_atomic_msgsize_get@COROSYNC_CPG_1.0 3.1.9
  cpg_mcast_joined@COROSYNC_CPG_1.0 1.0.0
  cpg_membership_get@COROSYNC_CPG_1.0 1.0.0
- cpg_model_initialize@COROSYNC_CPG_1.0 1.3.0
+ cpg_model_initialize@COROSYNC_CPG_1.0 3.1.9
  cpg_zcb_alloc@COROSYNC_CPG_1.0 1.0.0
  cpg_zcb_free@COROSYNC_CPG_1.0 1.0.0
- cpg_zcb_mcast_joined@COROSYNC_CPG_1.0 1.0.0
+ cpg_zcb_mcast_joined@COROSYNC_CPG_1.0 3.1.9

@@ -1,13 +1,13 @@
 libquorum.so.5 libquorum5 #MINVER#
 * Build-Depends-Package: libquorum-dev
  COROSYNC_QUORUM_1.0@COROSYNC_QUORUM_1.0 1.99.9
- quorum_context_get@COROSYNC_QUORUM_1.0 1.99.9
- quorum_context_set@COROSYNC_QUORUM_1.0 1.99.9
+ quorum_context_get@COROSYNC_QUORUM_1.0 3.1.9
+ quorum_context_set@COROSYNC_QUORUM_1.0 3.1.9
  quorum_dispatch@COROSYNC_QUORUM_1.0 1.99.9
- quorum_fd_get@COROSYNC_QUORUM_1.0 1.99.9
+ quorum_fd_get@COROSYNC_QUORUM_1.0 3.1.9
  quorum_finalize@COROSYNC_QUORUM_1.0 1.99.9
  quorum_getquorate@COROSYNC_QUORUM_1.0 1.99.9
  quorum_initialize@COROSYNC_QUORUM_1.0 1.99.9
- quorum_model_initialize@COROSYNC_QUORUM_1.0 3.1.0
- quorum_trackstart@COROSYNC_QUORUM_1.0 1.99.9
- quorum_trackstop@COROSYNC_QUORUM_1.0 1.99.9
+ quorum_model_initialize@COROSYNC_QUORUM_1.0 3.1.9
+ quorum_trackstart@COROSYNC_QUORUM_1.0 3.1.9
+ quorum_trackstop@COROSYNC_QUORUM_1.0 3.1.9

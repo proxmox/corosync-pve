@@ -16,9 +16,6 @@ endif
 
 ifneq ($(wildcard /usr/include/systemd/sd-daemon.h),)
 enable-systemd=--enable-systemd
-initscript-dir=usr/share/corosync
-else
-initscript-dir=etc/init.d
 endif
 
 %:
@@ -34,11 +31,10 @@ override_dh_auto_configure:
 	    BASHPATH=/bin/bash \
 	    --with-initconfigdir=/etc/default \
 	    --with-logdir=/var/log/corosync \
-	    --with-systemddir=/lib/systemd/system \
 	    --enable-dbus \
 	    $(enable-monitoring) \
 	    $(enable-watchdog) \
-	    --disable-augeas \
+	    --enable-augeas \
 	    --enable-nozzle \
 	    --enable-snmp \
 	    --enable-xmlconf \
@@ -63,9 +59,5 @@ override_dh_auto_install-arch:
 # we don't need the upstream license
 	rm debian/tmp/usr/share/doc/corosync/LICENSE
 
-override_dh_missing:
-	dh_missing --fail-missing
-
-override_dh_gencontrol:
+execute_before_dh_gencontrol:
 	debian/check_header_deps
-	dh_gencontrol

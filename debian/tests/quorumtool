@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -e
+
+OUTPUT="${AUTOPKGTEST_ARTIFACTS:-.}/quorumtool.txt"
+
+corosync-quorumtool >"$OUTPUT"
+cat "$OUTPUT"
+grep -q ' 1 node1 (local)' "$OUTPUT"

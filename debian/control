@@ -2,7 +2,7 @@ Source: corosync
 Section: admin
 Priority: optional
 Maintainer: Proxmox Support Team <support@proxmox.com>
-Standards-Version: 4.5.1
+Standards-Version: 4.7.2
 Build-Depends:
  debhelper-compat (= 13),
  dctrl-tools,
@@ -19,8 +19,7 @@ Build-Depends:
 # libstatgrab is Linux-only until #823899 and #823900 gets fixed:
  libstatgrab-dev [linux-any],
  libsystemd-dev [linux-any],
- libxml2-dev,
- pkg-config,
+ pkgconf,
  zlib1g-dev
 Build-Depends-Indep:
  doxygen,
@@ -51,6 +50,8 @@ Pre-Depends:
 Depends: ${shlibs:Depends},
  ${misc:Depends},
  adduser,
+# corosync-blackbox uses qb-blackbox:
+ libqb-tools,
  xsltproc
 Description: cluster engine daemon and utilities
  ${S:X-Common-Description}

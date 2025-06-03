@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -e
+
+OUTPUT="${AUTOPKGTEST_ARTIFACTS:-.}/cfgtool.txt"
+
+corosync-cfgtool -s >"$OUTPUT"
+cat "$OUTPUT"
+grep -q '^[[:blank:]]*nodeid:[[:blank:]]*1:[[:blank:]]*localhost$' "$OUTPUT"

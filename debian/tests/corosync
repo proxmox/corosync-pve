@@ -1,6 +1,0 @@
-#!/bin/sh
-
-set -ex
-
-corosync-cfgtool -s | grep -C 20 'node 0:	link enabled:1	link connected:1'
-corosync-quorumtool | grep -C 20 ' 1 node1 (local)'

@@ -1,3 +1,7 @@
 Depends: @
-Restrictions: needs-root, allow-stderr, isolation-container
-Tests: corosync
+Restrictions: needs-root, isolation-container
+Tests: cfgtool quorumtool
+
+Depends: @, logrotate
+Restrictions: allow-stderr, needs-root, isolation-container
+Tests: logrotate

@@ -21,7 +21,6 @@ NAME=corosync-notifyd
 DAEMON=/usr/sbin/$NAME
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$NAME
-PIDFILE=/var/run/corosync.pid
 RARUNDIR=/var/run/resource-agents
 
 # Exit if the package is not installed

@@ -1,0 +1,19 @@
+#!/bin/sh
+
+set -ex
+
+OUTPUT="${AUTOPKGTEST_ARTIFACTS:-.}/logrotate.txt"
+
+LOG="/var/log/corosync/corosync.log"
+
+logrotate --force --log "$OUTPUT" /etc/logrotate.d/corosync
+cat "$OUTPUT"
+grep -q "rotating log $LOG," "$OUTPUT"
+
+[ -e "$LOG" ]
+! [ -s "$LOG" ]
+
+# Reload config to generate logs
+corosync-cfgtool -R
+
+grep -q 'Config reload requested' "$LOG"
