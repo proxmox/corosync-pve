@@ -13,7 +13,7 @@ Signed-off-by: Thomas Lamprecht <t.lamprecht@proxmox.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/init/corosync.service.in b/init/corosync.service.in
-index 0c74306b..adf7080f 100644
+index 530dadeb..fd06209c 100644
 --- a/init/corosync.service.in
 +++ b/init/corosync.service.in
 @@ -2,6 +2,7 @@

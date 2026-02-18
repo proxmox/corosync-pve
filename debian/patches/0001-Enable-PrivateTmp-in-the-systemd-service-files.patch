@@ -22,10 +22,10 @@ index 410a6837..9247cbcf 100644
  [Install]
  WantedBy=multi-user.target
 diff --git a/init/corosync.service.in b/init/corosync.service.in
-index 654e41fc..0c74306b 100644
+index 89d67b5e..530dadeb 100644
 --- a/init/corosync.service.in
 +++ b/init/corosync.service.in
-@@ -28,6 +28,7 @@ StandardError=null
+@@ -31,6 +31,7 @@ StandardError=null
  #RestartSec=70
  #  rewrite according to environment.
  #ExecStartPre=/sbin/modprobe softdog
