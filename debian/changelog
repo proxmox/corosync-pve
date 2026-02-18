@@ -1,3 +1,13 @@
+corosync (3.1.10-pve1) trixie; urgency=medium
+
+  * update to Corosync 3.1.10
+
+  * cherry-pick fix for knet ping timer calculation on corosync (config)
+    reload. This makes adapting some timeout related config values more robust
+    for a running cluster.
+
+ -- Proxmox Support Team <support@proxmox.com>  Wed, 18 Feb 2026 18:48:04 +0100
+
 corosync (3.1.9-pve2) trixie; urgency=medium
 
   * rebuild for Debian 13 Trixie / Proxmox VE 9
