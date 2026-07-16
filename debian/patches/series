@@ -3,3 +3,4 @@
 0003-totemconfig-Fix-knet-ping-timer-calc-on-reload.patch
 0004-totemsrp-Return-error-if-sanity-check-fails.patch
 0005-totemsrp-Fix-integer-overflow-in-memb_join_sanity.patch
+0007-sync-Call-service-abort-callback-also-in-barrier-phase.patch

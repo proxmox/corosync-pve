@@ -1,0 +1,70 @@
+From 0228e81df1db1cf8f730fe5b71e4ff11d9dbcda5 Mon Sep 17 00:00:00 2001
+From: Thomas Lamprecht <t.lamprecht@proxmox.com>
+Date: Tue, 14 Jul 2026 22:34:49 +0200
+Subject: [PATCH] sync: Call service abort callback also in barrier phase
+
+sync_abort() only invoked the current service's sync_abort callback
+in the process phase. When a member dies mid-round the barrier can
+never complete, so an abort typically happens in the barrier phase,
+after sync_process already ran, and the service never gets to
+discard its per-round state.
+
+cpg runs into exactly that: when a node joins the totem ring and its
+corosync exits again during the same sync round (for example on the
+totem.config_version mismatch check in cmap_sync_activate()), it may
+already have multicast its joinlist. The exit keeps the cpg barrier
+from ever completing, the round aborts without cpg_sync_abort()
+running, and the departed node's joinlist messages stay queued in
+joinlist_messages_head.
+
+The next round replays them: joinlist_inform_clients() announces a
+join for a process on a node that is no longer a member, the
+downlist cannot report it as left because the node never made it
+into an activated membership, and the same stale message keeps
+joinlist_remove_zombie_pi_entries() from dropping the entry again.
+Clients end up with a ghost group member that no confchg ever
+removes.
+
+Observed with Proxmox VE's pmxcfs, a cpg client that exchanges state
+with every group member after each confchg: all nodes wait forever
+for the ghost member's state, the cluster filesystem hangs on every
+node, and the cluster ends up watchdog-fenced. Reproducer: boot a
+node with an outdated corosync.conf, so its corosync joins the ring
+and exits again on the config_version mismatch.
+
+Run the abort callback in the barrier phase too, guarding on the
+processing index: my_state stays SYNC_BARRIER both before the first
+round and after a completed one, and in the latter case sync_abort()
+runs on every regular configuration change with my_processing_idx
+pointing past the populated service list, so the barrier branch must
+not blindly dereference that entry.
+
+All other in-tree sync_abort callbacks are empty, so this only
+changes behavior for cpg.
+
+Signed-off-by: Thomas Lamprecht <t.lamprecht@proxmox.com>
+---
+ exec/sync.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/exec/sync.c b/exec/sync.c
+index 962f341b..904c3559 100644
+--- a/exec/sync.c
++++ b/exec/sync.c
+@@ -537,6 +537,16 @@ void sync_abort (void)
+ 	ENTER();
+ 	if (my_state == SYNC_PROCESS) {
+ 		schedwrk_destroy (my_schedwrk_handle);
++	}
++
++	/*
++	 * A service waiting for the barrier already ran its process phase,
++	 * so its abort callback must run too or per-round state leaks into
++	 * the next round. Skip when no service is being synchronized, which
++	 * is the case before the first and after a completed round.
++	 */
++	if ((my_state == SYNC_PROCESS || my_state == SYNC_BARRIER) &&
++	    my_processing_idx < my_service_list_entries) {
+ 		if (my_sync_callbacks_retrieve(my_service_list[my_processing_idx].service_id, NULL) != -1) {
+ 			my_service_list[my_processing_idx].sync_abort ();
+ 		}
