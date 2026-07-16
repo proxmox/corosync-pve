@@ -10,7 +10,8 @@ Build-Depends:
  dwz (>= 0.13-5),
  groff,
  libdbus-1-dev,
- libknet-dev,
+# knet_handle_setprio_dscp for the totem ip_dscp option:
+ libknet-dev (>= 1.32~),
  libnozzle-dev,
 # protect backports from silent log loss (#898266):
  libqb-dev (>= 1.0.3),
