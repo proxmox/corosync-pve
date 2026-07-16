@@ -1,3 +1,16 @@
+corosync (3.1.10-pve3) trixie; urgency=medium
+
+  * fix stale CPG group members when a node joins the cluster and its
+    corosync exits again during the same sync round, for example due to a
+    corosync.conf config_version mismatch; the never-removed stale member
+    made the pmxcfs data synchronization hang on all nodes, blocking
+    /etc/pve cluster-wide and triggering HA watchdog fencing.
+
+  * enable support for the totem ip_dscp option to mark cluster traffic
+    with an IP DSCP QoS priority by building against the newer libknet.
+
+ -- Proxmox Support Team <support@proxmox.com>  Fri, 17 Jul 2026 01:21:13 +0200
+
 corosync (3.1.10-pve2) trixie; urgency=medium
 
   * backport fixes for CVE-2026-35091 and CVE-2026-35092.
